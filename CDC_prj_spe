@@ -1,0 +1,22 @@
+Dessin sur tableau blanc (potentiellement feure noir) sous une lampe et caméra pi (ou autre compatible jeston nano)
+Etapes de détection :
+ - Prise de la photo (Full HD)
+ - Prétraitement de l'image (par cases ou détection des contours du texte)
+ - Machine learning pour analyser l'écriture
+ - Calcul de la réponse (peut être déplacé sur le robot mais si on se trouve sur des équation on a plus de puissance de calcul)
+ ~ Sous traitement en requête internet à Wolfram-Alpha
+ - Envoi du résultat sous forme de texte via Bluetooth (uart ou usb) ou WIFI (pi robot serveur)
+ -> lib uart jetson nano [https://github.com/MathieuBahin/JetsonNanoUart/blob/master/uart.cpp]
+
+Tableau blanc grand à la vertical (contient des répères visuelles/physiques pour placer le robot), robot turtlebot et widow XL sur RPI avec une autre caméra PI ou lidar
+Etapes du dessin :
+ - Attente de la chaine de caractère à dessiner ET mise en forme de celle-ci
+ - Placement du robot dans l'espace (via caméra et/ou lidar) par rapport au tableau
+ ~ Effacement du tableau (prise de l'éffaceur ou changement du bout du robot => par exemple un bout du bras dessine, l'autre efface OU on pose l'outil à chaque fois mais c'est difficile pour rien)
+ ~ Analyse du type de donnée (équation, fonction, calcul ou nombre)
+ - Algo de découpage des caractères en chaines qui couvrent la dynamique du bras (entre chaque chaine de caractère la base mobile se déplace)(ce n'est pas obligatoirement le cas)
+> - Placement de la base
+  - Algo de résolution des caractères en points d'intérêts
+  - Algo de déplacement du bras pour tout les points d'intérêts de la chaine de caractère [i]
+  > retour à la flèche ">" jusqu'à avoir fait tout les chaines
+ - Placement du robot en position de départ (caméra/lidar)

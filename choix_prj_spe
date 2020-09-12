@@ -1,0 +1,12 @@
+Choix du CDC :
+ - RPI ou jetson nano sur la détection (perso jetson)
+ - BLE, Bluetooth ou WIFI (dépend de Wolfram ?)
+ - UART ou USB (perso UART)
+ - Lidar ou caméra (lidar avec 2 le tableau et un carton)
+ - Effacement (perso sans prises de l'outil juste en tournant le dernier moteur)
+  - Type d'effaceur
+
+
+pièces techniques 3D :
+ - supprot_caméra
+ - support sytlo (monté sur ressort) + ~support effaceur (ajout MOT pchit ? AX-12) => rempalce la pince par le pchit ?
