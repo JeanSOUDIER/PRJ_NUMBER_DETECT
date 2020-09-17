@@ -8,7 +8,7 @@ UsbArm.o: UsbArm.cpp
 	g++ -O3 -o UsbArm.o -c UsbArm.cpp -Wall
 
 CtrlArm.o: CtrlArm.cpp
-	g++ -O3 -o CtrlArm.o -c CtrlArm.cpp -Wall
+	g++ -O3 -o CtrlArm.o -c CtrlArm.cpp -Wall -lwiringPi
 
 main.o: main.cpp rs232.h UsbArm.hpp CtrlArm.hpp
 	g++ -O3 -o main.o -c main.cpp -Wall -lwiringPi -pthread
