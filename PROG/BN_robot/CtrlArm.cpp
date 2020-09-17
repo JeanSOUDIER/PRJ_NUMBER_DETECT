@@ -91,6 +91,7 @@ bool Arm::PlaceArm(double x, double y, double z) {
 				SetAxePos(2, (int)(theta1));
 				SetAxePos(3, (int)(theta2));
 				SetAxePos(4, (int)(theta3));
+				SetAxePos(5, (int)(gamma));
 			} else {
 				//std:cout << "arm too short" << std::endl;
 			}
