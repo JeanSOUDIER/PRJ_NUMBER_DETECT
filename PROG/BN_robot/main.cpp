@@ -4,9 +4,7 @@
 constexpr int ttyUSB_ARBO = 38;
 //ttyUSB_LDS && ttyUSB_ARBO
 
-
 int main() {
-
     std::vector<int> lim_min = {0, 0, 0, 0, 0, 0};
     std::vector<int> lim_max = {1000, 1000, 1000, 1000, 1000, 1000};
 

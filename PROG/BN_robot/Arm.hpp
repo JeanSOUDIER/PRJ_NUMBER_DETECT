@@ -10,16 +10,13 @@
 
 #define HOMING
 
-
 constexpr int ARB_SIZE_POSE = 7;
 constexpr int ARB_LOAD_POSE = 8;
-
 constexpr int ARB_LOAD_SEQ  = 9;
 constexpr int ARB_PLAY_SEQ  = 10;
 constexpr int ARB_LOOP_SEQ  = 11;
 
 class Arm {
-
 	public:
         Arm(const int nb,const int nb_usb, const int bdrate);
         Arm(const int nb, const int nb_usb, const int bdrate, const int time);
@@ -46,9 +43,6 @@ class Arm {
 
         void WriteOn();
         void WriteOff();
-
-
-
 	private:
         void Send(int ins, const std::vector<char> &data);
 

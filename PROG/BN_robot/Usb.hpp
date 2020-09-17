@@ -6,7 +6,6 @@
 #include "rs232.h"
 
 class Usb {
-
 	public:
 		Usb();
         Usb(const int nb_usb, const int baudrate);
@@ -17,9 +16,7 @@ class Usb {
 		void SetActive(bool state);
         bool GetActive(void);
 
-
         void SendBytes(const std::vector<char> &data);
-
 	private:
         bool m_active;
         int m_port_nr;

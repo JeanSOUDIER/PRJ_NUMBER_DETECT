@@ -1,7 +1,6 @@
 #include "Arm.hpp"
 
 Arm::Arm(const int nb, const int nb_usb, const int bdrate) {
-
     std::vector<int> lim_min(nb);
     std::vector<int> lim_max(nb);
 
@@ -50,7 +49,6 @@ Arm::~Arm() {delete m_usb;}
 
 
 void Arm::MoveArm(bool withDelay) {
-
     if(m_usb->GetActive()) {
         //send pos
         std::vector<char> posi(2*m_PosArm.size()+1);
@@ -64,17 +62,16 @@ void Arm::MoveArm(bool withDelay) {
 		Send(ARB_LOAD_POSE, posi);
 		//send speed (time)
         std::vector<char> time = {0,
-                                  static_cast<char>((m_TimeArm%256)),
-                                  static_cast<unsigned char>(m_TimeArm/256),
-                                  255,
-                                  static_cast<char>(m_TimeArm%256),
-                                  static_cast<unsigned char>(m_TimeArm/256)};
+	      static_cast<char>((m_TimeArm%256)),
+	      static_cast<unsigned char>(m_TimeArm/256),
+	      255,
+	      static_cast<char>(m_TimeArm%256),
+	      static_cast<unsigned char>(m_TimeArm/256)};
 		Send(ARB_LOAD_SEQ, time);
 		//send play sequence
 		Send(ARB_PLAY_SEQ, {});
-        if(withDelay){delay(m_TimeArm+0.2);}
-    }
-    else {std::cout << "port not open" << std::endl;}
+        if(withDelay){delay(m_TimeArm+200);}
+    } else {std::cout << "port not open" << std::endl;}
 }
 
 void Arm::Send(int ins, const std::vector<char>&data) {
@@ -132,8 +129,8 @@ bool Arm::PlaceArm(double x, double y, double z) {
 	return test;
 }
 
-void Arm::WriteOn(){SetAxePos(5, 100);}
-void Arm::WriteOff(){SetAxePos(5, 200);}
+void Arm::WriteOn() {SetAxePos(5, 100);}
+void Arm::WriteOff() {SetAxePos(5, 200);}
 
 
 void Arm::SetTime(int time) {m_TimeArm = time;}
