@@ -27,7 +27,7 @@ Arm::Arm(const int nb,const  int nb_usb, const int bdrate,const std::vector<int>
 
 Arm::Arm(const int nb, const int nb_usb,const  int bdrate, const std::vector<int> &lim_min, const std::vector<int> &lim_max, const int time) {
 
-    m_usb = Usb(nb_usb, bdrate);
+    m_usb = new Usb(nb_usb, bdrate);
 	m_nb = nb;
     m_PosArm = std::vector<int>(nb);
     m_LimMinArm = std::vector<int>(nb);
@@ -40,18 +40,18 @@ Arm::Arm(const int nb, const int nb_usb,const  int bdrate, const std::vector<int
 		m_LimMaxArm[i] = lim_max[i];
 	}
 
-	if(m_usb.GetActive()) {
+    if(m_usb->GetActive()) {
         const std::vector<char> send_nb = {static_cast<unsigned char>(nb)};
         Send(ARB_SIZE_POSE, send_nb);
 	}
 }
 
-Arm::~Arm() {}
+Arm::~Arm() {delete m_usb;}
 
 
 void Arm::MoveArm(bool withDelay) {
 
-	if(m_usb.GetActive()) {
+    if(m_usb->GetActive()) {
         //send pos
         std::vector<char> posi(2*m_PosArm.size()+1);
         //posi[0] = 0; //Replaced by m_PosArm[i]%256 in next loop when i ==0
@@ -89,7 +89,7 @@ void Arm::Send(int ins, const std::vector<char>&data) {
 		sum += data[i];
 	}
     send[data.size()+4] = 255-((sum%256)+1);
-	m_usb.SendBytes(send);
+    m_usb->SendBytes(send);
 }
 
 bool Arm::PlaceArm(double x, double y, double z) {
@@ -145,8 +145,8 @@ void Arm::SetLimAxe(int nb, int lim_min, int lim_max) {
     m_LimMaxArm[nb-1] = lim_max;
 }
 
-int Arm::GetBdRate(void) {return m_usb.GetBdRate();}
-int Arm::GetPortNb(void) {return m_usb.GetPortNb();}
+int Arm::GetBdRate(void) {return m_usb->GetBdRate();}
+int Arm::GetPortNb(void) {return m_usb->GetPortNb();}
 int Arm::GetTime(void) {return m_TimeArm;}
 int Arm::GetNbMot(void) {return m_nb;}
 int Arm::GetLimMinAxe(int nb) {return m_LimMinArm[nb-1];}

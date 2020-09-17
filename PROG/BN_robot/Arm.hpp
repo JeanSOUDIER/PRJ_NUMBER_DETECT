@@ -67,7 +67,7 @@ class Arm {
         int m_bdrate; int m_TimeArm = 5000;
         int m_nb = 6;
 
-		Usb m_usb;
+        Usb *m_usb;
 
 };
 
