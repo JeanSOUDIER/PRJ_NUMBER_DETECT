@@ -11,6 +11,7 @@ int main() {
     Arm WidowWL(6, ttyUSB_ARBO, 115200, lim_min, lim_max, 5000);
 
     WidowWL.SetAxePos(1, 500);
+    WidowWL.SetAxePos(2, 500);
     WidowWL.MoveArm(true);
 
     return 0;
