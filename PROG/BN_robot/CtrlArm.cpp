@@ -1,21 +1,31 @@
 #include "CtrlArm.hpp"
 
 Arm::Arm(int nb, int nb_usb, int bdrate) {
-	Usb usb(nb_usb, bdrate);
-	m_usb = usb;
-	m_PosArm = new int[nb];
-	m_LimMinArm = new int[nb];
-	m_LimMaxArm = new int[nb];
+	int lim_min[nb], lim_max[nb];
 	for(int i=0;i<nb;i++) {
-		m_PosArm[i] = 0;
-		m_LimMinArm[i] = 0;
-		m_LimMaxArm[i] = 0;
+		lim_min[i] = 0;
+		lim_max[i] = 0;
 	}
+	Arm(nb,nb_usb,bdrate,lim_min,lim_max,5000);
+}
+
+Arm::Arm(int nb, int nb_usb, int bdrate, int time) {
+	int lim_min[nb], lim_max[nb];
+	for(int i=0;i<nb;i++) {
+		lim_min[i] = 0;
+		lim_max[i] = 0;
+	}
+	Arm(nb,nb_usb,bdrate,lim_min,lim_max,time);
 }
 
 Arm::Arm(int nb, int nb_usb, int bdrate, int *lim_min, int *lim_max) {
+	Arm(nb,nb_usb,bdrate,lim_min,lim_max,5000);
+}
+
+Arm::Arm(int nb, int nb_usb, int bdrate, int *lim_min, int *lim_max, int time) {
 	Usb usb(nb_usb, bdrate);
 	m_usb = usb;
+	m_nb = nb;
 	m_PosArm = new int[nb];
 	m_LimMinArm = new int[nb];
 	m_LimMaxArm = new int[nb];
@@ -23,6 +33,11 @@ Arm::Arm(int nb, int nb_usb, int bdrate, int *lim_min, int *lim_max) {
 		m_PosArm[i] = (lim_min[i]+lim_max[i])/2;
 		m_LimMinArm[i] = lim_min[i];
 		m_LimMaxArm[i] = lim_max[i];
+	}
+	m_TimeArm = time;
+	if(m_usb.GetActive()) {
+		char send_nb[] = {(unsigned char)(nb)};
+		Send(ARB_SIZE_POSE, send_nb);
 	}
 }
 
@@ -57,12 +72,42 @@ int Arm::GetAxePos(int nb) {
 	return m_PosArm[nb-1];
 }
 
-void Arm::MoveArm(void) {
+void Arm::MoveArm(bool delais) {
 	if(m_usb.GetActive()) {
-
+		//sebd pos
+		char posi[2*sizeof(m_PosArm)+1];
+		posi[0] = 0;
+		for(int i=0;i<sizeof(m_PosArm);i++) {
+			posi[2*i] = (m_PosArm[i]%256);
+			posi[2*i+1] = (unsigned char)(m_PosArm[i]/256);
+		}
+		Send(ARB_LOAD_POSE, posi);
+		//send speed (time)
+		char time[] = {0, (m_TimeArm%256), (unsigned char)(m_TimeArm/256), 255, (m_TimeArm%256), (unsigned char)(m_TimeArm/256)};
+		Send(ARB_LOAD_SEQ, time);
+		//send play sequence
+		Send(ARB_PLAY_SEQ, {});
+		if(delay) {
+			delay(delais+0.2);
+		}
 	} else {
 		std::cout << "port not open" << std::endl;
 	}
+}
+
+void Arm::Send(int ins, char *data) {
+	int sum = 0;
+	char send[5+sizeof(data)];
+	send[0] = 255;
+	send[1] = 253;
+	send[2] = sizeof(data)+2;
+	send[3] = ins;
+	for(int i=0;i<sizeof(data);i++) {
+		send[i+4] = data[i];
+		sum += data[i];
+	}
+	send[sizeof(data)+4] = 255-((sum%256)+1);
+	m_usb.SendBytes(send);
 }
 
 bool Arm::PlaceArm(double x, double y, double z) {
@@ -110,4 +155,16 @@ int Arm::GetBdRate(void) {
 
 int Arm::GetPortNb(void) {
 	return m_usb.GetPortNb();
+}
+
+int Arm::GetTime(void) {
+	return m_TimeArm;
+}
+
+void Arm::SetTime(int time) {
+	m_TimeArm = time;
+}
+
+int Arm::GetNbMot(void) {
+	return m_nb;
 }
