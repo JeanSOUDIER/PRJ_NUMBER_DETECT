@@ -1,23 +1,30 @@
-#ifndef USBARM_H
-#define USBARM_H
+#ifndef USB_H
+#define USB_H
 
 #include <iostream>
+#include <vector>
 #include "rs232.h"
 
 class Usb {
+
 	public:
 		Usb();
-		Usb(int nb_usb, int baudrate);
+        Usb(const int nb_usb, const int baudrate);
 		~Usb();
-		void SendBytes(char *data);
+
 		int GetBdRate(void);
 		int GetPortNb(void);
 		void SetActive(bool state);
-		bool GetActive(void);
+        bool GetActive(void);
+
+
+        void SendBytes(const std::vector<char> &data);
+
 	private:
-		bool m_active = false;
-		int m_port_nr, m_bdrate;
+        bool m_active;
+        int m_port_nr;
+        int m_bdrate;
 
 };
 
-#endif //USBARM_H
+#endif //USB_H

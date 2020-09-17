@@ -1,51 +1,74 @@
-#ifndef CTRLARM_H
-#define CTRLARM_H
+#ifndef ARM_H
+#define ARM_H
 
 #include <iostream>
 #include <complex>
 #include <cmath>
+#include <vector>
 #include <wiringPi.h>
-#include "UsbArm.hpp"
+#include "Usb.hpp"
 
-#define WriteOn() SetAxePos(5, 100)
-#define WriteOff() SetAxePos(5, 200)
 #define HOMING
 
-#define ARB_SIZE_POSE 7
-#define ARB_LOAD_POSE 8
-#define ARB_LOAD_SEQ  9
-#define ARB_PLAY_SEQ  10
-#define ARB_LOOP_SEQ  11
+
+constexpr int ARB_SIZE_POSE = 7;
+constexpr int ARB_LOAD_POSE = 8;
+
+constexpr int ARB_LOAD_SEQ  = 9;
+constexpr int ARB_PLAY_SEQ  = 10;
+constexpr int ARB_LOOP_SEQ  = 11;
 
 class Arm {
+
 	public:
-		Arm(int nb, int nb_usb, int bdrate);
-		Arm(int nb, int nb_usb, int bdrate, int time);
-		Arm(int nb, int nb_usb, int bdrate, int *lim_min, int *lim_max);
-		Arm(int nb, int nb_usb, int bdrate, int *lim_min, int *lim_max, int time);
+        Arm(const int nb,const int nb_usb, const int bdrate);
+        Arm(const int nb, const int nb_usb, const int bdrate, const int time);
+        Arm(const int nb, const int nb_usb, const int bdrate, const std::vector<int> &lim_min, const std::vector<int> &lim_max);
+        Arm(const int nb, const int nb_usb, const int bdrate, const std::vector<int> &lim_min, const std::vector<int> &lim_max, int time);
 		~Arm();
+
 		void SetLimAxe(int nb, int lim_min, int lim_max);
 		void SetLimMinAxe(int nb, int lim);
 		void SetLimMaxAxe(int nb, int lim);
+        void SetAxePos(int nb, int pos);
+        void SetTime(int time);
+
 		int GetLimMinAxe(int nb);
 		int GetLimMaxAxe(int nb);
-		void SetAxePos(int nb, int pos);
 		int GetAxePos(int nb);
-		void MoveArm(bool delais);
+        int GetBdRate(void);
+        int GetPortNb(void);
+        int GetTime(void);
+        int GetNbMot(void);
+
+        void MoveArm(bool withDelay);
 		bool PlaceArm(double x, double y, double z);
-		int GetBdRate(void);
-		int GetPortNb(void);
-		int GetTime(void);
-		void SetTime(int time);
-		int GetNbMot(void);
+
+        void WriteOn();
+        void WriteOff();
+
+
+
 	private:
-		void Send(int ins, char *data);
-		const int Lr = 179, Lz = -236, a1 = 155, a2 = 150, a3 = 0;
-		int *m_PosArm, *m_LimMinArm, *m_LimMaxArm;
+        void Send(int ins, const std::vector<char> &data);
+
+        const int Lr = 179;
+        const int Lz = -236;
+        const int a1 = 155;
+        const int a2 = 150;
+        const int a3 = 0;
+
+        std::vector<int> m_PosArm;
+        std::vector<int> m_LimMinArm;
+        std::vector<int> m_LimMaxArm;
+
 		bool m_active = false;
-		int m_port_nr, m_bdrate, m_TimeArm = 5000, m_nb = 6;
+        int m_port_nr;
+        int m_bdrate; int m_TimeArm = 5000;
+        int m_nb = 6;
+
 		Usb m_usb;
 
 };
 
-#endif //CTRLARM_H
+#endif //ARM_H
