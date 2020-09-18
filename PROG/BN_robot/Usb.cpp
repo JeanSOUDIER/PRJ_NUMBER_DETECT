@@ -20,10 +20,10 @@ Usb::Usb(const int nb_usb, const int baudrate) {
 
 Usb::~Usb() {}
 
-void Usb::SendBytes(
-	const std::vector<char>&data) {RS232_cputs(m_port_nr, &data[0]);
-	std::copy(data.begin(), data.end(), std::ostream_iterator<int>(std::cout, " "));
-	std::cout << std::endl;
+void Usb::SendBytes(const std::vector<char> &data) {
+    RS232_cputs(m_port_nr, &data[0]);
+	//std::copy(data.begin(), data.end(), std::ostream_iterator<int>(std::cout, " "));
+	//std::cout << std::endl;
 }
 
 std::vector<unsigned char> Usb::ReadBytes(const int n) {

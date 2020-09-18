@@ -1,5 +1,5 @@
-MAIN: main.o rs232.o Usb.o Arm.o Lidar.o
-	g++ -O3 -o draw rs232.o Usb.o Arm.o Lidar.o main.o -Wall -lwiringPi -pthread
+MAIN: main.o rs232.o Usb.o Arm.o Lidar.o Bluetooth.o MobileBase.o Sequencer.o
+	g++ -O3 -o draw rs232.o Usb.o Arm.o Lidar.o Bluetooth.o MobileBase.o Sequencer.o main.o -Wall -lwiringPi -pthread
 
 rs232.o: rs232.c
 	g++ -O3 -o rs232.o -c rs232.c -Wall
@@ -13,7 +13,16 @@ Arm.o: Arm.cpp
 Lidar.o : Lidar.cpp
 	g++ -O3 -o Lidar.o -c Lidar.cpp -Wall -lwiringPi -pthread
 
-main.o: main.cpp rs232.h Usb.hpp Arm.hpp Lidar.hpp
+Bluetooth.o : Bluetooth.cpp
+	g++ -O3 -o Bluetooth.o -c Bluetooth.cpp -Wall -pthread
+
+MobileBase.o : MobileBase.cpp
+	g++ -O3 -o MobileBase.o -c MobileBase.cpp -Wall
+
+Sequencer.o : Sequencer.cpp
+	g++ -O3 -o Sequencer.o -c Sequencer.cpp -Wall
+
+main.o: main.cpp rs232.h Usb.hpp Arm.hpp Lidar.hpp Bluetooth.hpp MobileBase.hpp Sequencer.hpp
 	g++ -O3 -o main.o -c main.cpp -Wall -lwiringPi -pthread
 
 clean:
