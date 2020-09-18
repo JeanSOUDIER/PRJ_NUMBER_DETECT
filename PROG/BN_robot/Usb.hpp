@@ -18,6 +18,7 @@ class Usb {
         bool GetActive(void);
 
         void SendBytes(const std::vector<char> &data);
+        std::vector<unsigned char> ReadBytes(const int n);
 	private:
         bool m_active;
         int m_port_nr;
