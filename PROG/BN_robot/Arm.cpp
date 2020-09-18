@@ -66,7 +66,8 @@ void Arm::MoveArm(bool withDelay) {
 	      static_cast<unsigned char>(m_TimeArm/256),
 	      255,
 	      static_cast<char>(m_TimeArm%256),
-	      static_cast<unsigned char>(m_TimeArm/256)};
+	      static_cast<unsigned char>(m_TimeArm/256)
+	    };
 		Send(ARB_LOAD_SEQ, time);
 		//send play sequence
 		Send(ARB_PLAY_SEQ, {});
@@ -129,8 +130,16 @@ bool Arm::PlaceArm(double x, double y, double z) {
 	return test;
 }
 
-void Arm::WriteOn() {SetAxePos(5, 100);}
-void Arm::WriteOff() {SetAxePos(5, 200);}
+void Arm::WriteOn() {SetAxePos(6, 100);}
+void Arm::WriteOff() {SetAxePos(6, 200);}
+void Arm::Homing() {
+	SetAxePos(1, 0);
+	SetAxePos(2, 0);
+	SetAxePos(3, 0);
+	SetAxePos(4, 0);
+	SetAxePos(5, 0);
+	SetAxePos(6, 0);
+}
 
 
 void Arm::SetTime(int time) {m_TimeArm = time;}

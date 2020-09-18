@@ -1,5 +1,5 @@
-MAIN: main.o rs232.o Usb.o Arm.o
-	g++ -O3 -o draw rs232.o Usb.o Arm.o main.o -Wall -lwiringPi -pthread
+MAIN: main.o rs232.o Usb.o Arm.o Lidar.o
+	g++ -O3 -o draw rs232.o Usb.o Arm.o Lidar.o main.o -Wall -lwiringPi -pthread
 
 rs232.o: rs232.c
 	g++ -O3 -o rs232.o -c rs232.c -Wall
@@ -10,10 +10,13 @@ Usb.o: Usb.cpp
 Arm.o: Arm.cpp
 	g++ -O3 -o Arm.o -c Arm.cpp -Wall -lwiringPi
 
-main.o: main.cpp rs232.h Usb.hpp Arm.hpp
+Lidar.o : Lidar.cpp
+	g++ -O3 -o Lidar.o -c Lidar.cpp -Wall -lwiringPi -pthread
+
+main.o: main.cpp rs232.h Usb.hpp Arm.hpp Lidar.hpp
 	g++ -O3 -o main.o -c main.cpp -Wall -lwiringPi -pthread
 
 clean:
-	@echo "cleanning"
+	@echo "cleaning"
 	rm *.o
 	make

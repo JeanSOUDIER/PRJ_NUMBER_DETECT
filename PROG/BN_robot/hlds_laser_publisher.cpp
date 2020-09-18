@@ -32,7 +32,6 @@
  /* Authors: SP Kong, JH Yang */
  /* maintainer: Pyo */
 
-#include <ros/ros.h>
 #include <std_msgs/UInt16.h>
 #include <sensor_msgs/LaserScan.h>
 #include <boost/asio.hpp>
@@ -139,8 +138,7 @@ void LFCDLaser::poll(sensor_msgs::LaserScan::Ptr scan)
 }
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
   ros::init(argc, argv, "hlds_laser_publisher");
   ros::NodeHandle n;
   ros::NodeHandle priv_nh("~");
