@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <iterator>
 #include "rs232.h"
 
 class Usb {

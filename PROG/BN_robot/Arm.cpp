@@ -75,7 +75,7 @@ void Arm::MoveArm(bool withDelay) {
 }
 
 void Arm::Send(int ins, const std::vector<char>&data) {
-	int sum = 0;
+	int sum = 508+data.size()+2+ins;
     std::vector<char>send(5+data.size());
 	send[0] = 255;
 	send[1] = 253;
