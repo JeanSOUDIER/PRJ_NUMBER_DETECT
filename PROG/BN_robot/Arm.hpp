@@ -17,35 +17,35 @@ constexpr int ARB_PLAY_SEQ  = 10;
 constexpr int ARB_LOOP_SEQ  = 11;
 
 class Arm {
-	public:
-        Arm(const int nb,const int nb_usb, const int bdrate);
-        Arm(const int nb, const int nb_usb, const int bdrate, const int time);
-        Arm(const int nb, const int nb_usb, const int bdrate, const std::vector<int> &lim_min, const std::vector<int> &lim_max);
-        Arm(const int nb, const int nb_usb, const int bdrate, const std::vector<int> &lim_min, const std::vector<int> &lim_max, int time);
-		~Arm();
+        public:
+                Arm(const int nb,const int nb_usb, const int bdrate);
+                Arm(const int nb, const int nb_usb, const int bdrate, const int time);
+                Arm(const int nb, const int nb_usb, const int bdrate, const std::vector<int> &lim_min, const std::vector<int> &lim_max);
+                Arm(const int nb, const int nb_usb, const int bdrate, const std::vector<int> &lim_min, const std::vector<int> &lim_max, int time);
+                ~Arm();
 
-		void SetLimAxe(int nb, int lim_min, int lim_max);
-		void SetLimMinAxe(int nb, int lim);
-		void SetLimMaxAxe(int nb, int lim);
-        void SetAxePos(int nb, double pos);
-        void SetAxePosTic(int nb, int pos);
-        void SetTime(int time);
+                void SetLimAxe(int nb, int lim_min, int lim_max);
+                void SetLimMinAxe(int nb, int lim);
+                void SetLimMaxAxe(int nb, int lim);
+                void SetAxePos(int nb, double pos);
+                void SetAxePosTic(int nb, int pos);
+                void SetTime(int time);
 
-		int GetLimMinAxe(int nb);
-		int GetLimMaxAxe(int nb);
-		int GetAxePos(int nb);
-        int GetBdRate(void);
-        int GetPortNb(void);
-        int GetTime(void);
-        int GetNbMot(void);
+                int GetLimMinAxe(int nb);
+                int GetLimMaxAxe(int nb);
+                int GetAxePos(int nb);
+                int GetBdRate(void);
+                int GetPortNb(void);
+                int GetTime(void);
+                int GetNbMot(void);
 
-        void MoveArm(bool withDelay);
-		bool PlaceArm(double x, double y, double z);
+                void MoveArm(bool withDelay);
+                bool PlaceArm(double x, double y, double z);
 
-        void WriteOn();
-        void WriteOff();
-        void Homing();
-	private:
+                void WriteOn();
+                void WriteOff();
+                void Homing();
+        private:
                 void Send(int ins, const std::vector<char> &data);
 
                 const int Lr = 179;
@@ -58,7 +58,7 @@ class Arm {
                 std::vector<int> m_LimMinArm;
                 std::vector<int> m_LimMaxArm;
 
-        		bool m_active = false;
+                        bool m_active = false;
                 int m_port_nr;
                 int m_bdrate; int m_TimeArm = 5000;
                 int m_nb = 6;

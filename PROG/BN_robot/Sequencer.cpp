@@ -23,7 +23,8 @@ void Sequencer::Execute() {
 				j++;
 				m_TurtleBot->Go(DIST_BASE*j,0);
 			}
-			/*std::vector<Movement> Move = getSequence(reading[i]);
+			/*SequenceHandler seqHandler('0' , "/Sequences/sequence_0.xml");
+			std::vector<Movement*> Move = seqHandler.find(reading[i]).getMovements_STD();
 			for(int k=0;k<Move.size();k++) {
 				arm_dist = DIST_ARM*(i%MAX_LENGTH_ARM-MAX_LENGTH_ARM/2);
 				m_WidowXL->PlaceArm(Move[k].getX()+arm_dist, m_TurtleBot.getDistBoard(), Move[k].getZ());

@@ -5,6 +5,8 @@
 #include "Lidar.hpp"
 #include "Bluetooth.hpp"
 #include "MobileBase.hpp"
+//#include "../SequenceHandler/sequencehandler.h"
+#include "../SequenceHandler/release/sequencehandler.o"
 
 constexpr int DIST_BASE = 200;
 constexpr int DIST_ARM = 50;
