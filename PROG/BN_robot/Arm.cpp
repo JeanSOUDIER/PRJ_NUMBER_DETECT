@@ -145,7 +145,17 @@ void Arm::Homing() {
 void Arm::SetTime(int time) {m_TimeArm = time;}
 void Arm::SetLimMinAxe(int nb, int lim) {m_LimMinArm[nb-1] = lim;}
 void Arm::SetLimMaxAxe(int nb, int lim) {m_LimMaxArm[nb-1] = lim;}
-void Arm::SetAxePos(int nb, int pos) {m_PosArm[nb-1] = pos;}
+void Arm::SetAxePos(int nb, double pos) {
+	if(pos < -M_PI/2) {pos = -M_PI/2;}
+	if(pos > M_PI/2) {pos = M_PI/2;}
+	SetAxePosTic(nb, pos);
+}
+void Arm::SetAxePosTic(int nb, double pos) {
+	int posi = static_cast<int>((((pos+M_PI/2)*(m_LimMaxArm[nb-1]-m_LimMinArm[nb-1]))/M_PI)+m_LimMinArm[nb-1]);
+	if(pos < m_LimMinArm[nb-1]) {pos = m_LimMinArm[nb-1];}
+	if(pos > m_LimMaxArm[nb-1]) {pos = m_LimMaxArm[nb-1];}
+	m_PosArm[nb-1] = posi;
+}
 void Arm::SetLimAxe(int nb, int lim_min, int lim_max) {
     m_LimMinArm[nb-1] = lim_min;
     m_LimMaxArm[nb-1] = lim_max;

@@ -27,7 +27,8 @@ class Arm {
 		void SetLimAxe(int nb, int lim_min, int lim_max);
 		void SetLimMinAxe(int nb, int lim);
 		void SetLimMaxAxe(int nb, int lim);
-        void SetAxePos(int nb, int pos);
+        void SetAxePos(int nb, double pos);
+        void SetAxePosTic(int nb, double pos);
         void SetTime(int time);
 
 		int GetLimMinAxe(int nb);

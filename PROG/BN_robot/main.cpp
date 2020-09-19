@@ -12,8 +12,8 @@ int main() {
     constexpr int ttyAMA0 = 22;
     constexpr int ttyACM0 = 24;
 
-    std::vector<int> lim_min = {0, 0, 0, 0, 0, 0};
-    std::vector<int> lim_max = {1000, 1000, 1000, 1000, 1000, 1000};
+    std::vector<int> lim_min = {700, 2000, 0, 0, 200, 0};
+    std::vector<int> lim_max = {2800, 4100, 2100, 2100, 820, 1000};
 
     Sequencer Prgm(
         new Arm(6, ttyUSB_ARBO, 115200, lim_min, lim_max, 5000),
@@ -23,7 +23,8 @@ int main() {
 
     Prgm.Execute();
 
-    /*WidowXL.SetAxePos(1, 500);
+    /*Arm WidowXL(6, ttyUSB_ARBO, 115200, lim_min, lim_max, 5000);
+    WidowXL.SetAxePos(1, 500);
     WidowXL.SetAxePos(2, 500);
     WidowXL.MoveArm(true);
     WidowXL.SetAxePos(1, 800);
