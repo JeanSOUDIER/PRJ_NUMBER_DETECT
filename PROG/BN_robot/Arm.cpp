@@ -130,15 +130,15 @@ bool Arm::PlaceArm(double x, double y, double z) {
 	return test;
 }
 
-void Arm::WriteOn() {SetAxePos(6, 100);}
-void Arm::WriteOff() {SetAxePos(6, 200);}
+void Arm::WriteOn() {SetAxePos(6, m_LimMinArm[5]);}
+void Arm::WriteOff() {SetAxePos(6, m_LimMaxArm[5]);}
 void Arm::Homing() {
-	SetAxePos(1, 0);
-	SetAxePos(2, 0);
-	SetAxePos(3, 0);
-	SetAxePos(4, 0);
-	SetAxePos(5, 0);
-	SetAxePos(6, 0);
+	SetAxePos(1, m_LimMinArm[0]);
+	SetAxePos(2, m_LimMinArm[1]);
+	SetAxePos(3, m_LimMinArm[2]);
+	SetAxePos(4, m_LimMinArm[3]);
+	SetAxePos(5, m_LimMinArm[4]);
+	SetAxePos(6, m_LimMinArm[5]);
 }
 
 
