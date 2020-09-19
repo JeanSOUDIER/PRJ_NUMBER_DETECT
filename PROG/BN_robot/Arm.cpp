@@ -52,20 +52,22 @@ void Arm::MoveArm(bool withDelay) {
     if(m_usb->GetActive()) {
         //send pos
         std::vector<char> posi(2*m_PosArm.size()+1);
-        //posi[0] = 0; //Replaced by m_PosArm[i]%256 in next loop when i ==0
+        posi[0] = 0; //Replaced by m_PosArm[i]%256 in next loop when i ==0
 
         for(unsigned int i=0;i<m_PosArm.size();i++) {
-			posi[2*i] = (m_PosArm[i]%256);
-            posi[2*i+1] = static_cast<unsigned char>(m_PosArm[i]/256);
+			posi[2*i+1] = Modulo(m_PosArm[i],256);
+			std::cout << m_PosArm[i] << std::endl;
+            posi[2*i+2] = static_cast<unsigned char>(m_PosArm[i]/256);
+            std::cout << static_cast<unsigned char>(m_PosArm[i]/256) << std::endl;
 		}
 
 		Send(ARB_LOAD_POSE, posi);
 		//send speed (time)
         std::vector<char> time = {0,
-	      static_cast<char>((m_TimeArm%256)),
+	      static_cast<char>(Modulo(m_TimeArm,256)),
 	      static_cast<unsigned char>(m_TimeArm/256),
 	      255,
-	      static_cast<char>(m_TimeArm%256),
+	      static_cast<char>(Modulo(m_TimeArm,256)),
 	      static_cast<unsigned char>(m_TimeArm/256)
 	    };
 		Send(ARB_LOAD_SEQ, time);
@@ -86,8 +88,15 @@ void Arm::Send(int ins, const std::vector<char>&data) {
 		send[i+4] = data[i];
 		sum += data[i];
 	}
-    send[data.size()+4] = 255-((sum%256)+1);
+    send[data.size()+4] = 255-(Modulo(sum,256)+1);
     m_usb->SendBytes(send);
+}
+
+int Arm::Modulo(int n, int m) {
+	while(n > m) {
+		n -= m;
+	}
+	return n;
 }
 
 bool Arm::PlaceArm(double x, double y, double z) {
@@ -130,15 +139,15 @@ bool Arm::PlaceArm(double x, double y, double z) {
 	return test;
 }
 
-void Arm::WriteOn() {SetAxePos(6, m_LimMinArm[5]);}
-void Arm::WriteOff() {SetAxePos(6, m_LimMaxArm[5]);}
+void Arm::WriteOn() {SetAxePosTic(6, m_LimMinArm[5]);}
+void Arm::WriteOff() {SetAxePosTic(6, m_LimMaxArm[5]);}
 void Arm::Homing() {
-	SetAxePos(1, m_LimMinArm[0]);
-	SetAxePos(2, m_LimMinArm[1]);
-	SetAxePos(3, m_LimMinArm[2]);
-	SetAxePos(4, m_LimMinArm[3]);
-	SetAxePos(5, m_LimMinArm[4]);
-	SetAxePos(6, m_LimMinArm[5]);
+	SetAxePosTic(1, m_LimMinArm[0]);
+	SetAxePosTic(2, m_LimMinArm[1]);
+	SetAxePosTic(3, m_LimMinArm[2]);
+	SetAxePosTic(4, m_LimMinArm[3]);
+	SetAxePosTic(5, m_LimMinArm[4]);
+	SetAxePosTic(6, m_LimMinArm[5]);
 }
 
 
@@ -148,13 +157,13 @@ void Arm::SetLimMaxAxe(int nb, int lim) {m_LimMaxArm[nb-1] = lim;}
 void Arm::SetAxePos(int nb, double pos) {
 	if(pos < -M_PI/2) {pos = -M_PI/2;}
 	if(pos > M_PI/2) {pos = M_PI/2;}
-	SetAxePosTic(nb, pos);
-}
-void Arm::SetAxePosTic(int nb, double pos) {
 	int posi = static_cast<int>((((pos+M_PI/2)*(m_LimMaxArm[nb-1]-m_LimMinArm[nb-1]))/M_PI)+m_LimMinArm[nb-1]);
+	SetAxePosTic(nb, posi);
+}
+void Arm::SetAxePosTic(int nb, int pos) {
 	if(pos < m_LimMinArm[nb-1]) {pos = m_LimMinArm[nb-1];}
 	if(pos > m_LimMaxArm[nb-1]) {pos = m_LimMaxArm[nb-1];}
-	m_PosArm[nb-1] = posi;
+	m_PosArm[nb-1] = pos;
 }
 void Arm::SetLimAxe(int nb, int lim_min, int lim_max) {
     m_LimMinArm[nb-1] = lim_min;

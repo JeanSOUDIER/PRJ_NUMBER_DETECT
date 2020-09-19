@@ -28,7 +28,7 @@ class Arm {
 		void SetLimMinAxe(int nb, int lim);
 		void SetLimMaxAxe(int nb, int lim);
         void SetAxePos(int nb, double pos);
-        void SetAxePosTic(int nb, double pos);
+        void SetAxePosTic(int nb, int pos);
         void SetTime(int time);
 
 		int GetLimMinAxe(int nb);
@@ -47,6 +47,7 @@ class Arm {
         void Homing();
 	private:
         void Send(int ins, const std::vector<char> &data);
+        int Modulo(int n, int m);
 
         const int Lr = 179;
         const int Lz = -236;

@@ -15,20 +15,22 @@ int main() {
     std::vector<int> lim_min = {700, 2000, 0, 0, 200, 0};
     std::vector<int> lim_max = {2800, 4100, 2100, 2100, 820, 1000};
 
-    Sequencer Prgm(
+    /*Sequencer Prgm(
         new Arm(6, ttyUSB_ARBO, 115200, lim_min, lim_max, 5000),
         new Bluetooth(ttyAMA0, 115200),
         new MobileBase(ttyACM0, 115200, new Lidar(true, ttyUSB_LDS, 230400))
     );
 
-    Prgm.Execute();
+    Prgm.Execute();*/
 
-    /*Arm WidowXL(6, ttyUSB_ARBO, 115200, lim_min, lim_max, 5000);
-    WidowXL.SetAxePos(1, 500);
-    WidowXL.SetAxePos(2, 500);
+    Arm WidowXL(6, ttyUSB_ARBO, 115200, lim_min, lim_max, 5000);
+    WidowXL.SetAxePosTic(1, 800);
+    WidowXL.SetAxePosTic(2, 3000);
+    WidowXL.SetAxePosTic(3, 800);
+    WidowXL.SetAxePosTic(4, 800);
+    WidowXL.SetAxePosTic(5, 800);
+    WidowXL.SetAxePosTic(6, 800);
     WidowXL.MoveArm(true);
-    WidowXL.SetAxePos(1, 800);
-    WidowXL.MoveArm(true);*/
 
     /*delay(1000);
     RPLidar.Poll();
