@@ -46,25 +46,24 @@ class Arm {
         void WriteOff();
         void Homing();
 	private:
-        void Send(int ins, const std::vector<char> &data);
-        int Modulo(int n, int m);
+                void Send(int ins, const std::vector<char> &data);
 
-        const int Lr = 179;
-        const int Lz = -236;
-        const int a1 = 155;
-        const int a2 = 150;
-        const int a3 = 0;
+                const int Lr = 179;
+                const int Lz = -236;
+                const int a1 = 155;
+                const int a2 = 150;
+                const int a3 = 0;
 
-        std::vector<int> m_PosArm;
-        std::vector<int> m_LimMinArm;
-        std::vector<int> m_LimMaxArm;
+                std::vector<int> m_PosArm;
+                std::vector<int> m_LimMinArm;
+                std::vector<int> m_LimMaxArm;
 
-		bool m_active = false;
-        int m_port_nr;
-        int m_bdrate; int m_TimeArm = 5000;
-        int m_nb = 6;
+        		bool m_active = false;
+                int m_port_nr;
+                int m_bdrate; int m_TimeArm = 5000;
+                int m_nb = 6;
 
-        Usb *m_usb;
+                Usb *m_usb;
 
 };
 

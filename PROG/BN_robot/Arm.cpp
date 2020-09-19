@@ -55,19 +55,17 @@ void Arm::MoveArm(bool withDelay) {
         posi[0] = 0; //Replaced by m_PosArm[i]%256 in next loop when i ==0
 
         for(unsigned int i=0;i<m_PosArm.size();i++) {
-			posi[2*i+1] = Modulo(m_PosArm[i],256);
-			std::cout << m_PosArm[i] << std::endl;
+			posi[2*i+1] = (m_PosArm[i]%256);
             posi[2*i+2] = static_cast<unsigned char>(m_PosArm[i]/256);
-            std::cout << static_cast<unsigned char>(m_PosArm[i]/256) << std::endl;
 		}
 
 		Send(ARB_LOAD_POSE, posi);
 		//send speed (time)
         std::vector<char> time = {0,
-	      static_cast<char>(Modulo(m_TimeArm,256)),
+	      static_cast<char>(m_TimeArm%256),
 	      static_cast<unsigned char>(m_TimeArm/256),
 	      255,
-	      static_cast<char>(Modulo(m_TimeArm,256)),
+	      static_cast<char>(m_TimeArm%256),
 	      static_cast<unsigned char>(m_TimeArm/256)
 	    };
 		Send(ARB_LOAD_SEQ, time);
@@ -88,15 +86,8 @@ void Arm::Send(int ins, const std::vector<char>&data) {
 		send[i+4] = data[i];
 		sum += data[i];
 	}
-    send[data.size()+4] = 255-(Modulo(sum,256)+1);
+    send[data.size()+4] = 255-((sum%256)+1);
     m_usb->SendBytes(send);
-}
-
-int Arm::Modulo(int n, int m) {
-	while(n > m) {
-		n -= m;
-	}
-	return n;
 }
 
 bool Arm::PlaceArm(double x, double y, double z) {
