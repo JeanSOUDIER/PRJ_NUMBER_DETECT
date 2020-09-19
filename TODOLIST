@@ -1,0 +1,20 @@
+LOW :
+ RPI
+ - BLE
+ - roues
+ - test bras
+ - test lidar => mise en forme
+ Jetson
+ - caméra
+ - test cuda
+ - bluetooth
+ - App tablette
+
+HIGH :
+ RPI
+ - link dessin
+ - test dessin
+ Jetson
+ - RNN
+ - pre traitement
+ - réponse ?
