@@ -6,20 +6,19 @@
 #include "Lidar.hpp"
 #include "Sequencer.hpp"
 
-constexpr int ttyUSB_ARBO = 38;
-constexpr int ttyUSB_LDS = 39;
-constexpr int ttyAMA0 = 22;
-constexpr int ttyACM0 = 24;
-
 int main() {
+    constexpr int ttyUSB_ARBO = 38;
+    constexpr int ttyUSB_LDS = 39;
+    constexpr int ttyAMA0 = 22;
+    constexpr int ttyACM0 = 24;
+
     std::vector<int> lim_min = {0, 0, 0, 0, 0, 0};
     std::vector<int> lim_max = {1000, 1000, 1000, 1000, 1000, 1000};
 
-    //MobileBase Turtlebot(new Lidar(true, ttyUSB_LDS, 230400));//, ttyACM0, 115200);
     Sequencer Prgm(
         new Arm(6, ttyUSB_ARBO, 115200, lim_min, lim_max, 5000),
         new Bluetooth(ttyAMA0, 115200),
-        new MobileBase(new Lidar(true, ttyUSB_LDS, 230400))//, ttyACM0, 115200)
+        new MobileBase(ttyACM0, 115200, new Lidar(true, ttyUSB_LDS, 230400))
     );
 
     Prgm.Execute();
