@@ -43,6 +43,7 @@ class Arm {
 
         void WriteOn();
         void WriteOff();
+        void Homing();
 	private:
         void Send(int ins, const std::vector<char> &data);
 
