@@ -6,7 +6,6 @@ LOW :
  - test lidar => mise en forme
  Jetson
  - caméra
- - test cuda
  - bluetooth
  - App tablette
 
