@@ -52,6 +52,19 @@ long int Movement::getCoordinate(const Coordinate coor){
 
 }
 
+long int Movement::getCoordiate(const Coordinate coor) const{
+
+    switch(coor){
+
+        case(Coordinate::X):{return x;}
+        case(Coordinate::Y):{return y;}
+        case(Coordinate::Z):{return z;}
+        default:{return 0;}
+
+    }
+
+}
+
 long int Movement::getX(){return x;}
 long int Movement::getX() const {return x;}
 long int Movement::getY(){return y;}
