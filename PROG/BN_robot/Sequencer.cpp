@@ -5,10 +5,10 @@ Sequencer::Sequencer(Arm* WidowXL, Bluetooth* BLE, MobileBase* TurtleBot) {
 	m_BLE = BLE;
 	m_TurtleBot = TurtleBot;
 	std::string path;
-	for(int i=0;i<256;i++) {
+	/*for(int i=0;i<256;i++) {
 		path = "/XML/seq_"+std::to_string(i)+".xml";
 		seqHandler.addSequence(static_cast<unsigned char>(i),path);
-	}
+	}*/
 }
 
 Sequencer::~Sequencer() {
@@ -28,13 +28,13 @@ void Sequencer::Execute() {
 				j++;
 				m_TurtleBot->Go(DIST_BASE*j,0);
 			}
-			std::vector<Movement*> Move = seqHandler.find(reading[i]).getMovements_STD();
+			/*std::vector<Movement*> Move = seqHandler.find(reading[i]).getMovements_STD();
 			for(int k=0;k<Move.size();k++) {
 				arm_dist = DIST_ARM*(i%MAX_LENGTH_ARM-MAX_LENGTH_ARM/2);
 				m_WidowXL->PlaceArm(Move[k].getX()+arm_dist, m_TurtleBot.getDistBoard(), Move[k].getZ());
 				m_WidowXL->SetTime(Move.getDuration());
 				m_WidowXL->MoveArm(true);
-			}
+			}*/
 		}
 		m_BLE->WriteEnd();
 	}

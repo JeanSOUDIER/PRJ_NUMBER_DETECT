@@ -1,11 +1,12 @@
 #ifndef SEQUENCER_H
 #define SEQUENCER_H
 
+#include <iostream>
+#include <string.h>
 #include "Arm.hpp"
 #include "Lidar.hpp"
 #include "Bluetooth.hpp"
 #include "MobileBase.hpp"
-#include "String.h"
 //#include "../SequenceHandler/sequencehandler.h"
 
 constexpr int DIST_BASE = 200;
@@ -23,7 +24,7 @@ class Sequencer {
 		Bluetooth* m_BLE;
 		MobileBase* m_TurtleBot;
 
-		SequenceHandler seqHandler;
+		//SequenceHandler seqHandler;
 };
 
 #endif //SEQUENCER_H
