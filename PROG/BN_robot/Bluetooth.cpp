@@ -1,7 +1,7 @@
 #include "Bluetooth.hpp"
 
 Bluetooth::Bluetooth(const int nb_usb, const int bdrate) {
-	system("sudo rfcomm watch hci0");
+	//system("sudo rfcomm watch hci0");
 	m_usb = new Usb(nb_usb, bdrate);
 	m_port_nr = nb_usb;
 	m_bdrate = bdrate;

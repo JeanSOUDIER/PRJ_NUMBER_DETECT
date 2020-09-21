@@ -14,16 +14,19 @@ Usb::Usb(const int nb_usb, const int baudrate) {
         std::cout << "Can not open comport\n" << std::endl;
         m_active = false;
     } else {
+        std::cout << "comport port open at : " << m_port_nr << std::endl;
 		m_active = true;
     }
 }
 
-Usb::~Usb() {}
+Usb::~Usb() {
+    RS232_CloseComport(m_port_nr);
+}
 
 void Usb::SendBytes(const std::vector<char> &data) {
     RS232_cputs(m_port_nr, &data[0]);
-	//std::copy(data.begin(), data.end(), std::ostream_iterator<int>(std::cout, " "));
-	//std::cout << std::endl;
+	std::copy(data.begin(), data.end(), std::ostream_iterator<int>(std::cout, " "));
+	std::cout << std::endl;
 }
 
 std::vector<unsigned char> Usb::ReadBytes(const int n) {

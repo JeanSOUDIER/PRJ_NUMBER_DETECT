@@ -1,7 +1,7 @@
 LOW :
  RPI
- - BLE
- - roues
+ - BLE (pb à tester avec un module)
+ - roues (test code ino)
  - test bras
  - test lidar => mise en forme
  Jetson
