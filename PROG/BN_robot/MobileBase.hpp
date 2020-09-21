@@ -12,8 +12,10 @@ constexpr int ERREUR_STATIQUE = 2;
 
 class MobileBase {
 	public:
-		explicit MobileBase(const int nb_usb, const int bdrate);//, Lidar* = nullptr);
-		explicit MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, Lidar* = nullptr);
+		explicit MobileBase(const int nb_usb, const int bdrate, const int lidar_start, const int lidar_nb_usb, const int lidar_bdrate);
+		explicit MobileBase(const int nb_usb, const int bdrate, const int lidar_start, const int lidar_nb_usb, const int lidar_bdrate, bool lidar_mutex_state);
+		explicit MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, const int lidar_start, const int lidar_nb_usb, const int lidar_bdrate);
+		explicit MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, const int lidar_start, const int lidar_nb_usb, const int lidar_bdrate, bool lidar_mutex_state);
 		~MobileBase();
 
 		void Go(const int x, const int y);
@@ -30,7 +32,7 @@ class MobileBase {
         int m_bdrate;
 
         Usb *m_usb;
-		//Lidar* m_RPLidar;
+		Lidar *m_RPLidar;
 
 		std::vector<double> m_x;
 		std::vector<double> m_y;

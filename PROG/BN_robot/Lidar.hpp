@@ -50,7 +50,7 @@ class Lidar{
                 int m_time_increment;
 
                 Usb *m_usb;
-                MutexThread* m_mutex;
+                MutexThread *m_mutex;
 };
 
 #endif //LIDAR_H

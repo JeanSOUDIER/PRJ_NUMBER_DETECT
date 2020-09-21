@@ -1,36 +1,44 @@
 #include "MobileBase.hpp"
 
-MobileBase::MobileBase(const int nb_usb, const int bdrate) {//, Lidar* RPLidar) {
-	//MobileBase(0, 0, 0, nb_usb, bdrate, RPLidar);
+MobileBase::MobileBase(const int nb_usb, const int bdrate, const int lidar_start, const int lidar_nb_usb, const int lidar_bdrate) {
+	MobileBase(0, 0, 0, nb_usb, bdrate, lidar_start, lidar_nb_usb, lidar_bdrate, true);
 }
 
-MobileBase::MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, Lidar* RPLidar) {
+MobileBase::MobileBase(const int nb_usb, const int bdrate, const int lidar_start, const int lidar_nb_usb, const int lidar_bdrate, bool lidar_mutex_state) {
+	MobileBase(0, 0, 0, nb_usb, bdrate, lidar_start, lidar_nb_usb, lidar_bdrate, lidar_mutex_state);
+}
+
+MobileBase::MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, const int lidar_start, const int lidar_nb_usb, const int lidar_bdrate) {
+	MobileBase(posX, posY, angle, nb_usb, bdrate, lidar_start, lidar_nb_usb, lidar_bdrate, true);
+}
+
+MobileBase::MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, const int lidar_start, const int lidar_nb_usb, const int lidar_bdrate, bool lidar_mutex_state) {
 	m_usb = new Usb(nb_usb, bdrate);
-	//m_RPLidar = RPLidar;
+	m_RPLidar = new Lidar(lidar_start, lidar_nb_usb, lidar_bdrate, lidar_mutex_state);
 	m_port_nr = nb_usb;
 	m_bdrate = bdrate;
 	m_posX = posX;
 	m_posY = posY;
 	m_angle = angle;
 	//thread
-	//m_RPLidar->GetMutex()->setState(true);
-    /*pthread_t inc_x_thread;
-    const int rcL = pthread_create(&inc_x_thread, NULL, &Lidar::LidarHelper, &m_RPLidar);
+	m_RPLidar->GetMutex()->setState(true);
+    pthread_t inc_x_thread;
+    /*const int rcL = pthread_create(&inc_x_thread, NULL, &Lidar::LidarHelper, &m_RPLidar);
     if (rcL) {
      	std::cout << "Error:unable to create thread Lidar," << rcL << std::endl;
     }*/
 }
 
 MobileBase::~MobileBase() {
-	//m_RPLidar->GetMutex()->setState(false);
-	//delete m_RPLidar;
+	m_RPLidar->GetMutex()->setState(false);
+	delete m_RPLidar;
 	delete m_usb;
 }
 
 void MobileBase::Go(const int x, const int y) {
 	//TODO asserv lidar + deplacement
 	while(abs(x-m_posX) > ERREUR_STATIQUE && abs(y-m_posY) > ERREUR_STATIQUE) {
-		//GetLidarPoints();
+		GetLidarPoints();
 		GetPosBase();
 		SetMot();
 	}
@@ -41,12 +49,12 @@ double MobileBase::getDistBoard() {
 }
 
 void MobileBase::GetLidarPoints(void) {
-	/*std::vector<int> range;// = m_RPLidar->GetRange();
-	std::vector<int> intensity;// = m_RPLidar->GetIntensity();
+	std::vector<int> range = m_RPLidar->GetRange();
+	std::vector<int> intensity = m_RPLidar->GetIntensity();
 	for(int i=0;i<static_cast<int>(range.size());i++) {
 		m_x[i] = static_cast<double>(range[i])*cos(static_cast<double>(intensity[i]));
 		m_y[i] = static_cast<double>(range[i])*sin(static_cast<double>(intensity[i]));
-	}*/
+	}
 }
 
 void MobileBase::GetPosBase(void) {
