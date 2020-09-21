@@ -12,13 +12,14 @@ constexpr int ERREUR_STATIQUE = 2;
 
 class MobileBase {
 	public:
-		explicit MobileBase(const int nb_usb, const int bdrate, Lidar* = nullptr);
+		explicit MobileBase(const int nb_usb, const int bdrate);//, Lidar* = nullptr);
 		explicit MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, Lidar* = nullptr);
 		~MobileBase();
 
 		void Go(const int x, const int y);
 		double getDistBoard();
 		void SetMot(void);
+		void SetSpeed(int L, int R);
 	private:
 		void GetLidarPoints(void);
 		void GetPosBase(void);
@@ -29,7 +30,7 @@ class MobileBase {
         int m_bdrate;
 
         Usb *m_usb;
-		Lidar* m_RPLidar;
+		//Lidar* m_RPLidar;
 
 		std::vector<double> m_x;
 		std::vector<double> m_y;

@@ -5,12 +5,12 @@ Lidar::Lidar(const bool start, const int nb_usb, const int bdrate) {
 }
 
 Lidar::Lidar(const bool start, const int nb_usb, const int bdrate, bool mutex_state) {
-	m_usb = new Usb(nb_usb, bdrate);
+	//m_usb = new Usb(nb_usb, bdrate);
 	m_start = start;
   m_port_nr = nb_usb;
   m_bdrate = bdrate;
-  m_mutex = new MutexThread(mutex_state);
-	StartLidar();
+  //m_mutex = new MutexThread(mutex_state);
+	//StartLidar();
 }
 
 Lidar::~Lidar() {

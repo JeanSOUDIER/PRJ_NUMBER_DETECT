@@ -12,8 +12,8 @@ int main() {
     constexpr int rfcomm0 = 26;
     constexpr int ttyACM0 = 24;
 
-    std::vector<int> lim_min = {700, 2000, 0, 0, 200, 0};
-    std::vector<int> lim_max = {2800, 4100, 2100, 2100, 820, 1000};
+    std::vector<int> lim_min = {700, 2000, 0, 0, 200, 300};
+    std::vector<int> lim_max = {2900, 4100, 2100, 2100, 820, 700};
 
     /*Sequencer Prgm(
         new Arm(6, ttyUSB_ARBO, 115200, lim_min, lim_max, 5000),
@@ -23,24 +23,13 @@ int main() {
 
     Prgm.Execute();*/
 
-    Arm WidowXL(6, ttyUSB_ARBO, 115200, lim_min, lim_max, 5000);
-    int pos = 800;
-    WidowXL.SetAxePosTic(1, pos);
-    WidowXL.SetAxePosTic(2, pos);
-    WidowXL.SetAxePosTic(3, pos);
-    WidowXL.SetAxePosTic(4, pos);
-    WidowXL.SetAxePosTic(5, pos);
-    WidowXL.SetAxePosTic(6, pos);
-    WidowXL.MoveArm(true);
-    pos = 500;
-    WidowXL.SetAxePosTic(1, pos);
-    WidowXL.SetAxePosTic(2, pos);
-    WidowXL.SetAxePosTic(3, pos);
-    WidowXL.SetAxePosTic(4, pos);
-    WidowXL.SetAxePosTic(5, pos);
-    WidowXL.SetAxePosTic(6, pos);
-    WidowXL.MoveArm(true);
+    /*Arm WidowXL(6, ttyUSB_ARBO, 115200, lim_min, lim_max, 5000);
+    WidowXL.PlaceArm(200, -200, 0);
+    WidowXL.WriteOn();
+    WidowXL.MoveArm(true);*/
 
+    MobileBase OpenCR(0, 0, 0, ttyACM0, 115200, &Lidar(true, ttyUSB_LDS, 230400));
+    OpenCR.SetSpeed(0,0);
 
     //Bluetooth BLE(rfcomm0, 9600);
     //BLE.WriteEnd();

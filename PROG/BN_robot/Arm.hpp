@@ -8,13 +8,12 @@
 #include <wiringPi.h>
 #include "Usb.hpp"
 
-#define HOMING
-
 constexpr int ARB_SIZE_POSE = 7;
 constexpr int ARB_LOAD_POSE = 8;
 constexpr int ARB_LOAD_SEQ  = 9;
 constexpr int ARB_PLAY_SEQ  = 10;
 constexpr int ARB_LOOP_SEQ  = 11;
+constexpr int ARB_DO_FULL   = 12;
 
 class Arm {
         public:
@@ -53,6 +52,9 @@ class Arm {
                 const int a1 = 155;
                 const int a2 = 150;
                 const int a3 = 0;
+
+                const int limTimeMin = 300;
+                const int limTimeMax = 60000;
 
                 std::vector<int> m_PosArm;
                 std::vector<int> m_LimMinArm;

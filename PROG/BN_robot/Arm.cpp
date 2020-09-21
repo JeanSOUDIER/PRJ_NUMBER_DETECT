@@ -31,7 +31,7 @@ Arm::Arm(const int nb, const int nb_usb,const  int bdrate, const std::vector<int
     m_PosArm = std::vector<int>(nb);
     m_LimMinArm = std::vector<int>(nb);
     m_LimMaxArm = std::vector<int>(nb);
-    m_TimeArm = time;
+    SetTime(time);
 
 	for(int i=0;i<nb;i++) {
 		m_PosArm[i] = (lim_min[i]+lim_max[i])/2;
@@ -40,8 +40,8 @@ Arm::Arm(const int nb, const int nb_usb,const  int bdrate, const std::vector<int
 	}
 
     if(m_usb->GetActive()) {
-        const std::vector<char> send_nb = {static_cast<unsigned char>(nb)};
-        Send(ARB_SIZE_POSE, send_nb);
+        delay(5000);
+        Homing();
 	}
 }
 
@@ -50,27 +50,14 @@ Arm::~Arm() {delete m_usb;}
 
 void Arm::MoveArm(bool withDelay) {
     if(m_usb->GetActive()) {
-        //send pos
-        std::vector<char> posi(2*m_PosArm.size()+1);
-        posi[0] = 0; //Replaced by m_PosArm[i]%256 in next loop when i ==0
-
+    	std::vector<char> sending(2*m_nb+2);
+    	sending[0] = (m_TimeArm%256);
+    	sending[1] = static_cast<unsigned char>(m_TimeArm/256);
         for(unsigned int i=0;i<m_PosArm.size();i++) {
-			posi[2*i+1] = (m_PosArm[i]%256);
-            posi[2*i+2] = static_cast<unsigned char>(m_PosArm[i]/256);
+			sending[2*i+2] = (m_PosArm[i]%256);
+            sending[2*i+3] = static_cast<unsigned char>(m_PosArm[i]/256);
 		}
-
-		Send(ARB_LOAD_POSE, posi);
-		//send speed (time)
-        std::vector<char> time = {0,
-	      static_cast<char>(m_TimeArm%256),
-	      static_cast<unsigned char>(m_TimeArm/256),
-	      255,
-	      static_cast<char>(m_TimeArm%256),
-	      static_cast<unsigned char>(m_TimeArm/256)
-	    };
-		Send(ARB_LOAD_SEQ, time);
-		//send play sequence
-		Send(ARB_PLAY_SEQ, {});
+		Send(ARB_DO_FULL, sending);
         if(withDelay){delay(m_TimeArm+200);}
     } else {std::cout << "port not open" << std::endl;}
 }
@@ -106,18 +93,21 @@ bool Arm::PlaceArm(double x, double y, double z) {
 				//compute thet1 (2 triangle)
 				double theta1 = atan(abs(z)/d);
 				theta1 += acos((d*d-a1*a1-a2*a2)/(2*a2*a1)); //check bigger ?
+				std::cout << theta1 << std::endl;
 				//compute theta2 (loi cos)
                 const double theta2 = M_PI-acos((a1*a1-a2*a2-d*d)/(2*d*a2));
+                std::cout << theta2 << std::endl;
 				//compute theta3 (x -> P2, triangle P3P2M)
                 const double x2 = a1*cos(theta1);
                 const double m = r-a3-x2;
                 const double theta3 = acos(m/a2);
+                std::cout << theta3 << std::endl;
 				//set axes
-                SetAxePos(1, static_cast<int>(gamma));
-                SetAxePos(2, static_cast<int>(theta1));
-                SetAxePos(3, static_cast<int>(theta2));
-                SetAxePos(4, static_cast<int>(theta3));
-                SetAxePos(5, static_cast<int>(gamma));
+                SetAxePos(1, (gamma));
+                SetAxePos(2, (theta1));
+                SetAxePos(3, (-theta2));
+                SetAxePos(4, (theta1));
+                SetAxePos(5, (gamma));
 			} else {
 				//std:cout << "arm too short" << std::endl;
 			}
@@ -133,16 +123,27 @@ bool Arm::PlaceArm(double x, double y, double z) {
 void Arm::WriteOn() {SetAxePosTic(6, m_LimMinArm[5]);}
 void Arm::WriteOff() {SetAxePosTic(6, m_LimMaxArm[5]);}
 void Arm::Homing() {
-	SetAxePosTic(1, m_LimMinArm[0]);
-	SetAxePosTic(2, m_LimMinArm[1]);
-	SetAxePosTic(3, m_LimMinArm[2]);
-	SetAxePosTic(4, m_LimMinArm[3]);
-	SetAxePosTic(5, m_LimMinArm[4]);
-	SetAxePosTic(6, m_LimMinArm[5]);
+	SetAxePos(1, 0);
+	SetAxePos(2, 0);
+	SetAxePos(3, 0);
+	SetAxePos(4, 0);
+	SetAxePos(5, 0);
+	WriteOff();
+	MoveArm(true);
 }
 
 
-void Arm::SetTime(int time) {m_TimeArm = time;}
+void Arm::SetTime(int time) {
+	if(time < limTimeMin) {
+		time = limTimeMin;
+		std::cout << "time arm sat min" << std::endl;
+	}
+	if(time > limTimeMax) {
+		time = limTimeMax;
+		std::cout << "time arm sat max" << std::endl;
+	}
+	m_TimeArm = time;
+}
 void Arm::SetLimMinAxe(int nb, int lim) {m_LimMinArm[nb-1] = lim;}
 void Arm::SetLimMaxAxe(int nb, int lim) {m_LimMaxArm[nb-1] = lim;}
 void Arm::SetAxePos(int nb, double pos) {
