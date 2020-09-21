@@ -27,7 +27,7 @@ unsigned char SequenceHandler::find(const Sequence& seq){
     return (index > -1) ? characters.at(index): '0';
 }
 
-void SequenceHandler::addSequence(const unsigned char&character , const QString &path){
+void SequenceHandler::addSequence(const unsigned char &character , const QString &path){
 
     SequenceReader reader(path);
 

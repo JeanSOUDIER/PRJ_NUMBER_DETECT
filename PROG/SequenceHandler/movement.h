@@ -28,6 +28,7 @@ public:
     Direction getDirection();
 
     long int getCoordinate(const Coordinate coor);
+    long int getCoordiate(const Coordinate coor) const;
     long int getX();
     long int getX() const;
     long int getY();
