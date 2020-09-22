@@ -49,9 +49,13 @@ class Arm {
 
                 const int Lr = 179;
                 const int Lz = -236;
-                const int a1 = 155;
-                const int a2 = 150;
-                const int a3 = 0;
+                const int A1 = 155;
+                const int A2 = 150;
+                const int A3 = 80;
+                const int A4a = 110;
+                const int A4b = 105;
+                const int A4 = sqrt(A4a*A4a+A4b*A4b);
+                const double A1thet = 0.37;
 
                 const int limTimeMin = 300;
                 const int limTimeMax = 60000;

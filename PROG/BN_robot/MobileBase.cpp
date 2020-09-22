@@ -21,7 +21,7 @@ MobileBase::MobileBase(const double posX, const double posY, const double angle,
 	m_posY = posY;
 	m_angle = angle;
 	//thread
-	m_RPLidar->GetMutex()->setState(true);
+	m_RPLidar->SetStart(true);
     pthread_t inc_x_thread;
     /*const int rcL = pthread_create(&inc_x_thread, NULL, &Lidar::LidarHelper, &m_RPLidar);
     if (rcL) {
@@ -30,7 +30,7 @@ MobileBase::MobileBase(const double posX, const double posY, const double angle,
 }
 
 MobileBase::~MobileBase() {
-	m_RPLidar->GetMutex()->setState(false);
+	m_RPLidar->SetStart(false);
 	delete m_RPLidar;
 	delete m_usb;
 }
@@ -49,8 +49,8 @@ double MobileBase::getDistBoard() {
 }
 
 void MobileBase::GetLidarPoints(void) {
-	std::vector<int> range = m_RPLidar->load(std::memoy_order_aquire)->GetRange();
-	std::vector<int> intensity = m_RPLidar->load(std::memoy_order_aquire)->GetIntensity();
+	std::vector<int> range;// = m_RPLidar->load(std::memoy_order_aquire)->GetRange();
+	std::vector<int> intensity;// = m_RPLidar->load(std::memoy_order_aquire)->GetIntensity();
 	for(int i=0;i<static_cast<int>(range.size());i++) {
 		m_x[i] = static_cast<double>(range[i])*cos(static_cast<double>(intensity[i]));
 		m_y[i] = static_cast<double>(range[i])*sin(static_cast<double>(intensity[i]));

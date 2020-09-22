@@ -37,13 +37,14 @@ class Lidar{
 	private:
 		void StartLidar(void);
 
-		std::atomic<bool> m_start{false};
+                bool m_start;
+		//std::atomic<bool> m_start{false};
 
 		int m_port_nr;
                 int m_bdrate;
 
-                std::atomic<std::vector<int>> m_range = std::vector<int>(360);
-                std::atomic<std::vector<int>> m_intensity = std::vector<int>(360);
+                //std::atomic<std::vector<int>> m_range = std::vector<int>(360);
+                //std::atomic<std::vector<int>> m_intensity = std::vector<int>(360);
 
                 int m_motor_speed = 0;
                 int m_time_increment;

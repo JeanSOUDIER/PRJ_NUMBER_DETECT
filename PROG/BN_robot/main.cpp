@@ -23,13 +23,25 @@ int main() {
 
     Prgm.Execute();*/
 
-    /*Arm WidowXL(6, ttyUSB_ARBO, 115200, lim_min, lim_max, 5000);
-    WidowXL.PlaceArm(200, -200, 0);
+    Arm WidowXL(6, ttyUSB_ARBO, 115200, lim_min, lim_max, 5000);
+    WidowXL.PlaceArm(300, 200, 100);
     WidowXL.WriteOn();
-    WidowXL.MoveArm(true);*/
+    WidowXL.MoveArm(true);
+    WidowXL.PlaceArm(300, 200, -100);
+    WidowXL.WriteOn();
+    WidowXL.MoveArm(true);
+    WidowXL.PlaceArm(300, 300, -100);
+    WidowXL.WriteOn();
+    WidowXL.MoveArm(true);
+    WidowXL.PlaceArm(300, 300, 100);
+    WidowXL.WriteOn();
+    WidowXL.MoveArm(true);
+    WidowXL.PlaceArm(300, 200, 100);
+    WidowXL.WriteOn();
+    WidowXL.MoveArm(true);
 
-    MobileBase OpenCR(0, 0, 0, ttyACM0, 115200, true, ttyUSB_LDS, 230400);
-    OpenCR.SetSpeed(0,0);
+    //MobileBase OpenCR(0, 0, 0, ttyACM0, 115200, true, ttyUSB_LDS, 230400);
+    //OpenCR.SetSpeed(0,0);
 
     //Bluetooth BLE(rfcomm0, 9600);
     //BLE.WriteEnd();

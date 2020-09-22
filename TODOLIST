@@ -1,13 +1,12 @@
 LOW :
  RPI
  - BLE (pb à tester avec un module)
- - roues (test code ino)
- - test bras
+ - deplacement (test)
+ - bras algo pos
  - test lidar => mise en forme
  Jetson
  - caméra
  - bluetooth
- - App tablette
 
 HIGH :
  RPI
