@@ -60,7 +60,7 @@ class Arm {
                 std::vector<int> m_LimMinArm;
                 std::vector<int> m_LimMaxArm;
 
-                        bool m_active = false;
+                bool m_active = false;
                 int m_port_nr;
                 int m_bdrate; int m_TimeArm = 5000;
                 int m_nb = 6;

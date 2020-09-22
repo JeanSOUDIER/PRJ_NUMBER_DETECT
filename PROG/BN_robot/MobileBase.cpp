@@ -1,20 +1,20 @@
 #include "MobileBase.hpp"
 
-MobileBase::MobileBase(const int nb_usb, const int bdrate, const int lidar_start, const int lidar_nb_usb, const int lidar_bdrate) {
-	MobileBase(0, 0, 0, nb_usb, bdrate, lidar_start, lidar_nb_usb, lidar_bdrate, true);
+MobileBase::MobileBase(const int nb_usb, const int bdrate, const int lidar_nb_usb, const int lidar_bdrate) {
+	MobileBase(0, 0, 0, nb_usb, bdrate, true, lidar_nb_usb, lidar_bdrate);
 }
 
-MobileBase::MobileBase(const int nb_usb, const int bdrate, const int lidar_start, const int lidar_nb_usb, const int lidar_bdrate, bool lidar_mutex_state) {
-	MobileBase(0, 0, 0, nb_usb, bdrate, lidar_start, lidar_nb_usb, lidar_bdrate, lidar_mutex_state);
+MobileBase::MobileBase(const int nb_usb, const int bdrate, const int lidar_start, const int lidar_nb_usb, const int lidar_bdrate) {
+	MobileBase(0, 0, 0, nb_usb, bdrate, lidar_start, lidar_nb_usb, lidar_bdrate);
+}
+
+MobileBase::MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, const int lidar_nb_usb, const int lidar_bdrate) {
+	MobileBase(posX, posY, angle, nb_usb, bdrate, true, lidar_nb_usb, lidar_bdrate);
 }
 
 MobileBase::MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, const int lidar_start, const int lidar_nb_usb, const int lidar_bdrate) {
-	MobileBase(posX, posY, angle, nb_usb, bdrate, lidar_start, lidar_nb_usb, lidar_bdrate, true);
-}
-
-MobileBase::MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, const int lidar_start, const int lidar_nb_usb, const int lidar_bdrate, bool lidar_mutex_state) {
 	m_usb = new Usb(nb_usb, bdrate);
-	m_RPLidar = new Lidar(lidar_start, lidar_nb_usb, lidar_bdrate, lidar_mutex_state);
+	m_RPLidar = new Lidar(lidar_start, lidar_nb_usb, lidar_bdrate);
 	m_port_nr = nb_usb;
 	m_bdrate = bdrate;
 	m_posX = posX;
@@ -49,8 +49,8 @@ double MobileBase::getDistBoard() {
 }
 
 void MobileBase::GetLidarPoints(void) {
-	std::vector<int> range = m_RPLidar->GetRange();
-	std::vector<int> intensity = m_RPLidar->GetIntensity();
+	std::vector<int> range = m_RPLidar->load(std::memoy_order_aquire)->GetRange();
+	std::vector<int> intensity = m_RPLidar->load(std::memoy_order_aquire)->GetIntensity();
 	for(int i=0;i<static_cast<int>(range.size());i++) {
 		m_x[i] = static_cast<double>(range[i])*cos(static_cast<double>(intensity[i]));
 		m_y[i] = static_cast<double>(range[i])*sin(static_cast<double>(intensity[i]));
@@ -70,12 +70,7 @@ void MobileBase::SetMot(void) {
     gamma = gamma-m_angle+M_PI;
     gamma = Modulo(gamma,(2*M_PI));
     gamma -= M_PI;
-    if(abs(gamma) > 0) {
-    	//turn
-    }
-    if(abs(r) > 0) {
-    	//vel
-    }
+    SetMotBalance(r, gamma);
 
 }
 
@@ -95,6 +90,11 @@ std::vector<double> MobileBase::FindSegment(int start, int end) {
 	v[0] = 0;
 	v[1] = 1;
 	return v;
+}
+
+void MobileBase::SetMotBalance(double rho, double theta) {
+	const int facteur = 4;
+	SetSpeed(rho+facteur*theta, rho-facteur*theta);
 }
 
 void MobileBase::SetSpeed(int L, int R) {

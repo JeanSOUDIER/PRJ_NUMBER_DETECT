@@ -1,28 +1,26 @@
 #include "Lidar.hpp"
 
-Lidar::Lidar(const bool start, const int nb_usb, const int bdrate) {
+Lidar::Lidar(const int nb_usb, const int bdrate) {
   Lidar(start, nb_usb, bdrate, true);
 }
 
-Lidar::Lidar(const bool start, const int nb_usb, const int bdrate, bool mutex_state) {
-	//m_usb = new Usb(nb_usb, bdrate);
-	m_start = start;
-  m_port_nr = nb_usb;
-  m_bdrate = bdrate;
-  m_mutex = new MutexThread(mutex_state);
-	//StartLidar();
+Lidar::Lidar(const bool start, const int nb_usb, const int bdrate) {
+	m_usb = new Usb(nb_usb, bdrate);
+	m_start.store(start, std::memory_order_release);
+  	m_port_nr = nb_usb;
+  	m_bdrate = bdrate;
+	StartLidar();
 }
 
 Lidar::~Lidar() {
-  /*const std::vector<char> data = {'e'};
+  	/*const std::vector<char> data = {'e'};
 	m_usb->SendBytes(data);
 	delay(1000);*/
 	delete m_usb;
-  delete m_mutex;
 }
 
 void Lidar::SetStart(const bool state) {
-	m_start = state;
+	m_start.store(state, std::memory_order_release);
 	StartLidar();
 }
 
@@ -75,8 +73,8 @@ void Lidar::Poll(void) {
           uint16_t intensity = (byte1 << 8) + byte0;
           uint16_t range     = (byte3 << 8) + byte2;
 
-          m_range.at(359 - index - degree_count_num) = range / 1000.0;
-          m_intensity.at(359 - index - degree_count_num) = intensity;
+          m_range.store(range/1000.0,std::memory_order_release).at(359 - index - degree_count_num);
+          m_intensity.store(intensity,std::memory_order_release).at(359 - index - degree_count_num);
 
           degree_count_num++;
         }      
@@ -92,14 +90,14 @@ int Lidar::GetMotorSpeed(void) {return m_motor_speed;}
 int Lidar::GetTimeIncrement(void) {return m_time_increment;}
 std::vector<int> Lidar::GetRange(void) {return m_range;}
 std::vector<int> Lidar::GetIntensity(void) {return m_intensity;}
-MutexThread* Lidar::GetMutex(void) {return m_mutex;}
+bool Lidar::GetStart(void) {return m_start.load(std::memoy_order_aquire);}
 
 void* Lidar::LidarHelper(void *context) {
     return static_cast<Lidar*>(context)->ThreadLidar();
 }
 
 void* Lidar::ThreadLidar() {
-    while(m_mutex->Read()){
+    while(m_start.load(std::memoy_order_aquire)){
         Poll();
     }
     pthread_exit(NULL);

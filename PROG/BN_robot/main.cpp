@@ -28,7 +28,7 @@ int main() {
     WidowXL.WriteOn();
     WidowXL.MoveArm(true);*/
 
-    MobileBase OpenCR(0, 0, 0, ttyACM0, 115200, true, ttyUSB_LDS, 230400, true);
+    MobileBase OpenCR(0, 0, 0, ttyACM0, 115200, true, ttyUSB_LDS, 230400);
     OpenCR.SetSpeed(0,0);
 
     //Bluetooth BLE(rfcomm0, 9600);
