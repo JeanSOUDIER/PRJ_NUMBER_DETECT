@@ -19,7 +19,8 @@ Arm::Arm(const int nb,const  int nb_usb, const int bdrate,const std::vector<int>
 }
 
 Arm::Arm(const int nb, const int nb_usb,const  int bdrate, const std::vector<int> &lim_min, const std::vector<int> &lim_max, const int time) {
-	m_usb = new Usb(nb_usb, bdrate);
+
+    m_usb = new Usb(nb_usb, bdrate);
 	m_nb = nb;
     m_PosArm = std::vector<int>(nb);
     m_LimMinArm = std::vector<int>(nb);
@@ -129,14 +130,14 @@ bool Arm::PlaceArm(double x, double y, double z) {
 					//std:cout << "arm too short" << std::endl;
 				}
 			} else {
-				std::cout << "in the bottom" << std::endl;
+				//std:cout << "arm too short" << std::endl;
 			}
 		} else {
-			std::cout << "in the robot" << std::endl;
+			std::cout << "in the bottom" << std::endl;
 		}
-    } else {
-    	std::cout << "in right of arm" << std::endl;
-    }
+	} else {
+		std::cout << "in the robot" << std::endl;
+	}
 	return test;
 }
 
