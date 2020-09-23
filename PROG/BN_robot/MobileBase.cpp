@@ -28,14 +28,14 @@ MobileBase::MobileBase(const double posX, const double posY, const double angle,
 
 MobileBase::~MobileBase() {
 	m_RPLidar->SetStart(false);
-    delete inc_x_thread; //Delete first because otherwise undefined behaviour when executed after calling delete on lidar
+    	delete inc_x_thread; //Delete first because otherwise the function called in the thread will have undefined behaviour when executed after calling delete on lidar
 	delete m_RPLidar;
 	delete m_usb;
 }
 
 void MobileBase::Go(const int x, const int y) {
 	//TODO asserv lidar + deplacement
-	while(abs(x-m_posX) > ERREUR_STATIQUE && abs(y-m_posY) > ERREUR_STATIQUE) {
+	while(std::abs(x-m_posX) > ERREUR_STATIQUE && std::abs(y-m_posY) > ERREUR_STATIQUE) {
 		GetLidarPoints();
 		GetPosBase();
 		SetMot();
@@ -62,13 +62,13 @@ void MobileBase::GetPosBase(void) {
 }
 
 void MobileBase::SetMot(void) {
+
 	const std::complex<double> c = std::polar(m_posX, m_posY);
-    const double r = abs(c);
-    double gamma = arg(c);
-    gamma = gamma-m_angle+M_PI;
-    gamma = Modulo(gamma,(2*M_PI));
-    gamma -= M_PI;
-    SetMotBalance(r, gamma);
+    //const double r = std::abs(c);
+    //const double gamma = std::fmod(std::arg(c) - m_angle + M_PI , (2*M_PI)) - M_PI;
+
+    SetMotBalance(std::abs(c),
+                  std::fmod(std::arg(c) - m_angle + M_PI , (2*M_PI)) - M_PI);
 
 }
 
@@ -99,6 +99,6 @@ void MobileBase::SetSpeed(int L, int R) {
 	if(R < -100) {R = -100;}
 	unsigned char Lc = L+128;
 	unsigned char Rc = R+128;
-	std::vector<char> sending{255, static_cast<char>(Rc), static_cast<char>(Lc)};
+	std::vector<char> sending{char(255), static_cast<char>(Rc), static_cast<char>(Lc)};
 	m_usb->SendBytes(sending);
 }
