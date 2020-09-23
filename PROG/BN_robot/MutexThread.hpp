@@ -1,5 +1,5 @@
-#ifndef MUTEX_H
-#define MUTEX_H
+#ifndef MUTEX_THREAD_H
+#define MUTEX_THREAD_H
 
 #include <stdio.h>
 #include <unistd.h>
