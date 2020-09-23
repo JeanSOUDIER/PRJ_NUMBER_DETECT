@@ -5,7 +5,7 @@
 #include <complex>
 #include <cmath>
 #include <vector>
-#include <wiringPi.h>
+//#include <wiringPi.h>
 #include <termios.h>
 #include "Usb.hpp"
 
@@ -29,7 +29,7 @@ class Arm {
                 void SetLimMaxAxe(int nb, int lim);
                 void SetAxePos(int nb, double pos);
                 void SetAxePosTic(int nb, int pos);
-                void SetTime(int time);
+                void SetTime(const int time);
 
                 int GetLimMinAxe(int nb);
                 int GetLimMaxAxe(int nb);
@@ -61,6 +61,7 @@ class Arm {
                 const int A4b = 105;
                 const int A4 = sqrt(A4a*A4a+A4b*A4b);
                 const double A1thet = 0.37;
+
 
                 const int limTimeMin = 300;
                 const int limTimeMax = 60000;
