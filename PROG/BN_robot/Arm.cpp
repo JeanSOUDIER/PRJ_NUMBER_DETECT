@@ -24,7 +24,7 @@ Arm::Arm(const int nb, const int nb_usb,const  int bdrate, const std::vector<int
     }
 
     if(m_usb->GetActive()) {
-        //delay(5000);
+        delay(5000);
         PosToMove();
         MoveArm(true);
         PosToMove();
@@ -47,7 +47,7 @@ void Arm::MoveArm(bool withDelay) {
             sending[2*i+3] = static_cast<unsigned char>(m_PosArm[i]/256);
         }
         Send(ARB_DO_FULL, sending);
-        if(withDelay){/*delay(m_TimeArm+50);*/}
+        if(withDelay){delay(m_TimeArm+50);}
     } else {std::cout << "port not open" << std::endl;}
 }
 
