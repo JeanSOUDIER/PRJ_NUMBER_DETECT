@@ -1,39 +1,36 @@
 #include "MobileBase.hpp"
 
-MobileBase::MobileBase(const int nb_usb, const int bdrate, const int lidar_start, const int lidar_nb_usb, const int lidar_bdrate) {
-	MobileBase(0, 0, 0, nb_usb, bdrate, lidar_start, lidar_nb_usb, lidar_bdrate, true);
-}
+MobileBase::MobileBase(const int nb_usb, const int bdrate, const int lidar_nb_usb, const int lidar_bdrate)
+    : MobileBase(0, 0, 0, nb_usb, bdrate, true, lidar_nb_usb, lidar_bdrate) {}
 
-MobileBase::MobileBase(const int nb_usb, const int bdrate, const int lidar_start, const int lidar_nb_usb, const int lidar_bdrate, bool lidar_mutex_state) {
-	MobileBase(0, 0, 0, nb_usb, bdrate, lidar_start, lidar_nb_usb, lidar_bdrate, lidar_mutex_state);
-}
+MobileBase::MobileBase(const int nb_usb, const int bdrate, const int lidar_start, const int lidar_nb_usb, const int lidar_bdrate)
+    : MobileBase(0, 0, 0, nb_usb, bdrate, lidar_start, lidar_nb_usb, lidar_bdrate) {}
+
+MobileBase::MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, const int lidar_nb_usb, const int lidar_bdrate)
+    : MobileBase(posX, posY, angle, nb_usb, bdrate, true, lidar_nb_usb, lidar_bdrate) {}
 
 MobileBase::MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, const int lidar_start, const int lidar_nb_usb, const int lidar_bdrate) {
-	MobileBase(posX, posY, angle, nb_usb, bdrate, lidar_start, lidar_nb_usb, lidar_bdrate, true);
-}
-
-MobileBase::MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, const int lidar_start, const int lidar_nb_usb, const int lidar_bdrate, bool lidar_mutex_state) {
 	m_usb = new Usb(nb_usb, bdrate);
-	m_RPLidar = new Lidar(lidar_start, lidar_nb_usb, lidar_bdrate, lidar_mutex_state);
+	m_RPLidar = new Lidar(lidar_start, lidar_nb_usb, lidar_bdrate);
 	m_port_nr = nb_usb;
 	m_bdrate = bdrate;
 	m_posX = posX;
 	m_posY = posY;
 	m_angle = angle;
 	//thread
-	m_RPLidar->GetMutex()->setState(true);
+	m_RPLidar->SetStart(true);
     inc_x_thread = new pthread_t();
-    const int rcL = pthread_create(inc_x_thread, NULL, &Lidar::LidarHelper, &m_RPLidar);
+    /*const int rcL = pthread_create(inc_x_thread, NULL, &Lidar::LidarHelper, &m_RPLidar);
     if (rcL) {
      	std::cout << "Error:unable to create thread Lidar," << rcL << std::endl;
-    }
+    }*/
 }
 
 MobileBase::~MobileBase() {
-	m_RPLidar->GetMutex()->setState(false);
+	m_RPLidar->SetStart(false);
+    delete inc_x_thread; //Delete first because otherwise undefined behaviour when executed after calling delete on lidar
 	delete m_RPLidar;
 	delete m_usb;
-    delete inc_x_thread;
 }
 
 void MobileBase::Go(const int x, const int y) {
@@ -50,8 +47,8 @@ double MobileBase::getDistBoard() {
 }
 
 void MobileBase::GetLidarPoints(void) {
-	std::vector<int> range = m_RPLidar->GetRange();
-	std::vector<int> intensity = m_RPLidar->GetIntensity();
+	std::vector<int> range;// = m_RPLidar->load(std::memoy_order_aquire)->GetRange();
+	std::vector<int> intensity;// = m_RPLidar->load(std::memoy_order_aquire)->GetIntensity();
 	for(int i=0;i<static_cast<int>(range.size());i++) {
 		m_x[i] = static_cast<double>(range[i])*cos(static_cast<double>(intensity[i]));
 		m_y[i] = static_cast<double>(range[i])*sin(static_cast<double>(intensity[i]));
@@ -71,21 +68,11 @@ void MobileBase::SetMot(void) {
     gamma = gamma-m_angle+M_PI;
     gamma = Modulo(gamma,(2*M_PI));
     gamma -= M_PI;
-    if(abs(gamma) > 0) {
-    	//turn
-    }
-    if(abs(r) > 0) {
-    	//vel
-    }
+    SetMotBalance(r, gamma);
 
 }
 
-double MobileBase::Modulo(double n, double m) {
-	while(n > m) {
-		n -= m;
-	}
-	return n;
-}
+double MobileBase::Modulo(const double n, const double m) {return std::fmod(n , m);}
 
 std::vector<double> MobileBase::FindSegment(int start, int end) {
 	
@@ -96,6 +83,11 @@ std::vector<double> MobileBase::FindSegment(int start, int end) {
 	v[0] = 0;
 	v[1] = 1;
 	return v;
+}
+
+void MobileBase::SetMotBalance(const double rho, const double theta) {
+	const int facteur = 4;
+	SetSpeed(rho+facteur*theta, rho-facteur*theta);
 }
 
 void MobileBase::SetSpeed(int L, int R) {
