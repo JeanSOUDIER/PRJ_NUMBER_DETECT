@@ -144,9 +144,9 @@ void Lidar::display(const bool isXY){
 
                     const std::string currentItem =  (index < m_range.size()) ?
                                 "Point " + std::to_string(index) + " : (" +
-                                std::to_string(m_intensity.at(index).load()*cos(m_range.at(index).load())) +
+                                std::to_string(m_intensity.at(index).load()*std::cos(m_range.at(index).load())) +
                                 " ; " +
-                                std::to_string(m_intensity.at(index).load()*sin(m_range.at(index).load())) +
+                                std::to_string(m_intensity.at(index).load()*std::sin(m_range.at(index).load())) +
                                 ")"
                                 : "";
                     index++;
