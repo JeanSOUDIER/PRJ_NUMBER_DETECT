@@ -6,6 +6,7 @@
 #include <cmath>
 #include <vector>
 #include <wiringPi.h>
+#include <termios.h>
 #include "Usb.hpp"
 
 constexpr int ARB_SIZE_POSE = 7;
@@ -44,8 +45,12 @@ class Arm {
                 void WriteOn();
                 void WriteOff();
                 void Homing();
+                void PosToMove();
+
+                void ToKeyboard();
         private:
                 void Send(int ins, const std::vector<char> &data);
+                char getch();
 
                 const int Lr = 179;
                 const int Lz = -236;
@@ -66,7 +71,8 @@ class Arm {
 
                 bool m_active = false;
                 int m_port_nr;
-                int m_bdrate; int m_TimeArm = 5000;
+                int m_bdrate; 
+                int m_TimeArm = 5000;
                 int m_nb = 6;
 
                 Usb *m_usb;

@@ -1,21 +1,15 @@
 #include "Arm.hpp"
 
 Arm::Arm(const int nb, const int nb_usb, const int bdrate) {
-    std::vector<int> lim_min(nb);
-    std::vector<int> lim_max(nb);
-
-    std::fill(lim_min.begin(), lim_min.end(), 0);
-    std::fill(lim_max.begin(), lim_max.end(), 0);
+    std::vector<int> lim_min = {700, 2000, 0, 0, 200, 300};
+    std::vector<int> lim_max = {2900, 4100, 2100, 2100, 820, 700};
 
 	Arm(nb,nb_usb,bdrate,lim_min,lim_max,5000);
 }
 
 Arm::Arm(const int nb, const int nb_usb,const int bdrate, const int time) {
-    std::vector<int> lim_min(nb);
-    std::vector<int> lim_max(nb);
-
-    std::fill(lim_min.begin(), lim_min.end(), 0);
-    std::fill(lim_max.begin(), lim_max.end(), 0);
+    std::vector<int> lim_min = {700, 2000, 0, 0, 200, 300};
+    std::vector<int> lim_max = {2900, 4100, 2100, 2100, 820, 700};
 
 	Arm(nb,nb_usb,bdrate,lim_min,lim_max,time);
 }
@@ -30,7 +24,6 @@ Arm::Arm(const int nb, const int nb_usb,const  int bdrate, const std::vector<int
     m_PosArm = std::vector<int>(nb);
     m_LimMinArm = std::vector<int>(nb);
     m_LimMaxArm = std::vector<int>(nb);
-    SetTime(time);
 
 	for(int i=0;i<nb;i++) {
 		m_PosArm[i] = (lim_min[i]+lim_max[i])/2;
@@ -40,8 +33,13 @@ Arm::Arm(const int nb, const int nb_usb,const  int bdrate, const std::vector<int
 
     if(m_usb->GetActive()) {
         delay(5000);
-        Homing();
+        PosToMove();
+		MoveArm(true);
+        PosToMove();
+		MoveArm(true);
 	}
+
+    SetTime(time);
 }
 
 Arm::~Arm() {delete m_usb;}
@@ -57,7 +55,7 @@ void Arm::MoveArm(bool withDelay) {
             sending[2*i+3] = static_cast<unsigned char>(m_PosArm[i]/256);
 		}
 		Send(ARB_DO_FULL, sending);
-        if(withDelay){delay(m_TimeArm+200);}
+        if(withDelay){delay(m_TimeArm+50);}
     } else {std::cout << "port not open" << std::endl;}
 }
 
@@ -77,11 +75,11 @@ void Arm::Send(int ins, const std::vector<char>&data) {
 }
 
 bool Arm::PlaceArm(double x, double y, double z) {
+	std::cout << "x = " << x << ", y = " << y << ", z = " << z << std::endl;
 	bool test = false;
 	x -= A4b;
 	y -= A4a;
 	z *= -1;
-	std::cout << x << " " << y << " " << z << std::endl;
 	//convet to cartesian
     const double r = sqrt(x*x+y*y);
     double gamma;
@@ -120,7 +118,7 @@ bool Arm::PlaceArm(double x, double y, double z) {
 	                const double m = rA3-x2;
 	                const double theta3 = acos(m/A2);*/
 	                const double theta3 = -theta1-theta2;
-	                std::cout << theta1 << " " << theta2 << " " << theta3 << " r" << std::endl;
+	                //std::cout << theta1 << " " << theta2 << " " << theta3 << " r" << std::endl;
 					//set axes
 	                SetAxePos(1, (gamma));
 	                SetAxePos(2, (theta1));
@@ -142,6 +140,77 @@ bool Arm::PlaceArm(double x, double y, double z) {
 	return test;
 }
 
+char Arm::getch() {
+        char buf = 0;
+        struct termios old = {0};
+        if (tcgetattr(0, &old) < 0)
+                perror("tcsetattr()");
+        old.c_lflag &= ~ICANON;
+        old.c_lflag &= ~ECHO;
+        old.c_cc[VMIN] = 1;
+        old.c_cc[VTIME] = 0;
+        if (tcsetattr(0, TCSANOW, &old) < 0)
+                perror("tcsetattr ICANON");
+        if (read(0, &buf, 1) < 0)
+                perror ("read()");
+        old.c_lflag |= ICANON;
+        old.c_lflag |= ECHO;
+        if (tcsetattr(0, TCSADRAIN, &old) < 0)
+                perror ("tcsetattr ~ICANON");
+        return (buf);
+}
+
+void Arm::ToKeyboard(void) {
+	int x = 300,y = 120,z = 0, pas = 1;;
+    SetTime(1000);
+    PlaceArm(x, y, z);
+    WriteOn();
+    MoveArm(true);
+    SetTime(0);
+    while(1) {
+    	char c = getch();
+    	switch(c) {
+    		case 'z':
+    			x += pas;
+    			break;
+    		case 's':
+    			x -= pas;
+    			break;
+    		case 'd':
+    			y += pas;
+    			break;
+    		case 'q':
+    			y -= pas;
+    			break;
+    		case 'r':
+    			z += pas;
+    			break;
+    		case 'f':
+    			z -= pas;
+    			break;
+    		case 't':
+    			pas++;
+    			if(pas > 10) {pas = 10;}
+    			break;
+    		case 'g':
+    			pas--;
+    			if(pas < 1) {pas = 1;}
+    			break;
+       		case 10:
+    		case 27:
+    			return;
+    			break;
+    		default:
+    			std::cout << "unknown key : " << c << std::endl;
+    			break;
+    	}
+    	std::cout << std::endl << "Pas = " << pas << std::endl;
+		PlaceArm(x, y, z);
+		MoveArm(true);
+		std::cout << std::endl;
+    }
+}
+
 void Arm::WriteOn() {SetAxePosTic(6, m_LimMinArm[5]);}
 void Arm::WriteOff() {SetAxePosTic(6, m_LimMaxArm[5]);}
 void Arm::Homing() {
@@ -152,6 +221,15 @@ void Arm::Homing() {
 	SetAxePos(5, 0);
 	WriteOff();
 	MoveArm(true);
+}
+
+void Arm::PosToMove() {
+	SetAxePos(1, 0);
+	SetAxePos(2, M_PI/2);
+	SetAxePos(3, -M_PI/2);
+	SetAxePos(4, 0);
+	SetAxePos(5, M_PI/2);
+	WriteOff();
 }
 
 
