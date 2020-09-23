@@ -20,10 +20,10 @@ MobileBase::MobileBase(const double posX, const double posY, const double angle,
 	//thread
 	m_RPLidar->SetStart(true);
     inc_x_thread = new pthread_t();
-    /*const int rcL = pthread_create(inc_x_thread, NULL, &Lidar::LidarHelper, &m_RPLidar);
+    const int rcL = pthread_create(inc_x_thread, NULL, &Lidar::LidarHelper, &m_RPLidar);
     if (rcL) {
      	std::cout << "Error:unable to create thread Lidar," << rcL << std::endl;
-    }*/
+    }
 }
 
 MobileBase::~MobileBase() {
@@ -47,8 +47,8 @@ double MobileBase::getDistBoard() {
 }
 
 void MobileBase::GetLidarPoints(void) {
-	std::vector<int> range;// = m_RPLidar->load(std::memoy_order_aquire)->GetRange();
-	std::vector<int> intensity;// = m_RPLidar->load(std::memoy_order_aquire)->GetIntensity();
+	std::vector<int> range = m_RPLidar->GetRange();
+	std::vector<int> intensity = m_RPLidar->GetIntensity();
 	for(int i=0;i<static_cast<int>(range.size());i++) {
 		m_x[i] = static_cast<double>(range[i])*cos(static_cast<double>(intensity[i]));
 		m_y[i] = static_cast<double>(range[i])*sin(static_cast<double>(intensity[i]));

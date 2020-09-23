@@ -23,7 +23,7 @@ int main() {
 
     Prgm.Execute();*/
 
-    Arm WidowXL(6, ttyUSB_ARBO, 115200, lim_min, lim_max, 1000);
+    Arm WidowXL(6, ttyUSB_ARBO, 115200);
     /*WidowXL.PlaceArm(300, 120, 0);
     WidowXL.WriteOff();
     WidowXL.MoveArm(true);

@@ -2,9 +2,10 @@
 #define LIDAR_H
 
 #include <iostream>
-//#include <wiringPi.h>
+#include <wiringPi.h>
 #include <vector>
 #include <pthread.h>
+#include <atomic>
 #include "Usb.hpp"
 #include "mutex.hpp"
 
@@ -15,8 +16,8 @@ class Lidar{
         friend class MobileBase;
 
 	public:
+        Lidar(const int nb_usb, const int bdrate);
         Lidar(const bool start, const int nb_usb, const int bdrate);
-        Lidar(const bool start, const int nb_usb, const int bdrate, bool mutex_state);
         ~Lidar();
 
         void SetStart(const bool state);
@@ -38,13 +39,13 @@ protected:
 private:
         void StartLidar(void);
 
-        bool m_start = false;
+        std::atomic<bool> m_start;
 
         int m_port_nr;
         int m_bdrate;
 
-        std::vector<int> m_range = std::vector<int>(360);
-        std::vector<int> m_intensity = std::vector<int>(360);
+        std::vector<std::atomic<int>> m_range;
+        std::vector<std::atomic<int>> m_intensity;
 
         int m_motor_speed = 0;
         int m_time_increment;

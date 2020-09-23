@@ -1,13 +1,12 @@
 #include "Lidar.hpp"
 
-Lidar::Lidar(const int nb_usb, const int bdrate) {
-    Lidar(true, nb_usb, bdrate);
-}
+Lidar::Lidar(const int nb_usb, const int bdrate)
+    : Lidar(true, nb_usb, bdrate) {}
 
 Lidar::Lidar(const bool start, const int nb_usb, const int bdrate) {
 
-    m_range.reserve(360);
-    m_intensity.reserve(360);
+    //m_range.reserve(360);
+    //m_intensity.reserve(360);
 
 
     m_usb = new Usb(nb_usb, bdrate);
@@ -93,8 +92,8 @@ int Lidar::GetBdRate(void) {return m_usb->GetBdRate();}
 int Lidar::GetPortNb(void) {return m_usb->GetPortNb();}
 int Lidar::GetMotorSpeed(void) {return m_motor_speed;}
 int Lidar::GetTimeIncrement(void) {return m_time_increment;}
-std::vector<std::atomic<int>> Lidar::GetRange(void) {return m_range;}
-std::vector<std::atomic<int>> Lidar::GetIntensity(void) {return m_intensity;}
+std::vector<int> Lidar::GetRange(void) {}//return m_range.load(std::memory_order_acquire);}
+std::vector<int> Lidar::GetIntensity(void) {}//return m_intensity.load(std::memory_order_acquire);}
 bool Lidar::GetStart(void) {return m_start.load(std::memory_order_acquire);}
 
 void* Lidar::LidarHelper(void *context) {return static_cast<Lidar*>(context)->ThreadLidar();}
@@ -102,8 +101,8 @@ void* Lidar::LidarHelper(void *context) {return static_cast<Lidar*>(context)->Th
 void* Lidar::ThreadLidar() {
 
 
-    //while(m_start.load(std::memory_order_acquire)){Poll();}
-    while(1) {Poll();}
+    while(m_start.load(std::memory_order_acquire)){Poll();}
+    //while(1) {Poll();}
 
     pthread_exit(NULL);
 }

@@ -94,19 +94,7 @@ bool Arm::PlaceArm(double x, double y, double z) {
                     const double thetLoi2 = acos(-(A1*A1+A2*A2-d*d)/(2*A2*A1));
                     const double theta2 = M_PI/2-thetLoi2;
 
-                    //compute thet1 (2 triangle)
-                    /*double theta1 = atan(abs(z)/d);
-                    theta1 += acos((d*d-A1*A1-A2*A2)/(2*A2*A1));//+A1thet;
-                    std::cout << theta1 << std::endl;
-                    //compute theta2 (loi cos)
-                    const double theta2 = -M_PI+acos((A1*A1-A2*A2-d*d)/(2*d*A2));
-                    std::cout << theta2 << std::endl;
-                    //compute theta3 (x -> P2, triangle P3P2M)
-                    const double x2 = A1*cos(theta1);
-                    const double m = rA3-x2;
-                    const double theta3 = acos(m/A2);*/
                     const double theta3 = -theta1-theta2;
-                    //std::cout << theta1 << " " << theta2 << " " << theta3 << " r" << std::endl;
                     //set axes
                     SetAxePos(1, (gamma));
                     SetAxePos(2, (theta1));
