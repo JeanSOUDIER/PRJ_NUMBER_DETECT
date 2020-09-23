@@ -2,11 +2,11 @@
 #define LIDAR_H
 
 #include <iostream>
-#include <wiringPi.h>
+//#include <wiringPi.h>
 #include <vector>
 #include <pthread.h>
-#include <atomic>
 #include "Usb.hpp"
+#include "mutex.hpp"
 
 class MobileBase;
 
@@ -15,41 +15,42 @@ class Lidar{
         friend class MobileBase;
 
 	public:
-		Lidar(const int nb_usb, const int bdrate);
-                Lidar(const bool start, const int nb_usb, const int bdrate);
-		~Lidar();
+        Lidar(const bool start, const int nb_usb, const int bdrate);
+        Lidar(const bool start, const int nb_usb, const int bdrate, bool mutex_state);
+        ~Lidar();
 
-		void SetStart(const bool state);
-		void Poll(void);
+        void SetStart(const bool state);
+        void Poll(void);
 
-		int GetBdRate(void);
-                int GetPortNb(void);
-                bool GetStart(void);
-                int GetMotorSpeed(void);
-                int GetTimeIncrement(void);
-                std::vector<int> GetRange(void);
-                std::vector<int> GetIntensity(void);
+        int GetBdRate(void);
+        int GetPortNb(void);
+        bool GetStart(void);
+        int GetMotorSpeed(void);
+        int GetTimeIncrement(void);
+        std::vector<int> GetRange(void);
+        std::vector<int> GetIntensity(void);
+        MutexThread* GetMutex(void);
 
-        protected:
-                static void* LidarHelper(void *context);
-                void* ThreadLidar();
-                
-	private:
-		void StartLidar(void);
+protected:
+        static void* LidarHelper(void *context);
+        void* ThreadLidar();
 
-                bool m_start;
-		//std::atomic<bool> m_start{false};
+private:
+        void StartLidar(void);
 
-		int m_port_nr;
-                int m_bdrate;
+        bool m_start = false;
 
-                //std::atomic<std::vector<int>> m_range = std::vector<int>(360);
-                //std::atomic<std::vector<int>> m_intensity = std::vector<int>(360);
+        int m_port_nr;
+        int m_bdrate;
 
-                int m_motor_speed = 0;
-                int m_time_increment;
+        std::vector<int> m_range = std::vector<int>(360);
+        std::vector<int> m_intensity = std::vector<int>(360);
 
-                Usb *m_usb;
+        int m_motor_speed = 0;
+        int m_time_increment;
+
+        Usb *m_usb;
+        MutexThread *m_mutex;
 };
 
 #endif //LIDAR_H

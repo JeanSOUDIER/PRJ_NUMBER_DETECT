@@ -25,7 +25,8 @@ Arm::Arm(const int nb,const  int nb_usb, const int bdrate,const std::vector<int>
 }
 
 Arm::Arm(const int nb, const int nb_usb,const  int bdrate, const std::vector<int> &lim_min, const std::vector<int> &lim_max, const int time) {
-	m_usb = new Usb(nb_usb, bdrate);
+
+    m_usb = new Usb(nb_usb, bdrate);
 	m_nb = nb;
     m_PosArm = std::vector<int>(nb);
     m_LimMinArm = std::vector<int>(nb);
@@ -78,67 +79,44 @@ void Arm::Send(int ins, const std::vector<char>&data) {
 
 bool Arm::PlaceArm(double x, double y, double z) {
 	bool test = false;
-	x -= A4b;
-	y -= A4a;
-	z *= -1;
-	std::cout << x << " " << y << " " << z << std::endl;
 	//convet to cartesian
-    const double r = sqrt(x*x+y*y);
-    double gamma;
-    if(y == 0 && x < 0) {
-        gamma = 3.1415;
-    } else {
-        gamma = 2*atan(y/(x+r));
-    }
-    const double rA3 = r-A3;
-    std::cout << gamma << std::endl;
-    //test arm not at right
-    if(y > 0) {
-    	//test distance not in the robot
-		if(r > Lr) {
-			//test distance no in the bottom
-			if(z > Lz) {
-				//test arm not to short
-				const double d = sqrt(rA3*rA3+z*z);
-				if(d < A1+A2) {
-					const double thet = acos(z/d);
-					const double thetLoi = acos(-(A1*A1+d*d-A2*A2)/(2*d*A1));
-					const double theta1 = -thetLoi+thet+A1thet;
-
-					const double thetLoi2 = acos(-(A1*A1+A2*A2-d*d)/(2*A2*A1));
-					const double theta2 = M_PI/2-thetLoi2;
-
-					//compute thet1 (2 triangle)
-					/*double theta1 = atan(abs(z)/d);
-					theta1 += acos((d*d-A1*A1-A2*A2)/(2*A2*A1));//+A1thet;
-					std::cout << theta1 << std::endl;
-					//compute theta2 (loi cos)
-	                const double theta2 = -M_PI+acos((A1*A1-A2*A2-d*d)/(2*d*A2));
-	                std::cout << theta2 << std::endl;
-					//compute theta3 (x -> P2, triangle P3P2M)
-	                const double x2 = A1*cos(theta1);
-	                const double m = rA3-x2;
-	                const double theta3 = acos(m/A2);*/
-	                const double theta3 = -theta1-theta2;
-	                std::cout << theta1 << " " << theta2 << " " << theta3 << " r" << std::endl;
-					//set axes
-	                SetAxePos(1, (gamma));
-	                SetAxePos(2, (theta1));
-	                SetAxePos(3, (theta2));
-	                SetAxePos(4, (theta3));
-	                SetAxePos(5, (M_PI/2-gamma));
-				} else {
-					//std:cout << "arm too short" << std::endl;
-				}
+    const std::complex<double> c = std::polar(x, y);
+    const double r = abs(c);
+    const double gamma = arg(c);
+	//test distance not in the robot
+	if(r > Lr) {
+		//test distance no in the bottom
+		if(z > Lz) {
+			//test arm not to short
+			if(sqrt(r*r+z*z) < a1+a2+a3) {
+                const double d = sqrt((r-a3)*(r-a3)+z*z);
+				//compute thet1 (2 triangle)
+				double theta1 = atan(abs(z)/d);
+				theta1 += acos((d*d-a1*a1-a2*a2)/(2*a2*a1)); //check bigger ?
+				std::cout << theta1 << std::endl;
+				//compute theta2 (loi cos)
+                const double theta2 = M_PI-acos((a1*a1-a2*a2-d*d)/(2*d*a2));
+                std::cout << theta2 << std::endl;
+				//compute theta3 (x -> P2, triangle P3P2M)
+                const double x2 = a1*cos(theta1);
+                const double m = r-a3-x2;
+                const double theta3 = acos(m/a2);
+                std::cout << theta3 << std::endl;
+				//set axes
+                SetAxePos(1, (gamma));
+                SetAxePos(2, (theta1));
+                SetAxePos(3, (-theta2));
+                SetAxePos(4, (theta1));
+                SetAxePos(5, (gamma));
 			} else {
-				std::cout << "in the bottom" << std::endl;
+				//std:cout << "arm too short" << std::endl;
 			}
 		} else {
-			std::cout << "in the robot" << std::endl;
+			std::cout << "in the bottom" << std::endl;
 		}
-    } else {
-    	std::cout << "in right of arm" << std::endl;
-    }
+	} else {
+		std::cout << "in the robot" << std::endl;
+	}
 	return test;
 }
 

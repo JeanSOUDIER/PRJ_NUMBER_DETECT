@@ -17,7 +17,11 @@ Sequencer::~Sequencer() {
 	delete m_TurtleBot;
 }
 
-void Sequencer::Execute() {
+void* Sequencer::ExecuteHelper(void *context){
+    return static_cast<Sequencer*>(context)->Execute();
+}
+
+void* Sequencer::Execute() {
 	while(1) {
 		std::vector<unsigned char> reading = m_BLE->Read();
 		if(reading[0] == 252) {break;}
@@ -38,4 +42,6 @@ void Sequencer::Execute() {
 		}
 		m_BLE->WriteEnd();
 	}
+
+    pthread_exit(NULL);
 }
