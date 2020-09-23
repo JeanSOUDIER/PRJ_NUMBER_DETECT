@@ -54,15 +54,15 @@ void Arm::MoveArm(bool withDelay) {
 void Arm::Send(int ins, const std::vector<char>&data) {
     int sum = 508+data.size()+2+ins;
     std::vector<char>send(5+data.size());
-    send[0] = 255;
-    send[1] = 253;
-    send[2] = data.size()+2;
-    send[3] = ins;
+    send[0] = char(255);
+    send[1] = char(253);
+    send[2] = char(data.size()+2);
+    send[3] = char(ins);
     for(unsigned int i=0;i<data.size();i++) {
         send[i+4] = data[i];
         sum += data[i];
     }
-    send[data.size()+4] = 255-((sum%256)+1);
+    send[data.size()+4] = char(255-((sum%256)+1));
     m_usb->SendBytes(send);
 }
 
