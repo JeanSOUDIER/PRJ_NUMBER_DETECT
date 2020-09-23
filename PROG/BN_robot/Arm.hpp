@@ -5,7 +5,7 @@
 #include <complex>
 #include <cmath>
 #include <vector>
-//#include <wiringPi.h>
+#include <wiringPi.h>
 #include <termios.h>
 #include "Usb.hpp"
 
