@@ -3,11 +3,14 @@
 
 #include <iostream>
 #include <wiringPi.h>
+#include <cmath>
 #include <vector>
+#include <array>
 #include <pthread.h>
 #include <atomic>
 #include "Usb.hpp"
-#include "mutex.hpp"
+#include "MutexThread.hpp"
+#include "algorithm"
 
 class MobileBase;
 
@@ -31,6 +34,7 @@ class Lidar{
         std::vector<int> GetRange(void);
         std::vector<int> GetIntensity(void);
         MutexThread* GetMutex(void);
+        void display(const bool isXY);
 
 protected:
         static void* LidarHelper(void *context);
@@ -44,8 +48,8 @@ private:
         int m_port_nr;
         int m_bdrate;
 
-        std::vector<std::atomic<int>> m_range;
-        std::vector<std::atomic<int>> m_intensity;
+        std::array<std::atomic<int> , 360> m_range;
+        std::array<std::atomic<int> , 360> m_intensity;
 
         int m_motor_speed = 0;
         int m_time_increment;
@@ -53,5 +57,4 @@ private:
         Usb *m_usb;
         MutexThread *m_mutex;
 };
-
 #endif //LIDAR_H
