@@ -5,9 +5,8 @@ Lidar::Lidar(const int nb_usb, const int bdrate)
 
 Lidar::Lidar(const bool start, const int nb_usb, const int bdrate) {
 
-    //m_range.reserve(360);
-    //m_intensity.reserve(360);
-
+    for(auto &item:m_range){std::atomic_init(&item,0);}
+    for(auto &item:m_intensity){std::atomic_init(&item,0);}
 
     m_usb = new Usb(nb_usb, bdrate);
     m_start.store(start, std::memory_order_release);
@@ -92,8 +91,32 @@ int Lidar::GetBdRate(void) {return m_usb->GetBdRate();}
 int Lidar::GetPortNb(void) {return m_usb->GetPortNb();}
 int Lidar::GetMotorSpeed(void) {return m_motor_speed;}
 int Lidar::GetTimeIncrement(void) {return m_time_increment;}
-std::vector<int> Lidar::GetRange(void) {}//return m_range.load(std::memory_order_acquire);}
-std::vector<int> Lidar::GetIntensity(void) {}//return m_intensity.load(std::memory_order_acquire);}
+std::vector<int> Lidar::GetRange(void) {
+
+    std::vector<int> returnValue(m_range.size());
+    std::generate(returnValue.begin() , returnValue.end() , [this]{
+            static unsigned int index = 0;
+            const int currentItem = m_range.at(index).load();
+            index++;
+            return currentItem;
+
+    });
+
+    return returnValue;
+}
+std::vector<int> Lidar::GetIntensity(void) {
+
+    std::vector<int> returnValue(m_intensity.size());
+    std::generate(returnValue.begin() , returnValue.end() , [this]{
+        static unsigned int index = 0;
+        const int currentItem = m_intensity.at(index).load();
+        index++;
+        return currentItem;
+
+    });
+
+   return returnValue;
+}
 bool Lidar::GetStart(void) {return m_start.load(std::memory_order_acquire);}
 
 void* Lidar::LidarHelper(void *context) {return static_cast<Lidar*>(context)->ThreadLidar();}
@@ -105,4 +128,53 @@ void* Lidar::ThreadLidar() {
     //while(1) {Poll();}
 
     pthread_exit(NULL);
+    return 0;
 }
+
+void Lidar::display(const bool isXY){
+
+    std::vector<std::string> disp (m_range.size());
+
+    //Display as "Point N : (x , y)"
+    if(isXY){
+
+        std::generate(disp.begin() , disp.end(),
+                  [this]{
+                    static unsigned index = 0;
+
+                    const std::string currentItem =  (index < m_range.size()) ?
+                                "Point " + std::to_string(index) + " : (" +
+                                std::to_string(m_intensity.at(index).load()*cos(m_range.at(index).load())) +
+                                " ; " +
+                                std::to_string(m_intensity.at(index).load()*sin(m_range.at(index).load())) +
+                                ")"
+                                : "";
+                    index++;
+                    return currentItem;
+             }
+        );
+
+    //Display as "Point N : (range , intensity)"
+    }else{
+        std::generate(disp.begin() , disp.end(),
+                  [this]{
+                    static unsigned index = 0;
+
+                    const std::string currentItem =  (index < m_range.size()) ?
+                                "Point " + std::to_string(index) + " : (" +
+                                std::to_string(m_range.at(index).load()) +
+                                " ; " +
+                                std::to_string(m_intensity.at(index).load())
+                                +")"
+                                : "";
+                    index++;
+                    return currentItem;
+             }
+        );
+
+    }
+
+    std::copy(disp.begin(), disp.end(),std::ostream_iterator<std::string>(std::cout, "\n"));
+
+}
+
