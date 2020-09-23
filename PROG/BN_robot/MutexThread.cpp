@@ -1,4 +1,4 @@
-#include "mutex.hpp"
+#include "MutexThread.hpp"
 
 /*MutexThread::MutexThread(std::mutex* _mutex) {
     m_mutex = _mutex;
