@@ -12,9 +12,6 @@ int main() {
     constexpr int rfcomm0 = 26;
     constexpr int ttyACM0 = 24;
 
-    std::vector<int> lim_min = {700, 2000, 500, 500, 200, 300};
-    std::vector<int> lim_max = {2800, 4100, 2600, 2600, 820, 700};
-
     /*Sequencer Prgm(
         new Arm(6, ttyUSB_ARBO, 115200, lim_min, lim_max, 5000),
         new Bluetooth(ttyAMA0, 115200),

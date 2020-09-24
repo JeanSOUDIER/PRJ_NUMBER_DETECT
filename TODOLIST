@@ -2,7 +2,6 @@ LOW :
  RPI
  - BLE (pb à tester avec un module)
  - deplacement (test)
- - bras algo pos
  - test lidar => mise en forme
  Jetson
  - caméra

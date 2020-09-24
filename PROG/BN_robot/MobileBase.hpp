@@ -12,6 +12,8 @@ constexpr int ERREUR_STATIQUE = 2;
 
 class MobileBase {
 	public:
+		explicit MobileBase(const int nb_usb, const int bdrate);
+		explicit MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate);
 		explicit MobileBase(const int nb_usb, const int bdrate, const int lidar_nb_usb, const int lidar_bdrate);
 		explicit MobileBase(const int nb_usb, const int bdrate, const int lidar_start, const int lidar_nb_usb, const int lidar_bdrate);
 		explicit MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, const int lidar_nb_usb, const int lidar_bdrate);
@@ -31,6 +33,7 @@ class MobileBase {
 
 		int m_port_nr;
         int m_bdrate;
+        bool m_lidar_start;
 
         Usb *m_usb;
 		Lidar *m_RPLidar;

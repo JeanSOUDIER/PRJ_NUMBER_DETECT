@@ -1,10 +1,10 @@
 #include "Arm.hpp"
 
 Arm::Arm(const int nb, const int nb_usb, const int bdrate)
-    : Arm(nb,nb_usb,bdrate,{700, 2000, 0, 0, 200, 300},{2900, 4100, 2100, 2100, 820, 700},5000){}
+    : Arm(nb,nb_usb,bdrate,{700, 2000, 500, 500, 200, 300},{2800, 4100, 2600, 2600, 820, 700},5000){}
 
 Arm::Arm(const int nb, const int nb_usb,const int bdrate, const int time)
-    : Arm(nb,nb_usb,bdrate,{700, 2000, 0, 0, 200, 300},{2900, 4100, 2100, 2100, 820, 700},time) {}
+    : Arm(nb,nb_usb,bdrate,{700, 2000, 500, 500, 200, 300},{2800, 4100, 2600, 2600, 820, 700},time) {}
 
 Arm::Arm(const int nb,const  int nb_usb, const int bdrate,const std::vector<int> &lim_min, const std::vector<int> &lim_max)
     : Arm(nb,nb_usb,bdrate,lim_min,lim_max,5000) {}
@@ -24,7 +24,7 @@ Arm::Arm(const int nb, const int nb_usb,const  int bdrate, const std::vector<int
     }
 
     if(m_usb->GetActive()) {
-        delay(5000);
+        delay(10000);
         PosToMove();
         MoveArm(true);
         PosToMove();
@@ -147,7 +147,7 @@ void Arm::ToKeyboard(void) {
     int y = 120;
     int z = 0;
 
-    int pas = 1;;
+    int pas = 10;
     SetTime(1000);
     PlaceArm(x, y, z);
     WriteOn();
@@ -199,6 +199,11 @@ void Arm::ToKeyboard(void) {
             case 'g':{
                 pas--;
                 if(pas < 1) {pas = 1;}
+                break;
+            }
+
+            case ' ':{
+                //save pos
                 break;
             }
 

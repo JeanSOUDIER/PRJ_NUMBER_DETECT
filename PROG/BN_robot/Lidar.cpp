@@ -125,7 +125,6 @@ void* Lidar::ThreadLidar() {
 
 
     while(m_start.load(std::memory_order_acquire)){Poll();}
-    //while(1) {Poll();}
 
     pthread_exit(NULL);
     return 0;

@@ -9,7 +9,6 @@
 #include <pthread.h>
 #include <atomic>
 #include "Usb.hpp"
-#include "MutexThread.hpp"
 #include "algorithm"
 
 class MobileBase;
@@ -33,7 +32,6 @@ class Lidar{
         int GetTimeIncrement(void);
         std::vector<int> GetRange(void);
         std::vector<int> GetIntensity(void);
-        MutexThread* GetMutex(void);
         void display(const bool isXY);
 
 protected:
@@ -55,6 +53,5 @@ private:
         int m_time_increment;
 
         Usb *m_usb;
-        MutexThread *m_mutex;
 };
 #endif //LIDAR_H
