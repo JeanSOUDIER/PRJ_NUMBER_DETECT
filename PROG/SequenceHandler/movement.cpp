@@ -8,7 +8,38 @@ Movement::Movement(){
     y = 0;
     z = 0;
     duration_ms = 0;
+
 }
+
+Movement::Movement(const Movement &mov){
+
+    direction = mov.direction;
+    mode = mov.mode;
+    x = mov.x;
+    y = mov.y;
+    z = mov.z;
+    duration_ms = mov.duration_ms;
+
+}
+
+/*******************************************************************/
+
+void Movement::display() const{
+
+    std::cout << "Movement : \n";
+   if(mode == MovementMode::COORDINATES){
+       std::cout << "    X: " << std::to_string(x) << "\n";
+       std::cout << "    Y: " << std::to_string(y) << "\n";
+       std::cout << "    Z: " << std::to_string(z) << "\n";}
+
+   else{std::cout << "    Direction: " << std::to_string(static_cast<int>(direction)) << "\n";}
+
+   std::cout << "    Duration (ms): " << std::to_string(duration_ms) << std::endl;
+
+
+
+}
+
 
 /**************************************************************/
 
@@ -38,6 +69,7 @@ void Movement::setMode(const MovementMode _mode, bool withReset){
                     /*------------------------------*/
 
 Direction Movement::getDirection(){return direction;}
+Direction Movement::getDirection() const {return direction;}
 
 long int Movement::getCoordinate(const Coordinate coor){
 
@@ -93,5 +125,15 @@ bool Movement::isEquivalent(const Movement &mov) const{
             (direction==mov.direction)&&
             (duration_ms == mov.duration_ms);
 
+
+}
+
+bool Movement::positionMatches(const Movement &mov) const{
+
+    return (mode == mov.mode)&&
+           (mode == MovementMode::COORDINATES) &&
+           (x==mov.x)&&
+           (y==mov.y)&&
+           (z==mov.z);
 
 }

@@ -21,8 +21,8 @@ class SequenceWriter{
 
 public:
 
-    SequenceWriter(const QVector<Movement*> &_movements, const QString _filePath);
-    SequenceWriter(const std::vector<Movement *> &_movements, const std::string _filePath);
+    SequenceWriter(const QVector<Movement> &_movements, const QString _filePath);
+    SequenceWriter(const std::vector<Movement> &_movements, const std::string _filePath);
 
 
     void setFile(const QString &path);
@@ -37,7 +37,7 @@ protected:
 
 private:
 
-    QVector<Movement*> movements;
+    QVector<Movement> movements;
     QString filePath;
 
 

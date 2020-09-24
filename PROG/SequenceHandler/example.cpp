@@ -12,24 +12,24 @@ int main(){
 
 /*----------------------------------------------------------------------------------------------*/
 
-    std::vector<Movement*> movement_0 = seqHandler.find('0').getMovements_STD(); //Create a vector of movements
+    std::vector<Movement> movement_0 = seqHandler.find('0').getMovements_STD(); //Create a vector of movements
 
 
     for(unsigned int index = 0 ; index < movement_0.size() ; index++){
 
-        const Movement *currentMovement = movement_0.at(index);
-        const Movement nextMovement = *((index+1 < movement_0.size()) ? movement_0.at(index+1): nullptr);
+        const Movement currentMovement = movement_0.at(index);
+        const Movement nextMovement = ((index+1 < movement_0.size()) ? movement_0.at(index+1): Movement());
 
-        const long int x = currentMovement->getX();
-        const long int y =currentMovement->getY();
-        const long int z = currentMovement->getZ();
-        const uint64_t duration_ms = currentMovement->getDuration();
+        const long int x = currentMovement.getX();
+        const long int y =currentMovement.getY();
+        const long int z = currentMovement.getZ();
+        const uint64_t duration_ms = currentMovement.getDuration();
 
         foo(x , y , z , duration_ms); //Do stuff for each movement
 
         if(index+1 < movement_0.size()){ //Only for valid instances of nextMovement
 
-            if(currentMovement->isEquivalent(nextMovement)){/*...*/}
+            if(currentMovement.isEquivalent(nextMovement)){/*...*/}
 
         }
 
@@ -42,7 +42,7 @@ int main(){
     seqHandler.addSequence('1' , "/Sequences/sequence_1.xml");
 
 
-    std::vector<Movement*> movements_1 = seqHandler.find('1').getMovements_STD();
+    std::vector<Movement> movements_1 = seqHandler.find('1').getMovements_STD();
 
 
     //Do stuff with movements_1

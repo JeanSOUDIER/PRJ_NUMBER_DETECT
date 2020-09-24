@@ -20,14 +20,16 @@ SOURCES += \
     movement.cpp \
     sequence.cpp \
     sequencehandler.cpp \
-    sequencereader.cpp
+    sequencereader.cpp \
+    sequencewriter.cpp
 
 HEADERS += \
     SequenceHandler_global.h \
     movement.h \
     sequence.h \
     sequencehandler.h \
-    sequencereader.h
+    sequencereader.h \
+    sequencewriter.h
 
 # Default rules for deployment.
 unix {

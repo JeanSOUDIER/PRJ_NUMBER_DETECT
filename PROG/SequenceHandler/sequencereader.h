@@ -39,7 +39,7 @@ private :
     Sequence readSequence_XML(const QString &path);
     Sequence readSequence_CSV(const QString &path);
 
-    Movement* constructMovement_CSV(const QVector<QString> &);
+    Movement constructMovement_CSV(const QVector<QString> &);
 
 
 

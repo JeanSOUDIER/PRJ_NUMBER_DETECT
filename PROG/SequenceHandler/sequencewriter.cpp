@@ -1,14 +1,14 @@
 #include "sequencewriter.h"
 
-SequenceWriter::SequenceWriter(const QVector<Movement*> &_movements, const QString _filePath){
+SequenceWriter::SequenceWriter(const QVector<Movement> &_movements, const QString _filePath){
 
     movements = _movements;
     filePath = _filePath;
 
 }
-SequenceWriter::SequenceWriter(const std::vector<Movement*> &_movements, const std::string _filePath){
+SequenceWriter::SequenceWriter(const std::vector<Movement> &_movements, const std::string _filePath){
 
-    movements = QVector<Movement*>::fromStdVector(_movements);
+    movements = QVector<Movement>::fromStdVector(_movements);
     filePath = QString::fromStdString(_filePath);
 
 }
@@ -50,7 +50,7 @@ bool SequenceWriter::generate_XML(const bool withOverride){
         if(target_file.exists()){target_file.remove();}
     }
 
-    const MovementMode movements_mode_format = movements.at(0)->getMode();
+    const MovementMode movements_mode_format = movements.at(0).getMode();
 
     if(target_file.open(QIODevice::WriteOnly)){
 
@@ -74,20 +74,20 @@ bool SequenceWriter::generate_XML(const bool withOverride){
                     switch(movements_mode_format){
 
                         case(MovementMode::DIRECTION):{
-                        writer.writeTextElement("DIRECTION" , QString::number(static_cast<int>(movements.at(index)->getDirection())));
+                        writer.writeTextElement("DIRECTION" , QString::number(static_cast<int>(movements.at(index).getDirection())));
                         break;
                         }
                         case(MovementMode::COORDINATES):{
-                        writer.writeTextElement("X" , QString::number(movements.at(index)->getX()));
-                        writer.writeTextElement("Y" , QString::number(movements.at(index)->getY()));
-                        writer.writeTextElement("Z" , QString::number(movements.at(index)->getZ()));
+                        writer.writeTextElement("X" , QString::number(movements.at(index).getX()));
+                        writer.writeTextElement("Y" , QString::number(movements.at(index).getY()));
+                        writer.writeTextElement("Z" , QString::number(movements.at(index).getZ()));
                         break;
                         }
                         default:{break;}
 
                     }
 
-                    writer.writeTextElement("DURATION" , QString::number(movements.at(index)->getDuration()));
+                    writer.writeTextElement("DURATION" , QString::number(movements.at(index).getDuration()));
 
 
                     writer.writeEndElement();
@@ -118,7 +118,7 @@ bool SequenceWriter::generate_CSV(const bool withOverride){
         if(target_file.exists()){target_file.remove();}
     }
 
-    const MovementMode movements_mode_format = movements.at(0)->getMode();
+    const MovementMode movements_mode_format = movements.at(0).getMode();
 
     if(target_file.open(QIODevice::WriteOnly)){
 
@@ -131,17 +131,17 @@ bool SequenceWriter::generate_CSV(const bool withOverride){
             switch(movements_mode_format){
 
                 case(MovementMode::DIRECTION):{
-                writer<< static_cast<int>(movements.at(index)->getDirection()) <<",";
+                writer<< static_cast<int>(movements.at(index).getDirection()) <<",";
                 break;
                 }
                 case(MovementMode::COORDINATES):{
-                writer << QString::number(movements.at(index)->getX()) << "," << QString::number(movements.at(index)->getY()) << "," << QString::number(movements.at(index)->getZ()) <<",";
+                writer << QString::number(movements.at(index).getX()) << "," << QString::number(movements.at(index).getY()) << "," << QString::number(movements.at(index).getZ()) <<",";
                 break;
                 }
                 default:{break;}
 
             }
-            writer << QString::number(movements.at(index)->getDuration()) << endl;
+            writer << QString::number(movements.at(index).getDuration()) << endl;
         }
 
 

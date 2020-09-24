@@ -10,6 +10,14 @@ class Movement{
 public:
 
     Movement();
+    Movement(const Movement&);
+
+                    /*------------------------------*/
+
+    void display() const;
+
+                    /*------------------------------*/
+
 
     void setDirection(const Direction _direction);
 
@@ -26,6 +34,7 @@ public:
                     /*------------------------------*/
 
     Direction getDirection();
+    Direction getDirection() const;
 
     long int getCoordinate(const Coordinate coor);
     long int getCoordiate(const Coordinate coor) const;
@@ -42,9 +51,12 @@ public:
     MovementMode getMode();
     MovementMode getMode() const;
 
+                    /*------------------------------*/
+
     bool operator ==(const Movement& mov) const;
     static bool equals (const Movement &mov1 , const Movement &mov2);
     bool isEquivalent(const Movement &mov) const;
+    bool positionMatches(const Movement &mov) const;
 
 
 private :

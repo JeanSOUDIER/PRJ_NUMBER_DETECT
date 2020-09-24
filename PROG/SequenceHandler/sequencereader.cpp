@@ -193,8 +193,8 @@ Sequence SequenceReader::readSequence_XML(const QString &path){
 
                 //qDebug() << reader.name() << "MOVEMENT";
 
-                Movement * mov = new Movement();
-                mov->setMode(movements_mode_format , false);
+                Movement mov;
+                mov.setMode(movements_mode_format , false);
 
                 switch(movements_mode_format){
                     case(MovementMode::DIRECTION):{
@@ -202,14 +202,14 @@ Sequence SequenceReader::readSequence_XML(const QString &path){
                     reader.readNextStartElement();
                     //qDebug() << reader.name() << "DIRECTION";
                     const Direction dir = static_cast<Direction>(reader.readElementText().toInt());
-                    mov->setDirection(dir);
+                    mov.setDirection(dir);
                     //</DIRECTION>
 
                     //<DURATION>
                     reader.readNextStartElement();
                     //qDebug() << reader.name() << "DURATION";
                     const uint64_t duration = reader.readElementText().toInt();
-                    mov->setDuration(duration);
+                    mov.setDuration(duration);
                     //</DURATION>
 
                     break;
@@ -220,32 +220,32 @@ Sequence SequenceReader::readSequence_XML(const QString &path){
                     reader.readNextStartElement();
                     //qDebug() << reader.name() << "X";
                     const int x = reader.readElementText().toInt();
-                    mov->setX(x);
+                    mov.setX(x);
                     //</X>
 
                     //<Y>
                     reader.readNextStartElement();
                     //qDebug() << reader.name() << "Y";
                     const int y = reader.readElementText().toInt();
-                    mov->setY(y);
+                    mov.setY(y);
                     //</Y>
 
                     //<Z>
                     reader.readNextStartElement();
                     //qDebug() << reader.name() << "Z";
                     const int z = reader.readElementText().toInt();
-                    mov->setZ(z);
+                    mov.setZ(z);
                     //</Z>
 
                     //<DURATION>
                     reader.readNextStartElement();
                     //qDebug() << reader.name() << "DURATION";
                     const uint64_t duration = reader.readElementText().toInt();
-                    mov->setDuration(duration);
+                    mov.setDuration(duration);
                     //</DURATION>
                     break;
                     }
-                    default:{mov->setMode(MovementMode::COORDINATES , true);} //Not good news if this is reached
+                    default:{mov.setMode(MovementMode::COORDINATES , true);} //Not good news if this is reached
                 }
 
                 seq.addMovement(mov);
@@ -297,24 +297,24 @@ Sequence SequenceReader::readSequence_CSV(const QString &path){
     return seq;
 }
 
-Movement* SequenceReader::constructMovement_CSV(const QVector<QString>& data ){
+Movement SequenceReader::constructMovement_CSV(const QVector<QString>& data ){
 
-    Movement *mov = new Movement();
+    Movement mov;
     switch(data.size()){
 
         case(2):{
-            mov->setMode(MovementMode::DIRECTION , false);
-            mov->setDirection(static_cast<Direction>(data.at(0).toInt()));
+            mov.setMode(MovementMode::DIRECTION , false);
+            mov.setDirection(static_cast<Direction>(data.at(0).toInt()));
             break;
         }
 
         case(4):{
         qDebug() << "mov_coor";;
-            mov->setMode(MovementMode::COORDINATES , false);
-            mov->setX(data.at(0).toInt());
-            mov->setY(data.at(1).toInt());
-            mov->setZ(data.at(2).toInt());
-            mov->setDuration(static_cast<uint64_t>(data.at(3).toInt()));
+            mov.setMode(MovementMode::COORDINATES , false);
+            mov.setX(data.at(0).toInt());
+            mov.setY(data.at(1).toInt());
+            mov.setZ(data.at(2).toInt());
+            mov.setDuration(static_cast<uint64_t>(data.at(3).toInt()));
             /*qDebug() << mov->getX();
             qDebug() << mov->getY();
             qDebug() << mov->getZ();

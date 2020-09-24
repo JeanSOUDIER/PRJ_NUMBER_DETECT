@@ -8,6 +8,7 @@
 #endif
 
 #include "stdint.h"
+#include <iostream>
 
 enum class Direction{
     NONE = 0,
