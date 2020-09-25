@@ -13,9 +13,9 @@ int main() {
     constexpr int ttyACM0 = 24;
 
     /*Sequencer Prgm(
-        new Arm(6, ttyUSB_ARBO, 115200, lim_min, lim_max, 5000),
+        new Arm(6, ttyUSB_ARBO, 115200),
         new Bluetooth(ttyAMA0, 115200),
-        new MobileBase(ttyACM0, 115200, new Lidar(true, ttyUSB_LDS, 230400))
+        new MobileBase(ttyACM0, 115200, new Lidar(ttyUSB_LDS, 230400), true)
     );
 
     Prgm.Execute();*/

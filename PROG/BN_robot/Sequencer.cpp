@@ -17,31 +17,20 @@ Sequencer::~Sequencer() {
 	delete m_TurtleBot;
 }
 
-void* Sequencer::ExecuteHelper(void *context){
-    return static_cast<Sequencer*>(context)->Execute();
-}
-
-void* Sequencer::Execute() {
-	while(1) {
-		std::vector<unsigned char> reading = m_BLE->Read();
-		if(reading[0] == 252) {break;}
-		m_TurtleBot->Go(0,0);
-		int j = 1, arm_dist;
-		for(int i=0;i<static_cast<unsigned char>(reading.size());i++) {
-			if(i%MAX_LENGTH_ARM >= j) {
-				j++;
-				m_TurtleBot->Go(DIST_BASE*j,0);
-			}
-			/*std::vector<Movement*> Move = seqHandler.find(reading[i]).getMovements_STD();
-			for(int k=0;k<Move.size();k++) {
-				arm_dist = DIST_ARM*(i%MAX_LENGTH_ARM-MAX_LENGTH_ARM/2);
-				m_WidowXL->PlaceArm(Move[k].getX()+arm_dist, m_TurtleBot.getDistBoard(), Move[k].getZ());
-				m_WidowXL->SetTime(Move.getDuration());
-				m_WidowXL->MoveArm(true);
-			}*/
-		}
-		m_BLE->WriteEnd();
+int Sequencer::Execute() {
+	int result = 0;
+	std::vector<unsigned char> reading = m_BLE->Read();
+	if(reading[0] == 252) {result = 1;}
+	m_TurtleBot->Go(0,0);
+	for(int i=0;i<static_cast<unsigned char>(reading.size());i++) {
+		m_TurtleBot->Go(DIST_BASE,0);
+		/*std::vector<Movement*> Move = seqHandler.find(reading[i]).getMovements_STD();
+		for(int k=0;k<Move.size();k++) {
+			m_WidowXL->PlaceArm(Move[k].getX(), Move[k].getY(), Move[k].getZ());
+			m_WidowXL->SetTime(Move.getDuration());
+			m_WidowXL->MoveArm(true);
+		}*/
 	}
-
-    pthread_exit(NULL);
+	m_BLE->WriteEnd();
+	return result;
 }

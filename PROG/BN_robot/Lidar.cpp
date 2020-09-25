@@ -12,6 +12,7 @@ Lidar::Lidar(const bool start, const int nb_usb, const int bdrate) {
     m_start.store(start, std::memory_order_release);
     m_port_nr = nb_usb;
     m_bdrate = bdrate;
+    m_sat = true;
     StartLidar();
 }
 
@@ -25,6 +26,10 @@ Lidar::~Lidar() {
 void Lidar::SetStart(const bool state) {
     m_start.store(state, std::memory_order_release);
     StartLidar();
+}
+
+void Lidar::SetSat(bool state) {
+    m_sat = state;
 }
 
 void Lidar::StartLidar(void) {
@@ -76,8 +81,14 @@ void Lidar::Poll(void) {
                     uint16_t intensity = (byte1 << 8) + byte0;
                     uint16_t range     = (byte3 << 8) + byte2;
 
-                    m_range.at(359 - index - degree_count_num).store(range/1000.0,std::memory_order_release);
-                    m_intensity.at(359 - index - degree_count_num).store(intensity,std::memory_order_release);
+                    int temp = range/1000.0;
+                    if(temp > 200 && m_sat) {temp = 3500;}
+                    if(temp > 3500) {temp = 3500;}
+                    m_range.at(359 - index - degree_count_num).store(temp,std::memory_order_release);
+                    temp = intensity;
+                    if(temp > 200 && m_sat) {temp = 3500;}
+                    if(temp > 3500) {temp = 3500;}
+                    m_intensity.at(359 - index - degree_count_num).store(temp,std::memory_order_release);
 
                     degree_count_num++;
                 }
@@ -90,6 +101,7 @@ void Lidar::Poll(void) {
 int Lidar::GetBdRate(void) {return m_usb->GetBdRate();}
 int Lidar::GetPortNb(void) {return m_usb->GetPortNb();}
 int Lidar::GetMotorSpeed(void) {return m_motor_speed;}
+bool Lidar::GetSat() {return m_sat;}
 int Lidar::GetTimeIncrement(void) {return m_time_increment;}
 std::vector<int> Lidar::GetRange(void) {
 
@@ -130,7 +142,7 @@ void* Lidar::ThreadLidar() {
     return 0;
 }
 
-void Lidar::display(const bool isXY){
+void Lidar::display(const bool isXY) {
 
     std::vector<std::string> disp (m_range.size());
 
@@ -177,3 +189,37 @@ void Lidar::display(const bool isXY){
 
 }
 
+void Lidar::DisplayGraph() {
+    std::vector<double> dispX(m_range.size());
+    std::vector<double> dispY(m_range.size());
+    std::generate(dispX.begin() , dispX.end(),
+        [this]{
+            static unsigned index = 0;
+            const int currentItem =  m_intensity.at(index).load()*std::cos(m_range.at(index).load());
+            index++;
+            return currentItem;
+        }
+    );
+    std::generate(dispY.begin() , dispY.end(),
+        [this]{
+            static unsigned index = 0;
+            const int currentItem =  m_intensity.at(index).load()*std::sin(m_range.at(index).load());
+            index++;
+            return currentItem;
+        }
+    );
+    for(int i=-TERMINAL_LENGTH/2;i<TERMINAL_LENGTH/2;i++) {
+        for(int j=-TERMINAL_LENGTH/2;j<TERMINAL_LENGTH/2;j++) {
+            bool test = false;
+            for(unsigned int k=0;k<dispX.size();k++) {
+                if(dispX.at(k) > i*TERMINAL_STEP && dispX.at(k) < (i+1)*TERMINAL_STEP && 
+                    dispY.at(k) > j*TERMINAL_STEP && dispY.at(k) < (j+1)*TERMINAL_STEP) {
+                        test = true;
+                        std::cout << "*";
+                }
+            }
+            if(!test) {std::cout << " ";}
+        }
+        std::cout << std::endl;
+    }
+}

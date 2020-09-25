@@ -7,7 +7,9 @@
 #include <vector>
 #include <wiringPi.h>
 #include <termios.h>
+#include <string.h>
 #include "Usb.hpp"
+//#include "../sequencewriter.h"
 
 constexpr int ARB_SIZE_POSE = 7;
 constexpr int ARB_LOAD_POSE = 8;
@@ -77,7 +79,6 @@ class Arm {
                 int m_nb = 6;
 
                 Usb *m_usb;
-
 };
 
 #endif //ARM_H

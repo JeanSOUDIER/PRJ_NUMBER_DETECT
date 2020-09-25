@@ -153,6 +153,9 @@ void Arm::ToKeyboard(void) {
     WriteOn();
     MoveArm(true);
     SetTime(0);
+    char caractere = getchar();
+    std::cout << "Votre caractere est : " << caractere << std::endl;
+    //std::vector<Movement> move;
 
     while(1) {
 
@@ -160,50 +163,55 @@ void Arm::ToKeyboard(void) {
 
         switch(input) {
 
-            case 'z':{
+            case 'z': {
                 x += pas;
                 break;
             }
 
-            case 's':{
+            case 's': {
                 x -= pas;
                 break;
             }
 
-            case 'd':{
+            case 'd': {
                 y += pas;
                 break;
             }
 
-            case 'q':{
+            case 'q': {
                 y -= pas;
                 break;
             }
 
-            case 'r':{
+            case 'r': {
                 z += pas;
                 break;
             }
 
-            case 'f':{
+            case 'f': {
                 z -= pas;
                 break;
             }
 
-            case 't':{
+            case 't': {
                 pas++;
                 if(pas > 10) {pas = 10;}
                 break;
             }
 
-            case 'g':{
+            case 'g': {
                 pas--;
                 if(pas < 1) {pas = 1;}
                 break;
             }
 
-            case ' ':{
+            case ' ': {
                 //save pos
+                /*Movement mov;
+                mov.setMode(MovementMode::Coordinate, false);
+                mov.setCoordinates(x, y, z);
+                mov.setDuration(1000);
+                move.push_back(mov);*/
                 break;
             }
 
@@ -218,6 +226,8 @@ void Arm::ToKeyboard(void) {
         MoveArm(true);
         std::cout << std::endl;
     }
+    std::string path = path = "/XML/seq_"+std::to_string(caractere);
+    //SequenceWriter seq(move,path);
 }
 
 void Arm::WriteOn() {SetAxePosTic(6, m_LimMinArm[5]);}

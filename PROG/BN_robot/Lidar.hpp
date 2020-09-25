@@ -8,13 +8,13 @@
 #include <array>
 #include <pthread.h>
 #include <atomic>
+#include <string.h>
 #include "Usb.hpp"
 #include "algorithm"
 
 class MobileBase;
 
 class Lidar{
-        friend class MutexThread;
         friend class MobileBase;
 
 	public:
@@ -23,6 +23,7 @@ class Lidar{
         ~Lidar();
 
         void SetStart(const bool state);
+        void SetSat(bool state);
         void Poll(void);
 
         int GetBdRate(void);
@@ -30,16 +31,20 @@ class Lidar{
         bool GetStart(void);
         int GetMotorSpeed(void);
         int GetTimeIncrement(void);
+        bool GetSat();
         std::vector<int> GetRange(void);
         std::vector<int> GetIntensity(void);
         void display(const bool isXY);
-
+        void DisplayGraph();
 protected:
         static void* LidarHelper(void *context);
         void* ThreadLidar();
 
 private:
         void StartLidar(void);
+
+        const int TERMINAL_LENGTH = 127;
+        const double TERMINAL_STEP = TERMINAL_LENGTH/3500;
 
         std::atomic<bool> m_start;
 
@@ -48,6 +53,7 @@ private:
 
         std::array<std::atomic<int> , 360> m_range;
         std::array<std::atomic<int> , 360> m_intensity;
+        bool m_sat = true;
 
         int m_motor_speed = 0;
         int m_time_increment;

@@ -14,21 +14,18 @@ class MobileBase {
 	public:
 		explicit MobileBase(const int nb_usb, const int bdrate);
 		explicit MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate);
-		explicit MobileBase(const int nb_usb, const int bdrate, const int lidar_nb_usb, const int lidar_bdrate);
-		explicit MobileBase(const int nb_usb, const int bdrate, const int lidar_start, const int lidar_nb_usb, const int lidar_bdrate);
-		explicit MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, const int lidar_nb_usb, const int lidar_bdrate);
-		explicit MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, const int lidar_start, const int lidar_nb_usb, const int lidar_bdrate);
+		explicit MobileBase(const int nb_usb, const int bdrate, Lidar* RPLidar, const bool lidar);
+		explicit MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, Lidar* RPLidar, const bool lidar);
 		~MobileBase();
 
 		void Go(const int x, const int y);
 		double getDistBoard();
-		void SetMot(void);
+		void SetMot();
 		void SetMotBalance(const double rho, const double theta);
 		void SetSpeed(int L, int R);
 	private:
-		void GetLidarPoints(void);
-		void GetPosBase(void);
-		double Modulo(double n, double m);
+		void GetLidarPoints();
+		void GetPosBase();
 		std::vector<double> FindSegment(int start, int end);
 
 		int m_port_nr;

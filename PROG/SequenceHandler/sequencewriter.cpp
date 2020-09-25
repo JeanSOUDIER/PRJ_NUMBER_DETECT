@@ -6,7 +6,7 @@ SequenceWriter::SequenceWriter(const QVector<Movement> &_movements, const QStrin
     filePath = _filePath;
 
 }
-SequenceWriter::SequenceWriter(const std::vector<Movement> &_movements, const std::string _filePath){
+SequenceWriter::SequenceWriter(const std::vector<Movement> &_movements, const std::string _filePath) {
 
     movements = QVector<Movement>::fromStdVector(_movements);
     filePath = QString::fromStdString(_filePath);

@@ -1,32 +1,26 @@
 #include "MobileBase.hpp"
 
 MobileBase::MobileBase(const int nb_usb, const int bdrate)
-	: MobileBase(0, 0, 0, nb_usb, bdrate, false, 0, 0) {}
+	: MobileBase(0, 0, 0, nb_usb, bdrate, nullptr, false) {}
 
 MobileBase::MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate)
-	: MobileBase(posX, posY, angle, nb_usb, bdrate, false, 0, 0) {}
+	: MobileBase(posX, posY, angle, nb_usb, bdrate, nullptr, false) {}
 
-MobileBase::MobileBase(const int nb_usb, const int bdrate, const int lidar_nb_usb, const int lidar_bdrate)
-    : MobileBase(0, 0, 0, nb_usb, bdrate, true, lidar_nb_usb, lidar_bdrate) {}
+MobileBase::MobileBase(const int nb_usb, const int bdrate, Lidar *RPLidar, const bool lidar)
+    : MobileBase(0, 0, 0, nb_usb, bdrate, RPLidar, lidar) {}
 
-MobileBase::MobileBase(const int nb_usb, const int bdrate, const int lidar_start, const int lidar_nb_usb, const int lidar_bdrate)
-    : MobileBase(0, 0, 0, nb_usb, bdrate, lidar_start, lidar_nb_usb, lidar_bdrate) {}
-
-MobileBase::MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, const int lidar_nb_usb, const int lidar_bdrate)
-    : MobileBase(posX, posY, angle, nb_usb, bdrate, true, lidar_nb_usb, lidar_bdrate) {}
-
-MobileBase::MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, const int lidar_start, const int lidar_nb_usb, const int lidar_bdrate) {
+MobileBase::MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, Lidar *RPLidar, const bool lidar) {
 	m_usb = new Usb(nb_usb, bdrate);
-	m_lidar_start = lidar_start;
-	m_RPLidar = new Lidar(m_lidar_start, lidar_nb_usb, lidar_bdrate);
+	m_lidar_start = lidar;
+	m_RPLidar = RPLidar;
 	m_port_nr = nb_usb;
 	m_bdrate = bdrate;
 	m_posX = posX;
 	m_posY = posY;
 	m_angle = angle;
 	//thread
-	m_RPLidar->SetStart(m_lidar_start);
 	if(m_lidar_start) {
+		m_RPLidar->SetStart(true);
 		inc_x_thread = new pthread_t();
 	    const int rcL = pthread_create(inc_x_thread, NULL, &Lidar::LidarHelper, &m_RPLidar);
 	    if (rcL) {
@@ -37,7 +31,7 @@ MobileBase::MobileBase(const double posX, const double posY, const double angle,
 
 MobileBase::~MobileBase() {
 	m_RPLidar->SetStart(false);
-    	delete inc_x_thread; //Delete first because otherwise the function called in the thread will have undefined behaviour when executed after calling delete on lidar
+    delete inc_x_thread; //Delete first because otherwise the function called in the thread will have undefined behaviour when executed after calling delete on lidar
 	delete m_RPLidar;
 	delete m_usb;
 }
@@ -55,22 +49,25 @@ double MobileBase::getDistBoard() {
 	return m_dist_board;
 }
 
-void MobileBase::GetLidarPoints(void) {
-	std::vector<int> range = m_RPLidar->GetRange();
-	std::vector<int> intensity = m_RPLidar->GetIntensity();
-	for(int i=0;i<static_cast<int>(range.size());i++) {
-		m_x[i] = static_cast<double>(range[i])*cos(static_cast<double>(intensity[i]));
-		m_y[i] = static_cast<double>(range[i])*sin(static_cast<double>(intensity[i]));
+void MobileBase::GetLidarPoints() {
+	if(m_lidar_start) {
+		std::vector<int> range = m_RPLidar->GetRange();
+		std::vector<int> intensity = m_RPLidar->GetIntensity();
+		for(int i=0;i<static_cast<int>(range.size());i++) {
+			m_x[i] = static_cast<double>(range[i])*std::cos(static_cast<double>(intensity[i]));
+			m_y[i] = static_cast<double>(range[i])*std::sin(static_cast<double>(intensity[i]));
+		}
 	}
+	
 }
 
-void MobileBase::GetPosBase(void) {
+void MobileBase::GetPosBase() {
 	//points cardinaux
 	//find a*x+b => a,b x4 + dist board
 	//set m_posX, m_posY, m_angle, m_dist_board
 }
 
-void MobileBase::SetMot(void) {
+void MobileBase::SetMot() {
 
 	const std::complex<double> c = std::polar(m_posX, m_posY);
     //const double r = std::abs(c);
@@ -80,8 +77,6 @@ void MobileBase::SetMot(void) {
                   std::fmod(std::arg(c) - m_angle + M_PI , (2*M_PI)) - M_PI);
 
 }
-
-double MobileBase::Modulo(const double n, const double m) {return std::fmod(n , m);}
 
 std::vector<double> MobileBase::FindSegment(int start, int end) {
 	
