@@ -15,7 +15,8 @@ std::vector<std::string> split(std::string str, const std::string &delimiter){
         result.push_back(token);
     }
 
-    if(!str.empty() && (str.find_first_not_of( "0123456789" ) == std::string::npos)){result.push_back(str);}
+     if(!str.empty() && (str.find_first_not_of( "0123456789" ) == std::string::npos)){result.push_back(str);} //Second condition for this particular application
+    //if(!str.empty()) == std::string::npos)){result.push_back(str);}
 
 
     return result;
@@ -39,9 +40,8 @@ std::string readAllFile(const std::string &path){
     std::vector<char> buffer(size);
     std::ifstream file(path);
 
-    if(file.is_open()){
-        file.read(&buffer[0] , size);
-    }
+    if(file.is_open()){file.read(&buffer[0] , size);}
+    
     file.close();
 
     return std::string(&buffer[0] , size);
