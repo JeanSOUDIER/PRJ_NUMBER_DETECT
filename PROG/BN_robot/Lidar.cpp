@@ -14,6 +14,7 @@ Lidar::Lidar(const bool start, const int nb_usb, const int bdrate) {
     m_bdrate = bdrate;
     m_sat = true;
     StartLidar();
+    std::cout << "Lidar start" << std::endl;
 }
 
 Lidar::~Lidar() {
@@ -24,8 +25,11 @@ Lidar::~Lidar() {
 }
 
 void Lidar::SetStart(const bool state) {
+    bool test = m_start.load();
     m_start.store(state, std::memory_order_release);
-    StartLidar();
+    if(!test) {
+        StartLidar();
+    }
 }
 
 void Lidar::SetSat(bool state) {

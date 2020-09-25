@@ -7,7 +7,8 @@ class Bluetooth {
 	public:
 		Bluetooth(const int nb_usb, const int bdrate);
 		~Bluetooth();
-		std::vector<unsigned char> Read();
+		//std::vector<unsigned char> Read();
+		unsigned char Read();
 		void WriteEnd();
 	private:
 		int m_port_nr;

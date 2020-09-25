@@ -18,7 +18,7 @@ class Sequencer {
 		explicit Sequencer(Arm* = nullptr, Bluetooth* = nullptr, MobileBase* = nullptr);
 		~Sequencer();
 
-        int Execute();
+        bool Execute();
 
 	private:
 		Arm* m_WidowXL;

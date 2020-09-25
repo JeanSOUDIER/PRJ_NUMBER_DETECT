@@ -1,17 +1,21 @@
 #include "MobileBase.hpp"
 
 MobileBase::MobileBase(const int nb_usb, const int bdrate)
-	: MobileBase(0, 0, 0, nb_usb, bdrate, nullptr, false) {}
+	: MobileBase(0, 0, 0, nb_usb, bdrate, nullptr) {}
 
 MobileBase::MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate)
-	: MobileBase(posX, posY, angle, nb_usb, bdrate, nullptr, false) {}
+	: MobileBase(posX, posY, angle, nb_usb, bdrate, nullptr) {}
 
-MobileBase::MobileBase(const int nb_usb, const int bdrate, Lidar *RPLidar, const bool lidar)
-    : MobileBase(0, 0, 0, nb_usb, bdrate, RPLidar, lidar) {}
+MobileBase::MobileBase(const int nb_usb, const int bdrate, Lidar *RPLidar)
+    : MobileBase(0, 0, 0, nb_usb, bdrate, RPLidar) {}
 
-MobileBase::MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, Lidar *RPLidar, const bool lidar) {
+MobileBase::MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, Lidar *RPLidar) {
 	m_usb = new Usb(nb_usb, bdrate);
-	m_lidar_start = lidar;
+	if(RPLidar) {
+		m_lidar_start = true;
+	} else {
+		m_lidar_start = false;
+	}
 	m_RPLidar = RPLidar;
 	m_port_nr = nb_usb;
 	m_bdrate = bdrate;
@@ -27,12 +31,13 @@ MobileBase::MobileBase(const double posX, const double posY, const double angle,
 	     	std::cout << "Error:unable to create thread Lidar," << rcL << std::endl;
 	    }
 	}
+    std::cout << "MobileBase start" << std::endl;
 }
 
 MobileBase::~MobileBase() {
-	m_RPLidar->SetStart(false);
+	if(m_lidar_start) {m_RPLidar->SetStart(false);}
     delete inc_x_thread; //Delete first because otherwise the function called in the thread will have undefined behaviour when executed after calling delete on lidar
-	delete m_RPLidar;
+	if(m_lidar_start) {delete m_RPLidar;}
 	delete m_usb;
 }
 

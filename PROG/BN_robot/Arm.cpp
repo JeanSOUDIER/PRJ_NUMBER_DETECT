@@ -32,6 +32,7 @@ Arm::Arm(const int nb, const int nb_usb,const  int bdrate, const std::vector<int
     }
 
     SetTime(time);
+    std::cout << "Arm start" << std::endl;
 }
 
 Arm::~Arm() {delete m_usb;}
@@ -119,7 +120,6 @@ bool Arm::PlaceArm(double x, double y, double z) {
 char Arm::getch() {
 
     char buf = 0;
-    //struct termios old = {0}; //¯\_(ツ)_/¯
     struct termios old = {0 , 0 , 0 ,0 , 0 , {0}};
 
     if (tcgetattr(0, &old) < 0){perror("tcsetattr()");}
@@ -153,6 +153,7 @@ void Arm::ToKeyboard(void) {
     WriteOn();
     MoveArm(true);
     SetTime(0);
+    std::cout << "Entrer your caractere : ";
     char caractere = getchar();
     std::cout << "Votre caractere est : " << caractere << std::endl;
     //std::vector<Movement> move;
@@ -174,12 +175,12 @@ void Arm::ToKeyboard(void) {
             }
 
             case 'd': {
-                y += pas;
+                y -= pas;
                 break;
             }
 
             case 'q': {
-                y -= pas;
+                y += pas;
                 break;
             }
 
@@ -193,13 +194,13 @@ void Arm::ToKeyboard(void) {
                 break;
             }
 
-            case 't': {
+            case 'a': {
                 pas++;
                 if(pas > 10) {pas = 10;}
                 break;
             }
 
-            case 'g': {
+            case 'e': {
                 pas--;
                 if(pas < 1) {pas = 1;}
                 break;
@@ -218,7 +219,7 @@ void Arm::ToKeyboard(void) {
             case 10:{return;}
             case 27:{return;}
 
-            default:{std::cout << "unknown key : " << input << std::endl;}
+            default:{std::cout << "unknown key : " << input << " " << static_cast<int>(input) << std::endl;}
 
         }
         std::cout << std::endl << "Pas = " << pas << std::endl;

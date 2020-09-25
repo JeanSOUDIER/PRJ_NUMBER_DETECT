@@ -7,20 +7,22 @@
 #include "Sequencer.hpp"
 
 int main() {
+    std::cout <<"----SETUP----" << std::endl;
     constexpr int ttyUSB_ARBO = 38;
     constexpr int ttyUSB_LDS = 39;
     constexpr int rfcomm0 = 26;
     constexpr int ttyACM0 = 24;
 
-    /*Sequencer Prgm(
+    Sequencer Prgm(
         new Arm(6, ttyUSB_ARBO, 115200),
-        new Bluetooth(ttyAMA0, 115200),
-        new MobileBase(ttyACM0, 115200, new Lidar(ttyUSB_LDS, 230400), true)
+        new Bluetooth(rfcomm0, 115200),
+        new MobileBase(ttyACM0, 115200, new Lidar(ttyUSB_LDS, 230400))
     );
 
-    Prgm.Execute();*/
+    std::cout <<"----LOOP----" << std::endl;
+    while(Prgm.Execute()) {}
 
-    Arm WidowXL(6, ttyUSB_ARBO, 115200);
+    //Arm WidowXL(6, ttyUSB_ARBO, 115200);
     /*WidowXL.PlaceArm(300, 120, 0);
     WidowXL.WriteOff();
     WidowXL.MoveArm(true);
@@ -39,7 +41,7 @@ int main() {
     WidowXL.PosToMove();
     WidowXL.MoveArm(true);*/
 
-    WidowXL.ToKeyboard();
+    //WidowXL.ToKeyboard();
 
 
     //MobileBase OpenCR(0, 0, 0, ttyACM0, 115200, true, ttyUSB_LDS, 230400);

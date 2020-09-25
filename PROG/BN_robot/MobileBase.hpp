@@ -14,8 +14,8 @@ class MobileBase {
 	public:
 		explicit MobileBase(const int nb_usb, const int bdrate);
 		explicit MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate);
-		explicit MobileBase(const int nb_usb, const int bdrate, Lidar* RPLidar, const bool lidar);
-		explicit MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, Lidar* RPLidar, const bool lidar);
+		explicit MobileBase(const int nb_usb, const int bdrate, Lidar* RPLidar);
+		explicit MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, Lidar* RPLidar);
 		~MobileBase();
 
 		void Go(const int x, const int y);

@@ -9,6 +9,7 @@ Sequencer::Sequencer(Arm* WidowXL, Bluetooth* BLE, MobileBase* TurtleBot) {
 		path = "/XML/seq_"+std::to_string(i)+".xml";
 		seqHandler.addSequence(static_cast<unsigned char>(i),path);
 	}*/
+    std::cout << "Sequencer start" << std::endl;
 }
 
 Sequencer::~Sequencer() {
@@ -17,10 +18,15 @@ Sequencer::~Sequencer() {
 	delete m_TurtleBot;
 }
 
-int Sequencer::Execute() {
-	int result = 0;
-	std::vector<unsigned char> reading = m_BLE->Read();
-	if(reading[0] == 252) {result = 1;}
+bool Sequencer::Execute() {
+	while(m_BLE->Read() != 255) {}
+	unsigned char length = m_BLE->Read();
+	std::vector<unsigned char> reading(length);
+	unsigned char re = m_BLE->Read();
+	if(re == 252) {return false;} else {reading.at(0) = re;}
+	for(int i=1;i<length;i++) {
+		reading.at(i) = m_BLE->Read();
+	}
 	m_TurtleBot->Go(0,0);
 	for(int i=0;i<static_cast<unsigned char>(reading.size());i++) {
 		m_TurtleBot->Go(DIST_BASE,0);
@@ -32,5 +38,5 @@ int Sequencer::Execute() {
 		}*/
 	}
 	m_BLE->WriteEnd();
-	return result;
+	return true;
 }
