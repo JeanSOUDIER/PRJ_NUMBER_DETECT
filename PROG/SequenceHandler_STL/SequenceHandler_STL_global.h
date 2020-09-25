@@ -2,8 +2,6 @@
 #define SEQUENCEHANDLER_STL_GLOBAL_H
 
 #include "stdint.h"
-#include "utility.h"
-#include <iostream>
 
 enum class Direction{
     NONE = 0,

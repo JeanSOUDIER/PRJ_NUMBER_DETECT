@@ -1,9 +1,13 @@
 #ifndef MOVEMENT_H
 #define MOVEMENT_H
 
-#include <memory> //std::addressof
-
 #include "SequenceHandler_STL_global.h"
+
+
+#include <memory> //std::addressof
+#include <iostream>
+
+
 
 class Movement{
 

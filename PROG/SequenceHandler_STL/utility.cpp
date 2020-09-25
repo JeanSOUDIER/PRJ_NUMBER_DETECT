@@ -15,7 +15,8 @@ std::vector<std::string> split(std::string str, const std::string &delimiter){
         result.push_back(token);
     }
 
-    if(!str.empty() && (str.find_first_not_of( "0123456789" ) == std::string::npos)){result.push_back(str);}
+    if(!str.empty() && (str.find_first_not_of( "0123456789" ) == std::string::npos)){result.push_back(str);} //Second condition for this particular application
+    //if(!str.empty()){result.push_back(str);}
 
 
     return result;
@@ -56,6 +57,20 @@ uint64_t fileSize(const std::string &path){
 
 
 
-bool exists(const std::string &path){return std::experimental::filesystem::exists(path);}
+bool exists(const std::string &path){
+    #if __cplusplus >= 201402L
+
+    return std::experimental::filesystem::exists(path);
+
+    #else
+
+    return static_cast<bool>(std::ifstream (path));
+    /*std::ifstream file(path);
+    return file.good();*/
+
+    #endif
+}
+
+
 
 }

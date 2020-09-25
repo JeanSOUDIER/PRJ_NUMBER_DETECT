@@ -10,7 +10,9 @@
 #include <vector>
 #include <string>
 
+#if __cplusplus >= 201402L
 #include <experimental/filesystem>
+#endif
 
 namespace Utility {
 

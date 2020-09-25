@@ -4,9 +4,9 @@
 #include "SequenceHandler_STL_global.h"
 
 #include "sequence.h"
+#include "utility.h"
 
 #include <string>
-
 
 class SequenceReader{
 
