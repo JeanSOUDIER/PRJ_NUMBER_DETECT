@@ -156,7 +156,7 @@ void Arm::ToKeyboard(void) {
     std::cout << "Entrer your caractere : ";
     char caractere = getchar();
     std::cout << "Votre caractere est : " << caractere << std::endl;
-    //std::vector<Movement> move;
+    std::vector<Movement> move;
 
     while(1) {
 
@@ -208,11 +208,11 @@ void Arm::ToKeyboard(void) {
 
             case ' ': {
                 //save pos
-                /*Movement mov;
-                mov.setMode(MovementMode::Coordinate, false);
+                Movement mov;
+                //mov.setMode(MovementMode::Coordinate, false);
                 mov.setCoordinates(x, y, z);
                 mov.setDuration(1000);
-                move.push_back(mov);*/
+                move.push_back(mov);
                 break;
             }
 
@@ -228,7 +228,7 @@ void Arm::ToKeyboard(void) {
         std::cout << std::endl;
     }
     std::string path = path = "/XML/seq_"+std::to_string(caractere);
-    //SequenceWriter seq(move,path);
+    SequenceWriter seq(move,path);
 }
 
 void Arm::WriteOn() {SetAxePosTic(6, m_LimMinArm[5]);}

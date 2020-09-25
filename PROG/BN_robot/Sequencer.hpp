@@ -7,7 +7,7 @@
 #include "Lidar.hpp"
 #include "Bluetooth.hpp"
 #include "MobileBase.hpp"
-//#include "../SequenceHandler/sequencehandler.h"
+#include "sequencehandler.h"
 
 constexpr int DIST_BASE = 200;
 constexpr int DIST_ARM = 50;
@@ -25,7 +25,7 @@ class Sequencer {
 		Bluetooth* m_BLE;
 		MobileBase* m_TurtleBot;
 
-		//SequenceHandler seqHandler;
+		SequenceHandler seqHandler;
 };
 
 #endif //SEQUENCER_H

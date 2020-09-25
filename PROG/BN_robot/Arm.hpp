@@ -9,7 +9,8 @@
 #include <termios.h>
 #include <string.h>
 #include "Usb.hpp"
-//#include "../sequencewriter.h"
+#include "sequencehandler.h"
+#include "sequencewriter.h"
 
 constexpr int ARB_SIZE_POSE = 7;
 constexpr int ARB_LOAD_POSE = 8;
