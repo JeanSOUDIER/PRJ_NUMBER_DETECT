@@ -30,12 +30,12 @@ bool Sequencer::Execute() {
 	m_TurtleBot->Go(0,0);
 	for(int i=0;i<static_cast<unsigned char>(reading.size());i++) {
 		m_TurtleBot->Go(DIST_BASE,0);
-		std::vector<Movement*> Move = seqHandler.find(reading[i]).getMovements_STD();
-		for(int k=0;k<Move.size();k++) {
+		//std::vector<Movement*> Move = seqHandler.find(reading[i]);
+		/*for(int k=0;k<Move.size();k++) {
 			m_WidowXL->PlaceArm(Move[k].getX(), Move[k].getY(), Move[k].getZ());
 			m_WidowXL->SetTime(Move.getDuration());
 			m_WidowXL->MoveArm(true);
-		}
+		}*/
 	}
 	m_BLE->WriteEnd();
 	return true;
