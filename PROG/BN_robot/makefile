@@ -14,7 +14,7 @@ Lidar.o : Lidar.cpp
 	g++ -O3 -o Lidar.o -c Lidar.cpp -Wall -lwiringPi -pthread
 
 Bluetooth.o : Bluetooth.cpp
-	g++ -O3 -o Bluetooth.o -c Bluetooth.cpp -Wall -pthread
+	g++ -O3 -Wall -pthread -std=c++11 $(pkg-config --cflags glib-2.0 gobject-2.0 gio-2.0) -c Bluetooth.cpp $(pkg-config --libs glib-2.0 gobject-2.0 gio-2.0 bluez) -o Bluetooth.o
 
 MobileBase.o : MobileBase.cpp
 	g++ -O3 -o MobileBase.o -c MobileBase.cpp -Wall

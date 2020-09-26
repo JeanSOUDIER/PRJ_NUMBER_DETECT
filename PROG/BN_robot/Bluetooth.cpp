@@ -1,8 +1,8 @@
 #include "Bluetooth.hpp"
 
 Bluetooth::Bluetooth(const int nb_usb, const int bdrate) {
-	//system("sudo rfcomm watch hci0");
 	m_usb = new Usb(nb_usb, bdrate);
+	//system("sudo rfcomm bind 0 88:25:83:F0:56:98");
 	m_port_nr = nb_usb;
 	m_bdrate = bdrate;
     std::cout << "Bluetooth start" << std::endl;
@@ -33,7 +33,7 @@ unsigned char Bluetooth::Read() {
 }*/
 
 void Bluetooth::WriteEnd() {
-	std::vector<char> sending;
-	sending[0] = 253;
+	std::vector<char> sending(1);
+	sending[0] = '0';
 	m_usb->SendBytes(sending);
 }

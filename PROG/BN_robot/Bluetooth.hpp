@@ -1,6 +1,7 @@
 #ifndef BLUETOOTH_H
 #define BLUETOOTH_H
 
+#include <iostream>
 #include "Usb.hpp"
 
 class Bluetooth {

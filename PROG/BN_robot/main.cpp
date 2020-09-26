@@ -11,16 +11,18 @@ int main() {
     constexpr int ttyUSB_ARBO = 38;
     constexpr int ttyUSB_LDS = 39;
     constexpr int rfcomm0 = 26;
+    constexpr int rfcomm1 = 27;
+    constexpr int uhid = 40;
     constexpr int ttyACM0 = 24;
 
-    Sequencer Prgm(
+    /*Sequencer Prgm(
         new Arm(6, ttyUSB_ARBO, 115200),
         new Bluetooth(rfcomm0, 115200),
         new MobileBase(ttyACM0, 115200, new Lidar(ttyUSB_LDS, 230400))
     );
 
     std::cout <<"----LOOP----" << std::endl;
-    while(Prgm.Execute()) {}
+    while(Prgm.Execute()) {}*/
 
     //Arm WidowXL(6, ttyUSB_ARBO, 115200);
     /*WidowXL.PlaceArm(300, 120, 0);
@@ -47,8 +49,8 @@ int main() {
     //MobileBase OpenCR(0, 0, 0, ttyACM0, 115200, true, ttyUSB_LDS, 230400);
     //OpenCR.SetSpeed(0,0);
 
-    //Bluetooth BLE(rfcomm0, 9600);
-    //BLE.WriteEnd();
+    Bluetooth BLE(rfcomm0, 9600);
+    BLE.WriteEnd();
     
     /*Lidar RPLidar(true, ttyUSB_LDS, 230400);
 	delay(1000);
