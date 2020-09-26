@@ -10,7 +10,7 @@
 
 
 class SequenceWriter{
-
+	friend class Arm;
 
 public:
 
@@ -22,7 +22,6 @@ public:
 
 
 protected:
-
     bool generate(const Format , const bool withOverride);
     bool generate_XML(const bool withOverride);
     bool generate_CSV(const bool withOverride);

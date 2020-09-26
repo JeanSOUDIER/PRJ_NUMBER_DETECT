@@ -209,7 +209,7 @@ void Arm::ToKeyboard(void) {
             case ' ': {
                 //save pos
                 Movement mov;
-                //mov.setMode(MovementMode::Coordinate, false);
+                mov.setMode(MovementMode::COORDINATES, false);
                 mov.setCoordinates(x, y, z);
                 mov.setDuration(1000);
                 move.push_back(mov);
@@ -227,8 +227,9 @@ void Arm::ToKeyboard(void) {
         MoveArm(true);
         std::cout << std::endl;
     }
-    std::string path = path = "/XML/seq_"+std::to_string(caractere);
+    std::string path = path = "/CSV/seq_"+std::to_string(caractere);
     SequenceWriter seq(move,path);
+    seq.generate(Format::CSV, true);
 }
 
 void Arm::WriteOn() {SetAxePosTic(6, m_LimMinArm[5]);}

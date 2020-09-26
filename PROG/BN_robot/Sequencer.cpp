@@ -28,14 +28,14 @@ bool Sequencer::Execute() {
 		reading.at(i) = m_BLE->Read();
 	}
 	m_TurtleBot->GoPos(0,0,0);
-	for(int i=0;i<static_cast<unsigned char>(reading.size());i++) {
+	for(unsigned int i=0;i<reading.size();i++) {
 		m_TurtleBot->GoPos(DIST_BASE,0,0);
-		//std::vector<Movement*> Move = seqHandler.find(reading[i]);
-		/*for(int k=0;k<Move.size();k++) {
+		std::vector<Movement> Move = seqHandler.find(reading[i]).getMovements();
+		for(unsigned int k=0;k<Move.size();k++) {
 			m_WidowXL->PlaceArm(Move[k].getX(), Move[k].getY(), Move[k].getZ());
-			m_WidowXL->SetTime(Move.getDuration());
+			m_WidowXL->SetTime(Move[k].getDuration());
 			m_WidowXL->MoveArm(true);
-		}*/
+		}
 	}
 	m_BLE->WriteEnd();
 	return true;
