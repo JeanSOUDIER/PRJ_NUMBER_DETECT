@@ -12,7 +12,6 @@ int main() {
     constexpr int ttyUSB_LDS = 39;
     constexpr int rfcomm0 = 26;
     constexpr int rfcomm1 = 27;
-    constexpr int uhid = 40;
     constexpr int ttyACM0 = 24;
 
     /*Sequencer Prgm(
@@ -46,11 +45,11 @@ int main() {
     //WidowXL.ToKeyboard();
 
 
-    //MobileBase OpenCR(0, 0, 0, ttyACM0, 115200, true, ttyUSB_LDS, 230400);
-    //OpenCR.SetSpeed(0,0);
+    MobileBase OpenCR(ttyACM0, 115200, nullptr);
+    OpenCR.GoPos(10,0,0);
 
-    Bluetooth BLE(rfcomm0, 9600);
-    BLE.WriteEnd();
+    //Bluetooth BLE(rfcomm0, 9600);
+    //BLE.WriteEnd();
     
     /*Lidar RPLidar(true, ttyUSB_LDS, 230400);
 	delay(1000);

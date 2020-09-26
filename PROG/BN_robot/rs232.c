@@ -36,7 +36,7 @@
 
 #if defined(__linux__) || defined(__FreeBSD__)   /* Linux & FreeBSD */
 
-#define RS232_PORTNR  41
+#define RS232_PORTNR  40
 
 
 int Cport[RS232_PORTNR],
@@ -53,7 +53,7 @@ const char *comports[RS232_PORTNR]={"/dev/ttyS0","/dev/ttyS1","/dev/ttyS2","/dev
                                     "/dev/rfcomm0","/dev/rfcomm1","/dev/ircomm0","/dev/ircomm1",
                                     "/dev/cuau0","/dev/cuau1","/dev/cuau2","/dev/cuau3",
                                     "/dev/cuaU0","/dev/cuaU1","/dev/cuaU2","/dev/cuaU3",
-                                    "/dev/ttyUSB_ARBO", "/dev/ttyUSB_LDS", "/dev/uhid"};
+                                    "/dev/ttyUSB_ARBO", "/dev/ttyUSB_LDS"};
 
 int RS232_OpenComport(int comport_number, int baudrate, const char *mode, int flowctrl)
 {

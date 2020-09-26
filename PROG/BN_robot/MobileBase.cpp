@@ -16,12 +16,12 @@ MobileBase::MobileBase(const double posX, const double posY, const double angle,
 	} else {
 		m_lidar_start = false;
 	}
-	m_RPLidar = RPLidar;
 	m_port_nr = nb_usb;
 	m_bdrate = bdrate;
 	m_posX = posX;
 	m_posY = posY;
 	m_angle = angle;
+	m_RPLidar = RPLidar;
 	//thread
 	if(m_lidar_start) {
 		m_RPLidar->SetStart(true);
@@ -35,19 +35,34 @@ MobileBase::MobileBase(const double posX, const double posY, const double angle,
 }
 
 MobileBase::~MobileBase() {
-	if(m_lidar_start) {m_RPLidar->SetStart(false);}
-    delete inc_x_thread; //Delete first because otherwise the function called in the thread will have undefined behaviour when executed after calling delete on lidar
-	if(m_lidar_start) {delete m_RPLidar;}
+	if(m_lidar_start) {
+		m_RPLidar->SetStart(false);
+		delete inc_x_thread; //Delete first because otherwise the function called in the thread will have undefined behaviour when executed after calling delete on lidar
+		delete m_RPLidar;
+	}
 	delete m_usb;
 }
 
-void MobileBase::Go(const int x, const int y) {
+void MobileBase::Go(const double x, const double y, const double a) {
 	//TODO asserv lidar + deplacement
 	while(std::abs(x-m_posX) > ERREUR_STATIQUE && std::abs(y-m_posY) > ERREUR_STATIQUE) {
 		GetLidarPoints();
 		GetPosBase();
-		SetMot();
+		GoPos(m_posX, m_posY, m_angle);
 	}
+}
+
+void MobileBase::GoPos(const double x, const double y, const double a) {
+	const double r = sqrt(x*x+y*y);
+    double gamma = (y == 0 && x < 0) ? 3.1415 : 2*atan(y/(x+r));
+    gamma += a+M_PI;
+    gamma = std::fmod(gamma,2*M_PI);
+    gamma -= M_PI;
+	SetSpeed(50*sign(gamma),-50*sign(gamma));
+	delay(gamma*SPEED_ANGLE);
+	SetSpeed(50*sign(r),50*sign(r));
+	delay(r*SPEED_NORM);
+	SetSpeed(0, 0);
 }
 
 double MobileBase::getDistBoard() {
@@ -70,17 +85,6 @@ void MobileBase::GetPosBase() {
 	//points cardinaux
 	//find a*x+b => a,b x4 + dist board
 	//set m_posX, m_posY, m_angle, m_dist_board
-}
-
-void MobileBase::SetMot() {
-
-	const std::complex<double> c = std::polar(m_posX, m_posY);
-    //const double r = std::abs(c);
-    //const double gamma = std::fmod(std::arg(c) - m_angle + M_PI , (2*M_PI)) - M_PI;
-
-    SetMotBalance(std::abs(c),
-                  std::fmod(std::arg(c) - m_angle + M_PI , (2*M_PI)) - M_PI);
-
 }
 
 std::vector<double> MobileBase::FindSegment(int start, int end) {
@@ -110,4 +114,12 @@ void MobileBase::SetSpeed(int L, int R) {
 	unsigned char Rc = R+128;
 	std::vector<char> sending{char(255), static_cast<char>(Rc), static_cast<char>(Lc)};
 	m_usb->SendBytes(sending);
+}
+
+int MobileBase::sign(const double test) {
+	if(test < 0) {
+		return -1;
+	} else {
+		return 1;
+	}
 }

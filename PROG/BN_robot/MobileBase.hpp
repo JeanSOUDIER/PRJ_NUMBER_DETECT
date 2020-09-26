@@ -18,15 +18,19 @@ class MobileBase {
 		explicit MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, Lidar* RPLidar);
 		~MobileBase();
 
-		void Go(const int x, const int y);
+		void Go(const double x, const double y, const double a);
 		double getDistBoard();
-		void SetMot();
+		void GoPos(const double x, const double y, const double a);
 		void SetMotBalance(const double rho, const double theta);
 		void SetSpeed(int L, int R);
 	private:
 		void GetLidarPoints();
 		void GetPosBase();
 		std::vector<double> FindSegment(int start, int end);
+		int sign(const double test);
+
+		const double SPEED_ANGLE = 1;
+		const double SPEED_NORM = 1;
 
 		int m_port_nr;
         int m_bdrate;

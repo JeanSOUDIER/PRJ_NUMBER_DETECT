@@ -27,9 +27,9 @@ bool Sequencer::Execute() {
 	for(int i=1;i<length;i++) {
 		reading.at(i) = m_BLE->Read();
 	}
-	m_TurtleBot->Go(0,0);
+	m_TurtleBot->GoPos(0,0,0);
 	for(int i=0;i<static_cast<unsigned char>(reading.size());i++) {
-		m_TurtleBot->Go(DIST_BASE,0);
+		m_TurtleBot->GoPos(DIST_BASE,0,0);
 		//std::vector<Movement*> Move = seqHandler.find(reading[i]);
 		/*for(int k=0;k<Move.size();k++) {
 			m_WidowXL->PlaceArm(Move[k].getX(), Move[k].getY(), Move[k].getZ());
