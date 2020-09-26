@@ -1,6 +1,6 @@
 LOW :
  RPI
- - BLE (pb à tester avec un module)
+ - BLE (pb à tester jetson)
  - deplacement (test)
  - test lidar => mise en forme
  Jetson
