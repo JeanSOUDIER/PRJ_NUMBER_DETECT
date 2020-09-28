@@ -6,7 +6,7 @@ Sequencer::Sequencer(Arm* WidowXL, Bluetooth* BLE, MobileBase* TurtleBot) {
 	m_TurtleBot = TurtleBot;
 	std::string path;
 	for(int i=0;i<256;i++) {
-		path = "/XML/seq_"+std::to_string(i)+".xml";
+		path = "CSV/seq_"+std::to_string(i)+".csv";
 		seqHandler.addSequence(static_cast<unsigned char>(i),path);
 	}
     std::cout << "Sequencer start" << std::endl;
@@ -29,7 +29,7 @@ bool Sequencer::Execute() {
 	}
 	m_TurtleBot->GoPos(0,0,0);
 	for(unsigned int i=0;i<reading.size();i++) {
-		m_TurtleBot->GoPos(DIST_BASE,0,0);
+		//m_TurtleBot->GoPos(DIST_BASE,0,0);
 		std::vector<Movement> Move = seqHandler.find(reading[i]).getMovements();
 		for(unsigned int k=0;k<Move.size();k++) {
 			m_WidowXL->PlaceArm(Move[k].getX(), Move[k].getY(), Move[k].getZ());

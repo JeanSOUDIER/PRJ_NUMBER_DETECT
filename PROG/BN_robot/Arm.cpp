@@ -229,7 +229,7 @@ void Arm::ToKeyboard(void) {
         MoveArm(true);
         std::cout << std::endl;
     }
-    std::string path = path = "/CSV/seq_"+std::to_string(caractere);
+    std::string path = "CSV/seq_"+std::to_string(caractere);
     SequenceWriter seq(move,path);
     seq.generate(Format::CSV, true);
 }
