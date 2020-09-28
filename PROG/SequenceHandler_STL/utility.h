@@ -22,7 +22,13 @@ namespace Utility {
     uint64_t fileSize(const std::string &path);
     bool exists(const std::string &path);
 
-    bool writeCSV(const std::string &path , const std::vector<std::vector<double>>&data);
+    bool writeCSV(const std::string &path , const std::vector<std::vector<double>> &data , const std::string &delimiter);
+    bool writeCSV(const std::string &path, const std::vector<std::vector<std::string>> &data , const std::string &delimiter);
+
+    bool writeCSV(const std::string &path , const std::vector<std::vector<double>> &data , const char &delimiter);
+    bool writeCSV(const std::string &path, const std::vector<std::vector<std::string>> &data , const char &delimiter);
+
+    bool writeCSV(const std::string &path , const std::vector<std::vector<double>> &data);
     bool writeCSV(const std::string &path, const std::vector<std::vector<std::string>> &data);
 
 }

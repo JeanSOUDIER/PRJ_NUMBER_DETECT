@@ -63,7 +63,7 @@ bool exists(const std::string &path){
 
 }
 
-bool writeCSV(const std::string &path, const std::vector<std::vector<double> > &data){
+bool writeCSV(const std::string &path, const std::vector<std::vector<double> > &data, const std::string &delimiter){
 
     std::vector<std::vector<std::string>> data_str;
     data_str.reserve(data.size());
@@ -74,11 +74,11 @@ bool writeCSV(const std::string &path, const std::vector<std::vector<double> > &
     }
 
 
-    return writeCSV(path , data_str);
+    return writeCSV(path , data_str , delimiter);
 
 }
 
-bool writeCSV(const std::string &path, const std::vector<std::vector<std::string>> &data){
+bool writeCSV(const std::string &path, const std::vector<std::vector<std::string>> &data , const std::string &delimiter){
 
     if(Utility::exists(path)){std::remove(&path[0]);}
 
@@ -87,7 +87,7 @@ bool writeCSV(const std::string &path, const std::vector<std::vector<std::string
     if(file.is_open()){
 
         for(auto &line:data){
-            for(auto &item:line){file << item << ";";}
+            for(auto &item:line){file << item << delimiter;}
             file << "\n";
         }
 
@@ -99,5 +99,10 @@ bool writeCSV(const std::string &path, const std::vector<std::vector<std::string
 
 }
 
+bool writeCSV(const std::string &path , const std::vector<std::vector<double>> &data , const char &delimiter){return Utility::writeCSV(path , data , std::to_string(delimiter));}
+bool writeCSV(const std::string &path, const std::vector<std::vector<std::string>> &data , const char &delimiter){return Utility::writeCSV(path , data , std::to_string(delimiter));}
+
+bool writeCSV(const std::string &path , const std::vector<std::vector<double>> &data){return Utility::writeCSV(path , data , ";");}
+bool writeCSV(const std::string &path, const std::vector<std::vector<std::string>> &data){return Utility::writeCSV(path , data , ";");}
 
 }
