@@ -38,7 +38,7 @@ sequencereader.o : sequencereader.cpp
 	g++ -O3 -o sequencereader.o -c sequencereader.cpp -Wall
 
 Sequencer.o : Sequencer.cpp
-	g++ -O3 -o Sequencer.o -c Sequencer.cpp -Wall
+	g++ -O3 -o Sequencer.o -c Sequencer.cpp -Wall -I/usr/include/qt5/QtCore -I/usr/include/qt5/QtGui -I/usr/include/qt5 -lQtCore -lQtGui
 
 main.o: main.cpp rs232.h Usb.hpp Arm.hpp Lidar.hpp Bluetooth.hpp MobileBase.hpp movement.h utility.h sequence.h sequencehandler.h sequencewriter.h sequencereader.h Sequencer.hpp
 	g++ -O3 -o main.o -c main.cpp -Wall -lwiringPi -pthread

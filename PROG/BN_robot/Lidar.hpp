@@ -36,8 +36,8 @@ class Lidar{
         std::vector<int> GetIntensity(void);
         void display(const bool isXY);
         void DisplayGraph();
-protected:
         static void* LidarHelper(void *context);
+protected:
         void* ThreadLidar();
 
 private:

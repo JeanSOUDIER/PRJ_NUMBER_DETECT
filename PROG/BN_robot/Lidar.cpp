@@ -88,11 +88,11 @@ void Lidar::Poll(void) {
                     int temp = range/1000.0;
                     if(temp > 200 && m_sat) {temp = 3500;}
                     if(temp > 3500) {temp = 3500;}
-                    m_range.at(359 - index - degree_count_num).store(temp,std::memory_order_release);
+                    m_intensity.at(359 - index - degree_count_num).store(temp,std::memory_order_release);
                     temp = intensity;
                     if(temp > 200 && m_sat) {temp = 3500;}
                     if(temp > 3500) {temp = 3500;}
-                    m_intensity.at(359 - index - degree_count_num).store(temp,std::memory_order_release);
+                    m_range.at(359 - index - degree_count_num).store(temp,std::memory_order_release);
 
                     degree_count_num++;
                 }
@@ -140,7 +140,10 @@ void* Lidar::LidarHelper(void *context) {return static_cast<Lidar*>(context)->Th
 void* Lidar::ThreadLidar() {
 
 
-    while(m_start.load(std::memory_order_acquire)){Poll();}
+    while(m_start.load(std::memory_order_acquire)){
+        Poll();
+        DisplayGraph();
+    }
 
     pthread_exit(NULL);
     return 0;

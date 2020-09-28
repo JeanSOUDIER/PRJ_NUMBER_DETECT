@@ -1,7 +1,7 @@
 LOW :
  RPI
  - BLE (pb à tester jetson)
- - deplacement (test)
+ - deplacement (réglages)
  - test lidar => mise en forme
  Jetson
  - caméra

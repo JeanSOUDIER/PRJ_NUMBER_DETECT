@@ -30,7 +30,7 @@ class MobileBase {
 		int sign(const double test);
 
 		const double SPEED_ANGLE = 1;
-		const double SPEED_NORM = 1;
+		const double SPEED_NORM = 7;
 
 		int m_port_nr;
         int m_bdrate;

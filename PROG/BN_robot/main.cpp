@@ -24,44 +24,23 @@ int main() {
     while(Prgm.Execute()) {}*/
 
     //Arm WidowXL(6, ttyUSB_ARBO, 115200);
-    /*WidowXL.PlaceArm(300, 120, 0);
-    WidowXL.WriteOff();
-    WidowXL.MoveArm(true);
-    WidowXL.WriteOn();
-    WidowXL.MoveArm(true);
-    WidowXL.PlaceArm(285, 120, -62);
-    WidowXL.MoveArm(true);
-    WidowXL.PlaceArm(319, 191, -62);
-    WidowXL.MoveArm(true);
-    WidowXL.PlaceArm(319, 191, 0);
-    WidowXL.MoveArm(true);
-    WidowXL.PlaceArm(300, 120, 0);
-    WidowXL.MoveArm(true);
-    WidowXL.WriteOff();
-    WidowXL.MoveArm(true);
-    WidowXL.PosToMove();
-    WidowXL.MoveArm(true);*/
-
     //WidowXL.ToKeyboard();
 
 
-    MobileBase OpenCR(ttyACM0, 115200, nullptr);
-    OpenCR.GoPos(10,0,0);
+    //MobileBase OpenCR(ttyACM0, 115200, nullptr);
+    //OpenCR.GoPos(0,1,0);
 
     //Bluetooth BLE(rfcomm0, 9600);
     //BLE.WriteEnd();
-    
-    /*Lidar RPLidar(true, ttyUSB_LDS, 230400);
-	delay(1000);
-    RPLidar.Poll();
-    delay(1000);
-    std::vector<int> range = RPLidar.GetRange();
-    std::vector<int> intensity = RPLidar.GetIntensity();
 
-    std::vector<std::vector<double>> pos;
-    for(unsigned int i=0;i<range.size();i++) {
-    		std::cout << range.at(i)*cos(intensity.at(i)) << " " << range.at(i)*sin(intensity.at(i)) << std::endl;
-    }*/
+    MobileBase OpenCR(ttyACM0, 115200, new Lidar(ttyUSB_LDS, 230400));
+    delay(1000);
+    //Lidar RPLidar(true, ttyUSB_LDS, 230400);
+    //std::vector<int> range = RPLidar.GetRange();
+    //std::vector<int> intensity = RPLidar.GetIntensity();
+
+    //RPLidar.display(true);
+    //RPLidar.DisplayGraph();
 
     return 0;
 }

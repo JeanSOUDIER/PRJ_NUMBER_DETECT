@@ -157,8 +157,9 @@ void Arm::ToKeyboard(void) {
     char caractere = getchar();
     std::cout << "Votre caractere est : " << caractere << std::endl;
     std::vector<Movement> move;
+    bool test = true;
 
-    while(1) {
+    while(test) {
 
         const char input = getch();
 
@@ -208,6 +209,7 @@ void Arm::ToKeyboard(void) {
 
             case ' ': {
                 //save pos
+                std::cout << "Pos saved : " << x << " " << y << " " << z << std::endl;
                 Movement mov;
                 mov.setMode(MovementMode::COORDINATES, false);
                 mov.setCoordinates(x, y, z);
@@ -216,8 +218,8 @@ void Arm::ToKeyboard(void) {
                 break;
             }
 
-            case 10:{return;}
-            case 27:{return;}
+            case 10:{test = false;}
+            case 27:{test = false;}
 
             default:{std::cout << "unknown key : " << input << " " << static_cast<int>(input) << std::endl;}
 
