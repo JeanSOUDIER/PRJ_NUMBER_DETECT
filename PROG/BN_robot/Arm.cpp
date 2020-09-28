@@ -1,10 +1,10 @@
 #include "Arm.hpp"
 
 Arm::Arm(const int nb, const int nb_usb, const int bdrate)
-    : Arm(nb,nb_usb,bdrate,{700, 2000, 500, 500, 200, 300},{2800, 4100, 2600, 2600, 820, 700},5000){}
+    : Arm(nb,nb_usb,bdrate,{1750, 2000, 500, 500, 200, 300},{3850, 4100, 2600, 2600, 820, 700},5000){}
 
 Arm::Arm(const int nb, const int nb_usb,const int bdrate, const int time)
-    : Arm(nb,nb_usb,bdrate,{700, 2000, 500, 500, 200, 300},{2800, 4100, 2600, 2600, 820, 700},time) {}
+    : Arm(nb,nb_usb,bdrate,{1750, 2000, 500, 500, 200, 300},{3850, 4100, 2600, 2600, 820, 700},time) {}
 
 Arm::Arm(const int nb,const  int nb_usb, const int bdrate,const std::vector<int> &lim_min, const std::vector<int> &lim_max)
     : Arm(nb,nb_usb,bdrate,lim_min,lim_max,5000) {}
@@ -35,7 +35,12 @@ Arm::Arm(const int nb, const int nb_usb,const  int bdrate, const std::vector<int
     std::cout << "Arm start" << std::endl;
 }
 
-Arm::~Arm() {delete m_usb;}
+Arm::~Arm() {
+    SetTime(5000);
+    PosToMove();
+    MoveArm(true);
+    delete m_usb;
+}
 
 
 void Arm::MoveArm(bool withDelay) {
@@ -97,11 +102,11 @@ bool Arm::PlaceArm(double x, double y, double z) {
 
                     const double theta3 = -theta1-theta2;
                     //set axes
-                    SetAxePos(1, (gamma));
-                    SetAxePos(2, (theta1));
-                    SetAxePos(3, (theta2));
-                    SetAxePos(4, (theta3));
-                    SetAxePos(5, (M_PI/2-gamma));
+                    SetAxePos(1, gamma);
+                    SetAxePos(2, theta1);
+                    SetAxePos(3, theta2);
+                    SetAxePos(4, theta3);
+                    SetAxePos(5, M_PI/2-gamma);
                 } else {
                     //std:cout << "arm too short" << std::endl;
                 }
@@ -143,12 +148,12 @@ char Arm::getch() {
 
 void Arm::ToKeyboard(void) {
 
-    int x = 300 ;
+    int x = 300;
     int y = 120;
     int z = 0;
 
     int pas = 10;
-    SetTime(1000);
+    SetTime(5000);
     PlaceArm(x, y, z);
     WriteOn();
     MoveArm(true);
@@ -218,8 +223,15 @@ void Arm::ToKeyboard(void) {
                 break;
             }
 
-            case 10:{test = false;}
-            case 27:{test = false;}
+            case 'o': {
+                test = false;
+                break;
+            }
+
+            case 126:{
+                std::cout << "no save" << std::endl;
+                return;
+            }
 
             default:{std::cout << "unknown key : " << input << " " << static_cast<int>(input) << std::endl;}
 
@@ -229,6 +241,7 @@ void Arm::ToKeyboard(void) {
         MoveArm(true);
         std::cout << std::endl;
     }
+    std::cout << "Saving" << std::endl;
     std::string path = "CSV/seq_"+std::to_string(caractere);
     SequenceWriter seq(move,path);
     seq.generate(Format::CSV, true);
@@ -247,7 +260,7 @@ void Arm::Homing() {
 }
 
 void Arm::PosToMove() {
-    SetAxePos(1, 0);
+    SetAxePos(1, -M_PI/2);
     SetAxePos(2, M_PI/2);
     SetAxePos(3, -M_PI/2);
     SetAxePos(4, 0);

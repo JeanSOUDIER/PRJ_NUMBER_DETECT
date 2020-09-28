@@ -1,16 +1,15 @@
 LOW :
  RPI
- - BLE (pb à tester jetson)
+ - BLE (pb à tester jetson) [mardi aprem]
  - deplacement (réglages)
- - test lidar => mise en forme
+ - test lidar => mise en forme [vendredi]
  Jetson
- - caméra
- - bluetooth
+ - caméra [jeudi aprem]
+ - bluetooth [mardi aprem]
 
 HIGH :
  RPI
- - link dessin
- - test dessin
+ - test dessin (améliorer)
  Jetson
  - RNN
  - pre traitement

@@ -14,14 +14,14 @@ int main() {
     constexpr int rfcomm1 = 27;
     constexpr int ttyACM0 = 24;
 
-    /*Sequencer Prgm(
+    Sequencer Prgm(
         new Arm(6, ttyUSB_ARBO, 115200),
-        new Bluetooth(rfcomm0, 115200),
+        nullptr,//new Bluetooth(rfcomm0, 115200),
         new MobileBase(ttyACM0, 115200, new Lidar(ttyUSB_LDS, 230400))
     );
 
     std::cout <<"----LOOP----" << std::endl;
-    while(Prgm.Execute()) {}*/
+    while(Prgm.Execute()) {}
 
     Arm WidowXL(6, ttyUSB_ARBO, 115200);
     WidowXL.ToKeyboard();

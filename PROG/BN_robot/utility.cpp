@@ -58,19 +58,51 @@ uint64_t fileSize(const std::string &path){
 
 
 bool exists(const std::string &path){
-    #if __cplusplus >= 201402L
-
-    return std::experimental::filesystem::exists(path);
-
-    #else
 
     return static_cast<bool>(std::ifstream (path));
-    /*std::ifstream file(path);
-    return file.good();*/
 
-    #endif
 }
 
+bool writeCSV(const std::string &path, const std::vector<std::vector<double> > &data, const std::string &delimiter){
 
+    std::vector<std::vector<std::string>> data_str;
+    data_str.reserve(data.size());
+    for(auto &vect:data){
+        std::vector<std::string> str_vect;
+        std::transform(vect.begin(), vect.end() , std::back_inserter(str_vect), [](double d) {return std::to_string(d);});
+        data_str.push_back(str_vect);
+    }
+
+
+    return writeCSV(path , data_str , delimiter);
+
+}
+
+bool writeCSV(const std::string &path, const std::vector<std::vector<std::string>> &data , const std::string &delimiter){
+
+    if(Utility::exists(path)){std::remove(&path[0]);}
+
+    std::ofstream file(path + ".csv");
+
+    if(file.is_open()){
+
+        for(auto &line:data){
+            for(auto &item:line){file << item << delimiter;}
+            file << "\n";
+        }
+
+    }
+    else{return false;}
+
+    file.close();
+    return true;
+
+}
+
+bool writeCSV(const std::string &path , const std::vector<std::vector<double>> &data , const char &delimiter){return Utility::writeCSV(path , data , std::to_string(delimiter));}
+bool writeCSV(const std::string &path, const std::vector<std::vector<std::string>> &data , const char &delimiter){return Utility::writeCSV(path , data , std::to_string(delimiter));}
+
+bool writeCSV(const std::string &path , const std::vector<std::vector<double>> &data){return Utility::writeCSV(path , data , ";");}
+bool writeCSV(const std::string &path, const std::vector<std::vector<std::string>> &data){return Utility::writeCSV(path , data , ";");}
 
 }
