@@ -1,7 +1,5 @@
 CONFIG -= qt
 
-LIBS += -lstdc++fs
-
 TEMPLATE = lib
 DEFINES += SEQUENCEHANDLER_STL_LIBRARY
 
