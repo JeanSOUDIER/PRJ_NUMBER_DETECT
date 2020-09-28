@@ -87,7 +87,7 @@ bool writeCSV(const std::string &path, const std::vector<std::vector<std::string
     if(file.is_open()){
 
         for(auto &line:data){
-            for(auto &item:line){file << item << ",";}
+            for(auto &item:line){file << item << ";";}
             file << "\n";
         }
 
