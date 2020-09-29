@@ -1,8 +1,8 @@
 LOW :
  RPI
  - BLE (pb à tester jetson) [mardi aprem]
- - deplacement (réglages)
  - test lidar => mise en forme [vendredi]
+ - SLAM (recherches)
  Jetson
  - caméra [jeudi aprem]
  - bluetooth [mardi aprem]

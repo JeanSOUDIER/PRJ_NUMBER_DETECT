@@ -22,6 +22,7 @@ MobileBase::MobileBase(const double posX, const double posY, const double angle,
 	m_posY = posY;
 	m_angle = angle;
 	m_RPLidar = RPLidar;
+	GoPos(0,0,0);
 	//thread
 	if(m_lidar_start) {
 		m_RPLidar->SetStart(true);
@@ -54,14 +55,25 @@ void MobileBase::Go(const double x, const double y, const double a) {
 
 void MobileBase::GoPos(const double x, const double y, const double a) {
 	const double r = sqrt(x*x+y*y);
-    double gamma = (y == 0 && x < 0) ? 3.1415 : 2*atan(y/(x+r));
+    double gamma;
+    if(x == 0 && y == 0) {
+    	gamma = 0;
+    } else if(y == 0 && x < 0) {
+    	gamma = M_PI;
+    } else {
+    	gamma = 2*atan(y/(x+r));
+    }
     gamma += a+M_PI;
     gamma = std::fmod(gamma,2*M_PI);
     gamma -= M_PI;
-	SetSpeed(50*sign(gamma),-50*sign(gamma));
-	delay(gamma*SPEED_ANGLE);
-	SetSpeed(50*sign(r),50*sign(r));
-	delay(r*SPEED_NORM);
+    if(gamma != 0) {
+    	SetSpeed(50*sign(gamma),-50*sign(gamma));
+		delay(std::abs(gamma)*SPEED_ANGLE);
+    }
+	if(r != 0) {
+		SetSpeed(50*sign(r),50*sign(r));
+		delay(r*SPEED_NORM);
+	}
 	SetSpeed(0, 0);
 }
 
