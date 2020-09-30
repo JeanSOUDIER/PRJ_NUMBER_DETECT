@@ -61,7 +61,7 @@ bool Sequencer::Execute() {
 		m_WidowXL->SetTime(2000);
 		m_WidowXL->WriteOff();
         m_WidowXL->MoveArm(true);
-		m_WidowXL->PosToMove();
+		m_WidowXL->PosWriting(false);
         m_WidowXL->MoveArm(true);
 		if(i < reading.size()-1) {
 			m_TurtleBot->GoPos(DIST_BASE,0,0);

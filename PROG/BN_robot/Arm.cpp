@@ -147,16 +147,12 @@ char Arm::getch() {
 }
 
 void Arm::ToKeyboard(void) {
+    std::vector<int> pos = PosWriting(true);
 
-    int x = 300;
-    int y = 120;
-    int z = 0;
-
+    int x = pos[0];
+    int y = pos[1];
+    int z = pos[2];
     int pas = 10;
-    SetTime(5000);
-    PlaceArm(x, y, z);
-    WriteOn();
-    MoveArm(true);
     SetTime(0);
     std::cout << "Entrer your caractere : ";
     char caractere = getchar();
@@ -258,7 +254,22 @@ void Arm::Homing() {
     WriteOff();
     MoveArm(true);
 }
+std::vector<int> Arm::PosWriting(bool state) {
+    std::vector<int> pos(3);
+    pos[0] = 300;
+    pos[1] = 120;
+    pos[2] = 0;
 
+    SetTime(5000);
+    PlaceArm(x, y, z);
+    if(state) {
+        WriteOn();
+    } else {
+        WriteOff();
+    }
+    MoveArm(true);
+    return pos;
+}
 void Arm::PosToMove() {
     SetAxePos(1, -M_PI/2);
     SetAxePos(2, M_PI/2);
