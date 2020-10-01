@@ -26,11 +26,17 @@ MobileBase::MobileBase(const double posX, const double posY, const double angle,
 	//thread
 	if(m_lidar_start) {
 		m_RPLidar->SetStart(true);
-		inc_x_thread = new pthread_t();
+		for(int i=0;i<60;i++) {
+			m_RPLidar->Poll();
+		}
+        //m_RPLidar->DisplayGraph();
+		//m_RPLidar->Display(true);
+		std::cout << m_RPLidar->SaveLidarPoints() <<std::endl;
+		/*inc_x_thread = new pthread_t();
 	    const int rcL = pthread_create(inc_x_thread, NULL, &Lidar::LidarHelper, &m_RPLidar);
 	    if (rcL) {
 	     	std::cout << "Error:unable to create thread Lidar," << rcL << std::endl;
-	    }
+	    }*/
 	}
     std::cout << "MobileBase start" << std::endl;
 }
@@ -38,7 +44,7 @@ MobileBase::MobileBase(const double posX, const double posY, const double angle,
 MobileBase::~MobileBase() {
 	if(m_lidar_start) {
 		m_RPLidar->SetStart(false);
-		delete inc_x_thread; //Delete first because otherwise the function called in the thread will have undefined behaviour when executed after calling delete on lidar
+		//delete inc_x_thread; //Delete first because otherwise the function called in the thread will have undefined behaviour when executed after calling delete on lidar
 		delete m_RPLidar;
 	}
 	delete m_usb;

@@ -261,7 +261,7 @@ std::vector<int> Arm::PosWriting(bool state) {
     pos[2] = 0;
 
     SetTime(5000);
-    PlaceArm(x, y, z);
+    PlaceArm(pos[0], pos[1], pos[2]);
     if(state) {
         WriteOn();
     } else {

@@ -44,14 +44,15 @@ void Lidar::StartLidar(void) {
     }
 }
 
-/*void Lidar::Poll(void) {
+void Lidar::Poll(void) {
     bool got_scan = false;
-    std::vector<unsigned char> raw_bytes;
+    std::vector<unsigned char> raw_bytes(42);
     uint8_t good_sets = 0;
     uint32_t m_motor_speed = 0;
     int index;
+    uint32_t motor_speed = 0;
 
-    while (m_start && !got_scan)
+    while (m_start.load(std::memory_order_acquire) && !got_scan)
     {
         // Wait until first data sync of frame: 0xFA, 0xA0
         //boost::asio::read(serial_, boost::asio::buffer(&raw_bytes[0], 1));
@@ -60,49 +61,51 @@ void Lidar::StartLidar(void) {
         if(raw_bytes[0] == 0xFA)
         {
             // Now that entire start sequence has been found, read in the rest of the message
-            got_scan = true;
+            //got_scan = true;
             //boost::asio::read(serial_,boost::asio::buffer(&raw_bytes[1], 41));
             raw_bytes.clear();
-            raw_bytes = m_usb->ReadBytes(40);
+            raw_bytes = m_usb->ReadBytes(41);
+            raw_bytes.insert(raw_bytes.begin(),0xFA);
 
-
-            if(raw_bytes[0] >= 0xA0  && raw_bytes[0] <= 0xDB)
+            if(raw_bytes[1] >= 0xA0  && raw_bytes[1] <= 0xDB)
             {
-                int degree_count_num = 0;
-                index = (raw_bytes[0] - 0xA0) * 6;
-                good_sets++;
+              got_scan = true;
+              int degree_count_num = 0;
+              index = (raw_bytes[1] - 0xA0) * 6;
+              good_sets++;
 
-                m_motor_speed += (raw_bytes[2] << 8) + raw_bytes[1]; //accumulate count for avg. time increment
+              motor_speed += (raw_bytes[3] << 8) + raw_bytes[2]; //accumulate count for avg. time increment
+              rpms=(raw_bytes[3]<<8|raw_bytes[2])/10;
 
-                //read data in sets of 6
-                for(uint16_t j = 3; j < 39; j = j + 6)
-                {
-                    uint8_t byte0 = raw_bytes[j];
-                    uint8_t byte1 = raw_bytes[j+1];
-                    uint8_t byte2 = raw_bytes[j+2];
-                    uint8_t byte3 = raw_bytes[j+3];
+              //read data in sets of 6
+              for(uint16_t j = 4; j < 40; j = j + 6)
+              {
+                uint8_t byte0 = raw_bytes[j];
+                uint8_t byte1 = raw_bytes[j+1];
+                uint8_t byte2 = raw_bytes[j+2];
+                uint8_t byte3 = raw_bytes[j+3];
 
-                    uint16_t intensity = (byte1 << 8) + byte0;
-                    uint16_t range     = (byte3 << 8) + byte2;
+                uint16_t intensity = (byte1 << 8) + byte0;
+                uint16_t range     = (byte3 << 8) + byte2;
 
-                    int temp = range/1000.0;
-                    if(temp > 200 && m_sat) {temp = 3500;}
-                    if(temp > 3500) {temp = 3500;}
-                    m_intensity.at(359 - index - degree_count_num).store(temp,std::memory_order_release);
-                    temp = intensity;
-                    if(temp > 200 && m_sat) {temp = 3500;}
-                    if(temp > 3500) {temp = 3500;}
-                    m_range.at(359 - index - degree_count_num).store(temp,std::memory_order_release);
+                int temp = range;//1000.0;
+                if(temp > 200 && m_sat) {temp = 3500;}
+                if(temp > 3500) {temp = 3500;}
+                m_intensity.at(359 - index - degree_count_num).store(temp,std::memory_order_release);
+                temp = intensity;
+                if(temp > 200 && m_sat) {temp = 3500;}
+                if(temp > 3500) {temp = 3500;}
+                m_range.at(359 - index - degree_count_num).store(temp,std::memory_order_release);
 
-                    degree_count_num++;
-                }
-                m_time_increment = m_motor_speed/good_sets/1e8;
+                degree_count_num++;
+              }      
+
+              m_time_increment = m_motor_speed/good_sets/1e8;
             }
         }
     }
-}*/
-void Lidar::Poll(void) {
-  uint8_t temp_char;
+}
+/*void Lidar::Poll(void) {
   uint8_t start_count = 0;
   bool got_scan = false;
   //boost::array<uint8_t, 2520> raw_bytes;
@@ -111,8 +114,9 @@ void Lidar::Poll(void) {
   uint32_t motor_speed = 0;
   rpms=0;
   int index;
+  std::cout << "Poll" << std::endl;
 
-  while (!shutting_down_ && !got_scan)
+  while (m_start.load(std::memory_order_acquire) && !got_scan)
   {
     // Wait until first data sync of frame: 0xFA, 0xA0
     //boost::asio::read(serial_, boost::asio::buffer(&raw_bytes[start_count],1));
@@ -120,14 +124,14 @@ void Lidar::Poll(void) {
 
     if(start_count == 0)
     {
-      if(raw_bytes[start_count] == 0xFA)
+      if(raw_bytes[0] == 0xFA)
       {
         start_count = 1;
       }
     }
     else if(start_count == 1)
     {
-      if(raw_bytes[start_count] == 0xA0)
+      if(raw_bytes[0] == 0xA0)
       {
         start_count = 0;
 
@@ -136,17 +140,19 @@ void Lidar::Poll(void) {
 
         //boost::asio::read(serial_,boost::asio::buffer(&raw_bytes[2], 2518));
         raw_bytes = m_usb->ReadBytes(2518);
-        for(int k=k<raw_bytes.size()-2;k>=0;k++) {
-            raw_bytes[k+2] = raw_bytes[k];
+        raw_bytes.insert(raw_bytes.begin(),0xA0);
+        raw_bytes.insert(raw_bytes.begin(),0xFA);
+        for(unsigned int k=0;k<raw_bytes.size();k++) {
+          std::cout << static_cast<int>(raw_bytes[k]) << std::endl;
         }
 
-        scan->angle_increment = (2.0*M_PI/360.0);
-        scan->angle_min = 0.0;
-        scan->angle_max = 2.0*M_PI-scan->angle_increment;
-        scan->range_min = 0.12;
-        scan->range_max = 3.5;
-        scan->ranges.resize(360);
-        scan->intensities.resize(360);
+        //scan->angle_increment = (2.0*M_PI/360.0);
+        //scan->angle_min = 0.0;
+        //scan->angle_max = 2.0*M_PI-scan->angle_increment;
+        //scan->range_min = 0.12;
+        //scan->range_max = 3.5;
+        //scan->ranges.resize(360);
+        //scan->intensities.resize(360);
 
         //read data in sets of 6
         for(uint16_t i = 0; i < raw_bytes.size(); i=i+42)
@@ -179,12 +185,14 @@ void Lidar::Poll(void) {
               int temp = range/1000.0;
               if(temp > 200 && m_sat) {temp = 3500;}
               if(temp > 3500) {temp = 3500;}
-              m_intensity.at(359 - index - degree_count_num).store(temp,std::memory_order_release);
+              m_intensity.at(359 - index).store(temp,std::memory_order_release);
               temp = intensity;
               if(temp > 200 && m_sat) {temp = 3500;}
               if(temp > 3500) {temp = 3500;}
-              m_range.at(359 - index - degree_count_num).store(temp,std::memory_order_release);
+              m_range.at(359 - index).store(temp,std::memory_order_release);
             }
+          } else {
+            //std::cout << "CRC NOT OK" << std::endl;
           }
         }
 
@@ -197,7 +205,7 @@ void Lidar::Poll(void) {
       }
     }
   }
-}
+}*/
 
 
 int Lidar::GetBdRate(void) {return m_usb->GetBdRate();}
@@ -213,7 +221,6 @@ std::vector<int> Lidar::GetRange(void) {
             const int currentItem = m_range.at(index).load();
             index++;
             return currentItem;
-
     });
 
     return returnValue;
@@ -226,7 +233,6 @@ std::vector<int> Lidar::GetIntensity(void) {
         const int currentItem = m_intensity.at(index).load();
         index++;
         return currentItem;
-
     });
 
    return returnValue;
@@ -247,7 +253,7 @@ void* Lidar::ThreadLidar() {
     return 0;
 }
 
-void Lidar::display(const bool isXY) {
+void Lidar::Display(const bool isXY) {
 
     std::vector<std::string> disp (m_range.size());
 
@@ -295,6 +301,7 @@ void Lidar::display(const bool isXY) {
 }
 
 void Lidar::DisplayGraph() {
+    std::cout << "GRAPH" << std::endl;
     std::vector<double> dispX(m_range.size());
     std::vector<double> dispY(m_range.size());
     std::generate(dispX.begin() , dispX.end(),
@@ -327,4 +334,16 @@ void Lidar::DisplayGraph() {
         }
         std::cout << std::endl;
     }
+}
+
+bool Lidar::SaveLidarPoints() {
+  std::vector<std::vector<double>> v;
+
+  for(int i=0;i<360;i++) {
+    v.at(0).push_back(m_intensity.at(i).load()*std::cos(m_range.at(i).load()));
+    v.at(1).push_back(m_intensity.at(i).load()*std::sin(m_range.at(i).load()));
+  }
+
+  //return Utility::writeCSV("graph",v,",");
+  return false;
 }

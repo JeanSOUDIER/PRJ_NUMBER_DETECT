@@ -11,6 +11,7 @@
 #include <string.h>
 #include "Usb.hpp"
 #include "algorithm"
+#include "utility.h"
 
 class MobileBase;
 
@@ -34,8 +35,9 @@ class Lidar{
         bool GetSat();
         std::vector<int> GetRange(void);
         std::vector<int> GetIntensity(void);
-        void display(const bool isXY);
+        void Display(const bool isXY);
         void DisplayGraph();
+        bool SaveLidarPoints();
         static void* LidarHelper(void *context);
 protected:
         void* ThreadLidar();
@@ -57,6 +59,7 @@ private:
 
         int m_motor_speed = 0;
         int m_time_increment;
+        uint16_t rpms;
 
         Usb *m_usb;
 };

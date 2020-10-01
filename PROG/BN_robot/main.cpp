@@ -27,14 +27,14 @@ int main() {
     WidowXL.ToKeyboard();*/
 
 
-    MobileBase OpenCR(ttyACM0, 115200, nullptr);
-    OpenCR.GoPos(0,0,M_PI);
+    //MobileBase OpenCR(ttyACM0, 115200, nullptr);
+    //OpenCR.GoPos(0,0,M_PI);
 
     //Bluetooth BLE(rfcomm0, 9600);
     //BLE.WriteEnd();
 
-    //MobileBase OpenCR(ttyACM0, 115200, new Lidar(ttyUSB_LDS, 230400));
-    //delay(1000);
+    MobileBase OpenCR(ttyACM0, 115200, new Lidar(ttyUSB_LDS, 230400));
+    delay(10000);
     //Lidar RPLidar(true, ttyUSB_LDS, 230400);
     //std::vector<int> range = RPLidar.GetRange();
     //std::vector<int> intensity = RPLidar.GetIntensity();

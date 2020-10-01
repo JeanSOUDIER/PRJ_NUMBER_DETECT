@@ -48,7 +48,7 @@ class Arm {
                 void WriteOn();
                 void WriteOff();
                 void Homing();
-                std::vector<int> PosWriting(bool state)
+                std::vector<int> PosWriting(bool state);
                 void PosToMove();
 
                 void ToKeyboard();
