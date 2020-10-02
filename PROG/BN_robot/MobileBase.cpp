@@ -10,6 +10,7 @@ MobileBase::MobileBase(const int nb_usb, const int bdrate, Lidar *RPLidar)
     : MobileBase(0, 0, 0, nb_usb, bdrate, RPLidar) {}
 
 MobileBase::MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, Lidar *RPLidar) {
+	
 	m_usb = new Usb(nb_usb, bdrate);
 	if(RPLidar) {
 		m_lidar_start = true;
@@ -27,7 +28,7 @@ MobileBase::MobileBase(const double posX, const double posY, const double angle,
 	if(m_lidar_start) {
 		//m_RPLidar->SetStart(true);
 		inc_x_thread = new pthread_t();
-	    const int rcL = pthread_create(inc_x_thread, NULL, &Lidar::LidarHelper, &m_RPLidar);
+	    const int rcL = pthread_create(inc_x_thread, NULL, &Lidar::LidarHelper, m_RPLidar);
 	    if (rcL) {
 	     	std::cout << "Error:unable to create thread Lidar," << rcL << std::endl;
 	    }
