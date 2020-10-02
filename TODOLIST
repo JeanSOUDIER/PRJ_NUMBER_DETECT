@@ -3,6 +3,7 @@ LOW :
  - BLE (pb à tester jetson) [mardi aprem]
  - test lidar => mise en forme [vendredi]
  - SLAM (recherches) ou trajectory follower
+ - pb '0'
  Jetson
  - caméra [jeudi aprem]
  - bluetooth [mardi aprem]
