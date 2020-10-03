@@ -16,24 +16,20 @@ unsigned char Bluetooth::Read() {
 	return reading.at(0);
 }
 
-/*std::vector<unsigned char> Bluetooth::Read() {
-	std::vector<unsigned char> reading(1);
-	unsigned char length;
-	reading[0] = '\0';
-	while(reading[0] != 255) {
-		reading = m_usb->ReadBytes(1);
-	}
-	reading.clear();
-	reading = m_usb->ReadBytes(1);
-	length = reading[0];
-	//lecture
-	return m_usb->ReadBytes(length);
-}*/
-
 void Bluetooth::WriteEnd() {
 	std::vector<char> sending(1);
-	sending[0] = '0';
+	sending[0] = 252;
 	m_usb->SendBytes(sending);
+}
+
+void Bluetooth::WriteWord(std::string txt) {
+	WriteWord(std::vector<char> charvect(txt.begin(), txt.end()));
+}
+
+void Bluetooth::WriteWord(std::vector<char> txt) {
+	txt.insert(txt.begin(),txt.size());
+	txt.insert(txt.begin(),255);
+	m_usb->SendBytes(txt);
 }
 
 bool Bluetooth::IsAddrValid(std::string addr) {

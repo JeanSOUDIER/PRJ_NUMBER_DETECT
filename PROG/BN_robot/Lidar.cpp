@@ -10,7 +10,6 @@ Lidar::Lidar(const bool start, const int nb_usb, const int bdrate) {
 
     m_usb = new Usb(nb_usb, bdrate);
     m_start.store(start, std::memory_order_release);
-    std::cout << "start = " << m_start.load() << std::endl;
     m_port_nr = nb_usb;
     m_bdrate = bdrate;
     m_sat = true;
@@ -22,7 +21,16 @@ Lidar::~Lidar() {
     /*const std::vector<char> data = {'e'};
     m_usb->SendBytes(data);
     delay(1000);*/
+    delete inc_x_thread; //Delete first because otherwise the function called in the thread will have undefined behaviour when executed after calling delete on lidar
     delete m_usb;
+}
+
+vois Lidar::StartThread() {
+    inc_x_thread = new pthread_t();
+    const int rcL = pthread_create(inc_x_thread, NULL, &Lidar::LidarHelper, this);
+    if (rcL) {
+        std::cout << "Error:unable to create thread Lidar," << rcL << std::endl;
+    }
 }
 
 void Lidar::SetStart(const bool state) {
@@ -53,25 +61,13 @@ void Lidar::Poll(void) {
     int index;
     uint32_t motor_speed = 0;
 
-    //std::cout << m_start.load() << std::endl;
-
-    while (!got_scan) //m_start.load() && 
-    {
-        // Wait until first data sync of frame: 0xFA, 0xA0
-        //boost::asio::read(serial_, boost::asio::buffer(&raw_bytes[0], 1));
+    while (m_start.load() && !got_scan) {
         raw_bytes = m_usb->ReadBytes(1);
-
-        if(raw_bytes[0] == 0xFA)
-        {
-            // Now that entire start sequence has been found, read in the rest of the message
-            //got_scan = true;
-            //boost::asio::read(serial_,boost::asio::buffer(&raw_bytes[1], 41));
+        if(raw_bytes[0] == 0xFA) {
             raw_bytes.clear();
             raw_bytes = m_usb->ReadBytes(41);
             raw_bytes.insert(raw_bytes.begin(),0xFA);
-
-            if(raw_bytes[1] >= 0xA0  && raw_bytes[1] <= 0xDB)
-            {
+            if(raw_bytes[1] >= 0xA0  && raw_bytes[1] <= 0xDB) {
               got_scan = true;
               int degree_count_num = 0;
               index = (raw_bytes[1] - 0xA0) * 6;
@@ -81,8 +77,7 @@ void Lidar::Poll(void) {
               rpms=(raw_bytes[3]<<8|raw_bytes[2])/10;
 
               //read data in sets of 6
-              for(uint16_t j = 4; j < 40; j = j + 6)
-              {
+              for(uint16_t j = 4; j < 40; j = j + 6) {
                 uint8_t byte0 = raw_bytes[j];
                 uint8_t byte1 = raw_bytes[j+1];
                 uint8_t byte2 = raw_bytes[j+2];
@@ -91,7 +86,7 @@ void Lidar::Poll(void) {
                 uint16_t intensity = (byte1 << 8) + byte0;
                 uint16_t range     = (byte3 << 8) + byte2;
 
-                int temp = range;//1000.0;
+                int temp = range;
                 if(temp > 200 && m_sat) {temp = 3500;}
                 if(temp > 3500) {temp = 3500;}
                 m_intensity.at(359 - index - degree_count_num).store(temp,std::memory_order_release);
@@ -105,108 +100,6 @@ void Lidar::Poll(void) {
         }
     }
 }
-/*void Lidar::Poll(void) {
-  uint8_t start_count = 0;
-  bool got_scan = false;
-  //boost::array<uint8_t, 2520> raw_bytes;
-  std::vector<unsigned char> raw_bytes(2520);
-  uint8_t good_sets = 0;
-  uint32_t motor_speed = 0;
-  rpms=0;
-  int index;
-  std::cout << "Poll" << std::endl;
-
-  while (m_start.load(std::memory_order_acquire) && !got_scan)
-  {
-    // Wait until first data sync of frame: 0xFA, 0xA0
-    //boost::asio::read(serial_, boost::asio::buffer(&raw_bytes[start_count],1));
-    raw_bytes = m_usb->ReadBytes(1);
-
-    if(start_count == 0)
-    {
-      if(raw_bytes[0] == 0xFA)
-      {
-        start_count = 1;
-      }
-    }
-    else if(start_count == 1)
-    {
-      if(raw_bytes[0] == 0xA0)
-      {
-        start_count = 0;
-
-        // Now that entire start sequence has been found, read in the rest of the message
-        got_scan = true;
-
-        //boost::asio::read(serial_,boost::asio::buffer(&raw_bytes[2], 2518));
-        raw_bytes = m_usb->ReadBytes(2518);
-        raw_bytes.insert(raw_bytes.begin(),0xA0);
-        raw_bytes.insert(raw_bytes.begin(),0xFA);
-        for(unsigned int k=0;k<raw_bytes.size();k++) {
-          std::cout << static_cast<int>(raw_bytes[k]) << std::endl;
-        }
-
-        //scan->angle_increment = (2.0*M_PI/360.0);
-        //scan->angle_min = 0.0;
-        //scan->angle_max = 2.0*M_PI-scan->angle_increment;
-        //scan->range_min = 0.12;
-        //scan->range_max = 3.5;
-        //scan->ranges.resize(360);
-        //scan->intensities.resize(360);
-
-        //read data in sets of 6
-        for(uint16_t i = 0; i < raw_bytes.size(); i=i+42)
-        {
-          if(raw_bytes[i] == 0xFA && raw_bytes[i+1] == (0xA0 + i / 42)) //&& CRC check
-          {
-            good_sets++;
-            motor_speed += (raw_bytes[i+3] << 8) + raw_bytes[i+2]; //accumulate count for avg. time increment
-            rpms=(raw_bytes[i+3]<<8|raw_bytes[i+2])/10;
-
-            for(uint16_t j = i+4; j < i+40; j=j+6)
-            {
-              index = 6*(i/42) + (j-4-i)/6;
-
-              // Four bytes per reading
-              uint8_t byte0 = raw_bytes[j];
-              uint8_t byte1 = raw_bytes[j+1];
-              uint8_t byte2 = raw_bytes[j+2];
-              uint8_t byte3 = raw_bytes[j+3];
-
-              // Remaining bits are the range in mm
-              uint16_t intensity = (byte1 << 8) + byte0;
-
-              // Last two bytes represent the uncertanty or intensity, might also be pixel area of target...
-              // uint16_t intensity = (byte3 << 8) + byte2;
-              uint16_t range = (byte3 << 8) + byte2;
-
-              //scan->ranges[359-index] = range / 1000.0;
-              //scan->intensities[359-index] = intensity;
-              int temp = range/1000.0;
-              if(temp > 200 && m_sat) {temp = 3500;}
-              if(temp > 3500) {temp = 3500;}
-              m_intensity.at(359 - index).store(temp,std::memory_order_release);
-              temp = intensity;
-              if(temp > 200 && m_sat) {temp = 3500;}
-              if(temp > 3500) {temp = 3500;}
-              m_range.at(359 - index).store(temp,std::memory_order_release);
-            }
-          } else {
-            //std::cout << "CRC NOT OK" << std::endl;
-          }
-        }
-
-        //scan->time_increment = motor_speed/good_sets/1e8;
-        m_time_increment = m_motor_speed/good_sets/1e8;
-      }
-      else
-      {
-        start_count = 0;
-      }
-    }
-  }
-}*/
-
 
 int Lidar::GetBdRate(void) {return m_usb->GetBdRate();}
 int Lidar::GetPortNb(void) {return m_usb->GetPortNb();}
@@ -245,10 +138,7 @@ void* Lidar::LidarHelper(void *context) {
 
 void* Lidar::ThreadLidar() {
     
-    while(m_start.load(std::memory_order_acquire)) {
-        Poll();
-        //DisplayGraph();
-    }
+    while(m_start.load(std::memory_order_acquire)) {Poll();}
 
     pthread_exit(NULL);
     return 0;

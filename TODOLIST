@@ -1,14 +1,15 @@
 LOW :
  RPI
- - test lidar => mise en forme [vendredi]
- - SLAM (recherches) ou trajectory follower
- - pb '0'
+ - trajectory follower
+ - test mobile base move properly [dimanche soir]
+ - pb '0' [dimanche soir]
  Jetson
- - caméra [jeudi aprem]
+ - caméra
 
 HIGH :
  RPI
  - test dessin (améliorer)
+ - lidar regression [dimanche soir]
  Jetson
  - RNN
  - pre traitement

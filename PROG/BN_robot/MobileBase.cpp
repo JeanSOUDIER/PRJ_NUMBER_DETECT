@@ -10,7 +10,6 @@ MobileBase::MobileBase(const int nb_usb, const int bdrate, Lidar *RPLidar)
     : MobileBase(0, 0, 0, nb_usb, bdrate, RPLidar) {}
 
 MobileBase::MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, Lidar *RPLidar) {
-	
 	m_usb = new Usb(nb_usb, bdrate);
 	if(RPLidar) {
 		m_lidar_start = true;
@@ -23,15 +22,10 @@ MobileBase::MobileBase(const double posX, const double posY, const double angle,
 	m_posY = posY;
 	m_angle = angle;
 	m_RPLidar = RPLidar;
-	GoPos(0,0,0);
+	StartPlacing();
 	//thread
 	if(m_lidar_start) {
-		//m_RPLidar->SetStart(true);
-		inc_x_thread = new pthread_t();
-	    const int rcL = pthread_create(inc_x_thread, NULL, &Lidar::LidarHelper, m_RPLidar);
-	    if (rcL) {
-	     	std::cout << "Error:unable to create thread Lidar," << rcL << std::endl;
-	    }
+		m_RPLidar->StartThread();
 	}
     std::cout << "MobileBase start" << std::endl;
 }
@@ -39,10 +33,13 @@ MobileBase::MobileBase(const double posX, const double posY, const double angle,
 MobileBase::~MobileBase() {
 	if(m_lidar_start) {
 		m_RPLidar->SetStart(false);
-		delete inc_x_thread; //Delete first because otherwise the function called in the thread will have undefined behaviour when executed after calling delete on lidar
 		delete m_RPLidar;
 	}
 	delete m_usb;
+}
+
+void MobileBase::StartPlacing() {
+
 }
 
 void MobileBase::Go(const double x, const double y, const double a) {
@@ -84,33 +81,32 @@ double MobileBase::getDistBoard() {
 
 void MobileBase::GetLidarPoints() {
 	if(m_lidar_start) {
-		/*std::vector<int> range = m_RPLidar->GetRange();
+		std::vector<int> range = m_RPLidar->GetRange();
 		std::vector<int> intensity = m_RPLidar->GetIntensity();
+		m_x.clear();
+		m_y.clear();
 		for(int i=0;i<static_cast<int>(range.size());i++) {
-			m_x[i] = static_cast<double>(range[i])*std::cos(static_cast<double>(intensity[i]));
-			m_y[i] = static_cast<double>(range[i])*std::sin(static_cast<double>(intensity[i]));
-		}*/
+			m_x[i].psuh_back(static_cast<double>(range[i])*std::cos(static_cast<double>(intensity[i])));
+			m_y[i].psuh_back(static_cast<double>(range[i])*std::sin(static_cast<double>(intensity[i])));
+		}
 		std::cout << "out : " << m_RPLidar->SaveLidarPoints() << std::endl;
-		m_RPLidar->Display(true);
+		//m_RPLidar->Display(true);
 	}
-	
 }
 
 void MobileBase::GetPosBase() {
+	std::vector<double> res = FindSegment(0,90);
+	std::cout << res[0] << " " << res[1] << " " << res[2] << std::endl;
 	//points cardinaux
 	//find a*x+b => a,b x4 + dist board
 	//set m_posX, m_posY, m_angle, m_dist_board
 }
 
 std::vector<double> MobileBase::FindSegment(int start, int end) {
-	
-	for(int i=start;i<end;i++) {
-
-	}
-	std::vector<double> v(2);
-	v[0] = 0;
-	v[1] = 1;
-	return v;
+	std::vector<double> subvectorX = {m_x.begin()+start, m_x.end()-end};
+	std::vector<double> subvectorY = {m_y.begin()+start, m_y.end()-end};
+	std::vector<double> res = Reg.RegressionLineaire(subvectorX,subvectorY);
+	return res;
 }
 
 void MobileBase::SetMotBalance(const double rho, const double theta) {

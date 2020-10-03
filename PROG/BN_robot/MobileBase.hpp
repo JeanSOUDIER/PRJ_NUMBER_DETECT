@@ -7,6 +7,7 @@
 #include <vector>
 #include "Lidar.hpp"
 #include "Usb.hpp"
+#include "Regression.hpp"
 
 constexpr int ERREUR_STATIQUE = 2;
 
@@ -18,6 +19,7 @@ class MobileBase {
 		explicit MobileBase(const double posX, const double posY, const double angle, const int nb_usb, const int bdrate, Lidar* RPLidar);
 		~MobileBase();
 
+		void StartPlacing();
 		void Go(const double x, const double y, const double a);
 		double getDistBoard();
 		void GoPos(const double x, const double y, const double a);
@@ -39,8 +41,6 @@ class MobileBase {
         Usb *m_usb;
 		Lidar *m_RPLidar;
 
-        pthread_t *inc_x_thread;
-
 		std::vector<double> m_x;
 		std::vector<double> m_y;
 
@@ -48,6 +48,8 @@ class MobileBase {
 		double m_posY = 0;
 		double m_angle = 0;
 		double m_dist_board = 0;
+
+		Regression Reg;
 };
 
 #endif //MOBILEBASE_H

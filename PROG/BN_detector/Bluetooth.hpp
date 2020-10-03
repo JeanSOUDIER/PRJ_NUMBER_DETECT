@@ -11,9 +11,10 @@ class Bluetooth {
 	public:
 		Bluetooth(const int nb_usb, const int bdrate);
 		~Bluetooth();
-		//std::vector<unsigned char> Read();
 		unsigned char Read();
 		void WriteEnd();
+		void WriteWord(std::string txt);
+		void WriteWord(std::vector<char> txt);
 	private:
 		bool IsAddrValid(std::string addr);
 

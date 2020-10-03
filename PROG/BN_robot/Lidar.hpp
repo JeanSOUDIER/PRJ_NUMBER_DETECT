@@ -39,6 +39,7 @@ class Lidar{
         void DisplayGraph();
         bool SaveLidarPoints();
         static void* LidarHelper(void *context);
+        void StartThread();
 protected:
         void* ThreadLidar();
 
@@ -62,5 +63,6 @@ private:
         uint16_t rpms;
 
         Usb *m_usb;
+        pthread_t *inc_x_thread;
 };
 #endif //LIDAR_H
