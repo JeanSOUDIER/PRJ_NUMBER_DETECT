@@ -9,6 +9,7 @@
 #include <termios.h>
 #include <string.h>
 #include "Usb.hpp"
+#include "js.hpp"
 #include "sequencehandler.h"
 #include "sequencewriter.h"
 
@@ -51,7 +52,7 @@ class Arm {
                 std::vector<int> PosWriting(bool state);
                 void PosToMove();
 
-                void ToKeyboard();
+                void ToKeyboard(bool GamePad);
         private:
                 void Send(int ins, const std::vector<char> &data);
                 char getch();

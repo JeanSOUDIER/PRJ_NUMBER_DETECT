@@ -146,7 +146,7 @@ char Arm::getch() {
     return buf;
 }
 
-void Arm::ToKeyboard(void) {
+void Arm::ToKeyboard(bool GamePad) {
     std::vector<int> pos = PosWriting(true);
 
     int x = pos[0];
@@ -160,79 +160,95 @@ void Arm::ToKeyboard(void) {
     std::vector<Movement> move;
     bool test = true;
 
+    if(GamePad) {
+        Js Xbox360();
+    }
+
     while(test) {
 
-        const char input = getch();
-
-        switch(input) {
-
-            case 'z': {
-                x += pas;
-                break;
+        if(GamePad) {
+            std::vector<int> res = Xbox360.GetEvent();
+            if(res[0] == GamePadType::Button) {
+                //TODO
+                std::cout << res[1] << " " << res[2] << std::endl;
+            } else {
+                x += res[1];
+                y += res[2];
+                z += res[3];
             }
+        } else {
+            const char input = getch();
 
-            case 's': {
-                x -= pas;
-                break;
+            switch(input) {
+
+                case 'z': {
+                    x += pas;
+                    break;
+                }
+
+                case 's': {
+                    x -= pas;
+                    break;
+                }
+
+                case 'd': {
+                    y -= pas;
+                    break;
+                }
+
+                case 'q': {
+                    y += pas;
+                    break;
+                }
+
+                case 'r': {
+                    z += pas;
+                    break;
+                }
+
+                case 'f': {
+                    z -= pas;
+                    break;
+                }
+
+                case 'a': {
+                    pas++;
+                    if(pas > 10) {pas = 10;}
+                    break;
+                }
+
+                case 'e': {
+                    pas--;
+                    if(pas < 1) {pas = 1;}
+                    break;
+                }
+
+                case ' ': {
+                    //save pos
+                    std::cout << "Pos saved : " << x << " " << y << " " << z << std::endl;
+                    Movement mov;
+                    mov.setMode(MovementMode::COORDINATES, false);
+                    mov.setCoordinates(x, y, z);
+                    mov.setDuration(1000);
+                    move.push_back(mov);
+                    break;
+                }
+
+                case 'o': {
+                    test = false;
+                    break;
+                }
+
+                case 126:{
+                    std::cout << "no save" << std::endl;
+                    return;
+                }
+
+                default:{std::cout << "unknown key : " << input << " " << static_cast<int>(input) << std::endl;}
+
             }
-
-            case 'd': {
-                y -= pas;
-                break;
-            }
-
-            case 'q': {
-                y += pas;
-                break;
-            }
-
-            case 'r': {
-                z += pas;
-                break;
-            }
-
-            case 'f': {
-                z -= pas;
-                break;
-            }
-
-            case 'a': {
-                pas++;
-                if(pas > 10) {pas = 10;}
-                break;
-            }
-
-            case 'e': {
-                pas--;
-                if(pas < 1) {pas = 1;}
-                break;
-            }
-
-            case ' ': {
-                //save pos
-                std::cout << "Pos saved : " << x << " " << y << " " << z << std::endl;
-                Movement mov;
-                mov.setMode(MovementMode::COORDINATES, false);
-                mov.setCoordinates(x, y, z);
-                mov.setDuration(1000);
-                move.push_back(mov);
-                break;
-            }
-
-            case 'o': {
-                test = false;
-                break;
-            }
-
-            case 126:{
-                std::cout << "no save" << std::endl;
-                return;
-            }
-
-            default:{std::cout << "unknown key : " << input << " " << static_cast<int>(input) << std::endl;}
-
+            std::cout << std::endl << "Pas = " << pas << std::endl;
         }
-        std::cout << std::endl << "Pas = " << pas << std::endl;
         PlaceArm(x, y, z);
         MoveArm(true);
         std::cout << std::endl;
