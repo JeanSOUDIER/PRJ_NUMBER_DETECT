@@ -23,7 +23,8 @@ void Bluetooth::WriteEnd() {
 }
 
 void Bluetooth::WriteWord(std::string txt) {
-	WriteWord(std::vector<char> charvect(txt.begin(), txt.end()));
+	std::vector<char> a(txt.begin(), txt.end());
+	WriteWord(a);
 }
 
 void Bluetooth::WriteWord(std::vector<char> txt) {
