@@ -24,8 +24,8 @@ int main() {
     std::cout <<"----LOOP----" << std::endl;
     while(Prgm.Execute()) {}*/
 
-    //Arm WidowXL(6, ttyUSB_ARBO, 115200);
-    //WidowXL.ToKeyboard(true);
+    Arm WidowXL(6, ttyUSB_ARBO, 115200);
+    WidowXL.ToKeyboard(true);
 
 
     //MobileBase OpenCR(ttyACM0, 115200, nullptr);
@@ -43,9 +43,9 @@ int main() {
     //std::vector<char> v = {'h','e','l','l','o'};
     //BLE.SendBytes(v);
 
-    MobileBase OpenCR(ttyACM0, 115200, new Lidar(ttyUSB_LDS, 230400));
-    delay(10000);
-    OpenCR.GetLidarPoints();
+    //MobileBase OpenCR(ttyACM0, 115200, new Lidar(ttyUSB_LDS, 230400));
+    //delay(10000);
+    //OpenCR.GetLidarPoints();
     
     //Lidar RPLidar(true, ttyUSB_LDS, 230400);
     //std::vector<int> range = RPLidar.GetRange();

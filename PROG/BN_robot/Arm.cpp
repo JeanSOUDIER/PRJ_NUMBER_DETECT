@@ -161,6 +161,7 @@ void Arm::ToKeyboard(bool GamePad) {
     bool test = true;
 
     Js Xbox360(GamePad);
+    int bt_state = 1;
 
     while(test) {
         if(GamePad) {
@@ -178,6 +179,21 @@ void Arm::ToKeyboard(bool GamePad) {
                             mov.setDuration(1000);
                             move.push_back(mov);
                             break;}
+                        case 1:{
+                            bt_state = 1;
+                            break;}
+                        case 2:{
+                            bt_state = 2;
+                            break;}
+                        case 3:{
+                            bt_state = 3;
+                            break;}
+                        case 4:{
+                            WriteOn();
+                            break;}
+                        case 5:{
+                            WriteOff();
+                            break;}
                         case 7:{
                             test = false;
                             break;}
@@ -190,9 +206,13 @@ void Arm::ToKeyboard(bool GamePad) {
                     }
                 }
             } else if(res[0] == static_cast<int>(GamePadType::Axis)) {
-                x += res[1];
-                y += res[2];
-                z += res[3];
+                if(bt_state == 1) {
+                    x += res[3];
+                } else if(bt_state == 2) {
+                    y += res[3];
+                } else {
+                    z += res[3];
+                }
             }
         } else {
             const char input = getch();
@@ -200,11 +220,13 @@ void Arm::ToKeyboard(bool GamePad) {
             switch(input) {
 
                 case 'z': {
+                    pas = 1;
                     x += pas;
                     break;
                 }
 
                 case 's': {
+                    pas = 1;
                     x -= pas;
                     break;
                 }
@@ -249,6 +271,7 @@ void Arm::ToKeyboard(bool GamePad) {
                     mov.setCoordinates(x, y, z);
                     mov.setDuration(1000);
                     move.push_back(mov);
+                    pas = 10;
                     break;
                 }
 

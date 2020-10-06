@@ -26,10 +26,10 @@ std::vector<int> Js::GetEvent() {
     std::vector<int> res = {static_cast<int>(GamePadType::None), 0, 0, 0};
     if(m_active) {
     	struct js_event event;
-    	struct axis_state axes[3] = {0};
+    	struct axis_state axes[3] = {0, 0, 0};
     	size_t axis;
-	    fflush(stdout);
     	while(res[0] == static_cast<int>(GamePadType::None)) {
+	    	fflush(stdout);
 	    	read_event(m_js, &event);
 	        switch (event.type) {
 
@@ -46,20 +46,24 @@ std::vector<int> Js::GetEvent() {
 	    		    axis = get_axis_state(&event, axes);
 	                if(axis == 0) {
 	                    x = (int)(axes[axis].x);
-	                    if(abs(x) < 16000) {x = 0;}
+	                    if(abs(x) < 1000) {x = 0;}
 	                    x = -x/m_lim1;
 	                    y = (int)(axes[axis].y);
-	                    if(abs(y) < 16000) {y = 0;}
+	                    if(abs(y) < 1000) {y = 0;}
 	                    y = -y/m_lim1;
 	                } else {
-	                    if(axis == 1) {
-	                        z = (int)(axes[axis].x)+32767;
-	                    } else {
-	                        zz = (int)(axes[axis].y)+32767;
-	                    }
-	                    z = (z-zz)/m_lim2;
+	                	if(static_cast<int>(axes[axis].x) != -32768 && static_cast<int>(axes[axis].y) != -32768) {
+							if(axis == 1) {
+		                        z = (int)(axes[axis].x)+32767;
+		                    } else {
+		                        zz = (int)(axes[axis].y)+32767;
+		                    }
+		                    z = (z-zz)/m_lim2;
+		                } else {
+		                	z = 0;
+		                }
 	                }
-	                std::cout << (int)(axes[axis].x) << " " << (int)(axes[axis].y) << std::endl;
+	                std::cout << static_cast<int>(axes[axis].x) << " " << static_cast<int>(axes[axis].y) << std::endl;
 	    		    res[0] = static_cast<int>(GamePadType::Axis);
 	    		    res[1] = static_cast<int>(x);
 	    		    res[2] = static_cast<int>(y);
