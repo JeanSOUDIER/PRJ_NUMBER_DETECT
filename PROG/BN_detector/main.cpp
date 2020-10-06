@@ -33,7 +33,7 @@ int main() {
     //MobileBase OpenCR(ttyACM0, 115200, nullptr);
     //OpenCR.GoPos(0,0,M_PI);
 	Cam CPI2;
-	CPI2.ImgShow();
+	CPI2.TakePhoto("ttr");
 
     /*Bluetooth BLE(ttyTHS1, 9600);
     while(1) {

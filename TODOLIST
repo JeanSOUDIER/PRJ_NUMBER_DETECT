@@ -1,21 +1,22 @@
 LOW :
  RPI
- - test gamepad
+ - test gamepad []
  - trajectory follower
- - test mobile base move properly
- - thread lisar test
- - pb '0'
+ - test mobile base move properly []
+ - thread lisar test []
+ - pb '0' []
+ - rs232 [vendredi]
  Jetson
- - caméra
+ - caméra []
 
 HIGH :
  RPI
  - test dessin (améliorer)
- - lidar regression
+ - lidar regression [vendredi]
  Jetson
  - RNN
  - pre traitement
  - réponse ?
 
 MAT :
- - Paper shapes
+ - Paper shapes []
