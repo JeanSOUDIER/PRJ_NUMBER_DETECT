@@ -23,6 +23,7 @@ Cam::Cam(int width, int height, int frameRate, int flip) {
     } else {
     	m_start = true;
     }
+    std::cout << "Cam Start" << std::endl;
 }
 
 Cam::~Cam() {
