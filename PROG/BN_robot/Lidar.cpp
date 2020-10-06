@@ -25,7 +25,7 @@ Lidar::~Lidar() {
     delete m_usb;
 }
 
-vois Lidar::StartThread() {
+void Lidar::StartThread() {
     inc_x_thread = new pthread_t();
     const int rcL = pthread_create(inc_x_thread, NULL, &Lidar::LidarHelper, this);
     if (rcL) {

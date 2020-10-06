@@ -160,18 +160,36 @@ void Arm::ToKeyboard(bool GamePad) {
     std::vector<Movement> move;
     bool test = true;
 
-    if(GamePad) {
-        Js Xbox360();
-    }
+    Js Xbox360(GamePad);
 
     while(test) {
-
         if(GamePad) {
             std::vector<int> res = Xbox360.GetEvent();
-            if(res[0] == GamePadType::Button) {
+            if(res[0] == static_cast<int>(GamePadType::Button)) {
                 //TODO
-                std::cout << res[1] << " " << res[2] << std::endl;
-            } else {
+                if(res[2]) {
+                    switch(res[1]) {
+                        case 0:{
+                            //save pos
+                            std::cout << "Pos saved : " << x << " " << y << " " << z << std::endl;
+                            Movement mov;
+                            mov.setMode(MovementMode::COORDINATES, false);
+                            mov.setCoordinates(x, y, z);
+                            mov.setDuration(1000);
+                            move.push_back(mov);
+                            break;}
+                        case 7:{
+                            test = false;
+                            break;}
+                        case 6:{
+                            std::cout << "no save" << std::endl;
+                            return;}
+                        default:{
+                            std::cout << "unknow key " << res[1] << std::endl;
+                            break;}
+                    }
+                }
+            } else if(res[0] == static_cast<int>(GamePadType::Axis)) {
                 x += res[1];
                 y += res[2];
                 z += res[3];

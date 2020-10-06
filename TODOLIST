@@ -1,13 +1,9 @@
 LOW :
  RPI
- - test gamepad []
- - trajectory follower
- - test mobile base move properly []
- - thread lisar test []
+ - test gamepad [vendredi]
+ - trajectory follower [vendredi]
  - pb '0' []
  - rs232 [vendredi]
- Jetson
- - caméra []
 
 HIGH :
  RPI

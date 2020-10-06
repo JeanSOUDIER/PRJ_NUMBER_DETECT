@@ -4,12 +4,13 @@
 #include <iostream>
 #include <cmath>
 #include <numeric>
+#include <vector>
 
 class Regression {
 	public:
 		Regression();
 		~Regression();
-		std::vecot<double> RegressionLineaire(std::vector<double> xi, std::vector<double> yi);
+		std::vector<double> RegressionLineaire(std::vector<double> xi, std::vector<double> yi);
 	protected:
 		int sign(const double test);
 	private:

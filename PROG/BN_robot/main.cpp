@@ -25,7 +25,7 @@ int main() {
     while(Prgm.Execute()) {}*/
 
     //Arm WidowXL(6, ttyUSB_ARBO, 115200);
-    //WidowXL.ToKeyboard();
+    //WidowXL.ToKeyboard(true);
 
 
     //MobileBase OpenCR(ttyACM0, 115200, nullptr);

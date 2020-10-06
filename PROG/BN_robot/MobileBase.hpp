@@ -48,8 +48,6 @@ class MobileBase {
 		double m_posY = 0;
 		double m_angle = 0;
 		double m_dist_board = 0;
-
-		Regression Reg;
 };
 
 #endif //MOBILEBASE_H
