@@ -147,7 +147,7 @@ char Arm::getch() {
 }
 
 void Arm::ToKeyboard(bool GamePad) {
-    std::vector<int> pos = PosWriting(true);
+    std::vector<int> pos = PosWriting(true, 5000);
 
     int x = pos[0];
     int y = pos[1];
@@ -311,13 +311,13 @@ void Arm::Homing() {
     WriteOff();
     MoveArm(true);
 }
-std::vector<int> Arm::PosWriting(bool state) {
+std::vector<int> Arm::PosWriting(bool state, int time) {
     std::vector<int> pos(3);
     pos[0] = 300;
     pos[1] = 120;
     pos[2] = 0;
 
-    SetTime(5000);
+    SetTime(time);
     PlaceArm(pos[0], pos[1], pos[2]);
     if(state) {
         WriteOn();

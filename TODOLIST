@@ -1,6 +1,5 @@
 LOW :
  RPI
- - test gamepad [vendredi]
  - trajectory follower [vendredi]
  - pb '0' []
  - rs232 [vendredi]

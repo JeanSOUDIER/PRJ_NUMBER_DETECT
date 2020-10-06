@@ -36,10 +36,12 @@ bool Sequencer::Execute() {
 		}
 	} else {
 		std::cout << "length = ";
-		std::cin >> length;
-		length -= '0'-1;
-		std::cout << static_cast<int>(length) << std::endl;
-		if(length == 254) {return false;}
+		int l;
+		std::cin >> l;
+		if(l == -1) {return false;}
+		length = static_cast<unsigned char>(l);
+		length++;
+		std::cout << static_cast<unsigned char>(length) << std::endl;
 	}
 	std::vector<unsigned char> reading(length);
 	std::fill(reading.begin(), reading.end(), 0);
@@ -55,6 +57,7 @@ bool Sequencer::Execute() {
 		}
 	}
 	//m_TurtleBot->GoPos(0,0,0);
+	m_WidowXL->PosWriting(true, 2000);
 	for(unsigned int i=0;i<reading.size();i++) {
 		std::vector<Movement> Move = seqHandler.find(reading[i]).getMovements();
 		m_WidowXL->WriteOff();
@@ -70,7 +73,7 @@ bool Sequencer::Execute() {
 		}
 		m_WidowXL->WriteOff();
         m_WidowXL->MoveArm(true);
-		m_WidowXL->PosWriting(false);
+		m_WidowXL->PosWriting(false, 0);
 		if(i < reading.size()-1) {
         	m_WidowXL->MoveArm(false);
         	delay(20);
