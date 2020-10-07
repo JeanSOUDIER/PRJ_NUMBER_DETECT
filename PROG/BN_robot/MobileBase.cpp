@@ -86,8 +86,13 @@ void MobileBase::GetLidarPoints() {
 		m_x.clear();
 		m_y.clear();
 		for(int i=0;i<static_cast<int>(range.size());i++) {
-			m_x.push_back(static_cast<double>(range[i])*std::cos(static_cast<double>(intensity[i])));
-			m_y.push_back(static_cast<double>(range[i])*std::sin(static_cast<double>(intensity[i])));
+			if(range[i] == 3500) {
+				m_x.push_back(1/0);
+				m_y.push_back(1/0);
+			} else {
+				m_x.push_back(static_cast<double>(range[i])*std::cos(static_cast<double>(intensity[i])));
+				m_y.push_back(static_cast<double>(range[i])*std::sin(static_cast<double>(intensity[i])));
+			}
 		}
 		m_RPLidar->Display(true);
 		std::cout << "out : " << m_RPLidar->SaveLidarPoints() << std::endl;
@@ -106,6 +111,12 @@ void MobileBase::GetPosBase() {
 std::vector<double> MobileBase::FindSegment(int start, int stop) {
 	std::vector<double> subvectorX = {m_x.begin()+start, m_x.end()-stop};
 	std::vector<double> subvectorY = {m_y.begin()+start, m_y.end()-stop};
+	for(int i=0;i<subvectorX.size();i++) {
+		if(isnan(subvectorX.at(i))) {
+			subvectorX.remove(i);
+			subvectorY.remove(i);
+		}
+	}
 	Regression reg;
 	std::vector<double> res = reg.RegressionLineaire(subvectorX,subvectorY);
 	return res;
