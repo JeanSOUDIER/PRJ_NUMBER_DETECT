@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONVOLUTIONAL_NEURAL_NETWORK>
+    <LAYER>
+        <NEURON>
+            <THRESHOLD>1</THRESHOLD>
+            <OFFSET>0</OFFSET>
+            <WEIGHTS>
+                <WEIGHT>1</WEIGHT>
+                <WEIGHT>2</WEIGHT>
+                <WEIGHT>2</WEIGHT>
+            </WEIGHTS>
+        </NEURON>
+        <!-- -------------------- -->
+        <NEURON>
+            <THRESHOLD>2</THRESHOLD>
+            <WEIGHTS>
+                <WEIGHT>1</WEIGHT>
+                <WEIGHT>2</WEIGHT>
+                <WEIGHT>2</WEIGHT>
+            </WEIGHTS>
+        </NEURON>
+    </LAYER>
+    <!-- ****************************************** -->
+    <LAYER>
+        <NEURON>
+            <THRESHOLD>1</THRESHOLD>
+            <OFFSET>-2</OFFSET>
+            <WEIGHTS>
+                <WEIGHT>1</WEIGHT>
+                <WEIGHT>2</WEIGHT>
+                <WEIGHT>2</WEIGHT>
+            </WEIGHTS>
+        </NEURON>
+    </LAYER>
+
+</CONVOLUTIONAL_NEURAL_NETWORK>
