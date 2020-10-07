@@ -229,11 +229,14 @@ void Lidar::DisplayGraph() {
 
 bool Lidar::SaveLidarPoints() {
   std::vector<std::vector<double>> v = {std::vector<double>() , std::vector<double>()};
+  std::vector<std::vector<double>> u = {std::vector<double>() , std::vector<double>()};
 
   for(int i=0;i<360;i++) {
     v.at(0).push_back(m_intensity.at(i).load()*std::cos(m_range.at(i).load()));
     v.at(1).push_back(m_intensity.at(i).load()*std::sin(m_range.at(i).load()));
+    u.at(0).push_back(m_intensity.at(i).load());
+    u.at(1).push_back(m_range.at(i).load());
   }
 
-  return Utility::writeCSV("graph",v,";");
+  return Utility::writeCSV("graphXY",v,";") && Utility::writeCSV("graphPol",u,";");
 }

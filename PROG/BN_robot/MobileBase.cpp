@@ -87,8 +87,8 @@ void MobileBase::GetLidarPoints() {
 		m_y.clear();
 		for(int i=0;i<static_cast<int>(range.size());i++) {
 			if(range[i] == 3500) {
-				m_x.push_back(1/0);
-				m_y.push_back(1/0);
+				m_x.push_back(std::numeric_limit<double>::silent_nan());
+				m_y.push_back(std::numeric_limit<double>::silent_nan());
 			} else {
 				m_x.push_back(static_cast<double>(range[i])*std::cos(static_cast<double>(intensity[i])));
 				m_y.push_back(static_cast<double>(range[i])*std::sin(static_cast<double>(intensity[i])));
@@ -112,9 +112,9 @@ std::vector<double> MobileBase::FindSegment(int start, int stop) {
 	std::vector<double> subvectorX = {m_x.begin()+start, m_x.end()-stop};
 	std::vector<double> subvectorY = {m_y.begin()+start, m_y.end()-stop};
 	for(int i=0;i<subvectorX.size();i++) {
-		if(isnan(subvectorX.at(i))) {
-			subvectorX.remove(i);
-			subvectorY.remove(i);
+		if(std::isnan(subvectorX.at(i))) {
+			subvectorX.erase(subvectorX.begin()+i);
+			subvectorY.erase(subvectorY.begin()+i);
 		}
 	}
 	Regression reg;

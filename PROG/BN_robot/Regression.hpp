@@ -5,6 +5,7 @@
 #include <cmath>
 #include <numeric>
 #include <vector>
+#include <algorithm>
 
 class Regression {
 	public:

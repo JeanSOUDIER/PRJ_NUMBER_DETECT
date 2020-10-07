@@ -10,6 +10,12 @@ int main() {
 
     std::vector<double> subvectorX = {m_x.begin()+start, m_x.end()-stop};
 	std::vector<double> subvectorY = {m_y.begin()+start, m_y.end()-stop};
+	for(int i=0;i<subvectorX.size();i++) {
+		if(std::isnan(subvectorX.at(i))) {
+			subvectorX.erase(subvectorX.begin()+i);
+			subvectorY.erase(subvectorY.begin()+i);
+		}
+	}
 	Regression reg;
 	std::vector<double> res = reg.RegressionLineaire(subvectorX,subvectorY);
 	for(unsigned int i=0;i<res.size();i++) {
