@@ -103,9 +103,9 @@ void MobileBase::GetPosBase() {
 	//set m_posX, m_posY, m_angle, m_dist_board
 }
 
-std::vector<double> MobileBase::FindSegment(int start, int end) {
-	std::vector<double> subvectorX = {m_x.begin()+start, m_x.end()-end};
-	std::vector<double> subvectorY = {m_y.begin()+start, m_y.end()-end};
+std::vector<double> MobileBase::FindSegment(int start, int stop) {
+	std::vector<double> subvectorX = {m_x.begin()+start, m_x.end()-stop};
+	std::vector<double> subvectorY = {m_y.begin()+start, m_y.end()-stop};
 	Regression reg;
 	std::vector<double> res = reg.RegressionLineaire(subvectorX,subvectorY);
 	return res;

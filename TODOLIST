@@ -1,7 +1,6 @@
 LOW :
  RPI
  - trajectory follower [vendredi]
- - pb '0' []
  - rs232 [vendredi]
 
 HIGH :

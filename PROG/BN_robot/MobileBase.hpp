@@ -28,7 +28,7 @@ class MobileBase {
 		void GetLidarPoints();
 	private:
 		void GetPosBase();
-		std::vector<double> FindSegment(int start, int end);
+		std::vector<double> FindSegment(int start, int stop);
 		int sign(const double test);
 
 		const double SPEED_NORM = 8.68;

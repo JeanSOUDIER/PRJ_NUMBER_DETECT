@@ -252,13 +252,13 @@ void Arm::ToKeyboard(bool GamePad) {
                 }
 
                 case 'a': {
-                    pas++;
-                    if(pas > 10) {pas = 10;}
+                    pas += 10;;
+                    if(pas > 50) {pas = 50;}
                     break;
                 }
 
                 case 'e': {
-                    pas--;
+                    pas -= 10;
                     if(pas < 1) {pas = 1;}
                     break;
                 }
