@@ -8,7 +8,10 @@ HIGH :
  - test dessin (améliorer)
  - lidar regression [vendredi]
  Jetson
- - RNN
+ - RNN (? CNN non ?- Erwan)
+ - CNN (-Erwan)
+ - Compilation CUDA sur Qt (-Erwan)
+ - Interface graphique rendu CNN [en cours] (-Erwan)
  - pre traitement
  - réponse ?
 
