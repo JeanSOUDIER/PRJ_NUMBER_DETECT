@@ -2,6 +2,8 @@ LOW :
  RPI
  - trajectory follower [vendredi]
  - rs232 [vendredi]
+ - lidar [vendredi] (x,y et atomic -Jean)
+ - writeCSV (string)
 
 HIGH :
  RPI
@@ -16,4 +18,4 @@ HIGH :
  - réponse ?
 
 MAT :
- - Paper shapes []
+ - Paper shapes

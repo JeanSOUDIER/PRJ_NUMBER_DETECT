@@ -5,6 +5,7 @@
 #include <cmath>
 #include <complex>
 #include <vector>
+#include <limits>
 #include "Lidar.hpp"
 #include "Usb.hpp"
 #include "Regression.hpp"

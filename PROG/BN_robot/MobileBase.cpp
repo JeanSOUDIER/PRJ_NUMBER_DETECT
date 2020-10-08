@@ -85,10 +85,10 @@ void MobileBase::GetLidarPoints() {
 		std::vector<int> intensity = m_RPLidar->GetIntensity();
 		m_x.clear();
 		m_y.clear();
-		for(int i=0;i<static_cast<int>(range.size());i++) {
+		for(unsigned int i=0;i<range.size();i++) {
 			if(range[i] == 3500) {
-				m_x.push_back(std::numeric_limit<double>::silent_nan());
-				m_y.push_back(std::numeric_limit<double>::silent_nan());
+				m_x.push_back(std::numeric_limits<double>::quiet_NaN());
+				m_y.push_back(std::numeric_limits<double>::quiet_NaN());
 			} else {
 				m_x.push_back(static_cast<double>(range[i])*std::cos(static_cast<double>(intensity[i])));
 				m_y.push_back(static_cast<double>(range[i])*std::sin(static_cast<double>(intensity[i])));
@@ -96,22 +96,29 @@ void MobileBase::GetLidarPoints() {
 		}
 		m_RPLidar->Display(true);
 		std::cout << "out : " << m_RPLidar->SaveLidarPoints() << std::endl;
+		GetPosBase();
 		//m_RPLidar->Display(true);
 	}
 }
 
 void MobileBase::GetPosBase() {
-	std::vector<double> res = FindSegment(0,90);
+	std::vector<double> res = FindSegment(0,89);
 	std::cout << res[0] << " " << res[1] << " " << res[2] << std::endl;
+	/*res = FindSegment(910,179);
+	std::cout << res[0] << " " << res[1] << " " << res[2] << std::endl;
+	res = FindSegment(179,269);
+	std::cout << res[0] << " " << res[1] << " " << res[2] << std::endl;
+	res = FindSegment(269,359);
+	std::cout << res[0] << " " << res[1] << " " << res[2] << std::endl;*/
 	//points cardinaux
 	//find a*x+b => a,b x4 + dist board
 	//set m_posX, m_posY, m_angle, m_dist_board
 }
 
 std::vector<double> MobileBase::FindSegment(int start, int stop) {
-	std::vector<double> subvectorX = {m_x.begin()+start, m_x.end()-stop};
-	std::vector<double> subvectorY = {m_y.begin()+start, m_y.end()-stop};
-	for(int i=0;i<subvectorX.size();i++) {
+	std::vector<double> subvectorX = {m_x.begin()+start, m_x.begin()+stop+1};
+	std::vector<double> subvectorY = {m_y.begin()+start, m_y.begin()+stop+1};
+	for(unsigned int i=0;i<subvectorX.size();i++) {
 		if(std::isnan(subvectorX.at(i))) {
 			subvectorX.erase(subvectorX.begin()+i);
 			subvectorY.erase(subvectorY.begin()+i);

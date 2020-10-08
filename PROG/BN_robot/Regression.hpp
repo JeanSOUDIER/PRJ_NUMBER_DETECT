@@ -9,6 +9,11 @@
 #include <vector>
 #include <algorithm>
 
+struct Sum {
+    void operator()(double n) {sum += n;}
+    double sum{0};
+};
+
 class Regression {
 	public:
 		Regression();
