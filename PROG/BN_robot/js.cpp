@@ -8,8 +8,8 @@ Js::Js(bool active, int lim_min, int lim_max) {
 	m_lim2 = 65536/(lim_max-lim_min);
     m_active = active;
     if(m_active) {
-	    const char *device = "/dev/input/js0";
-        m_js = open(device, O_RDONLY);
+	    const std::string device = "/dev/input/js0";
+        m_js = open(&device[0], O_RDONLY);
 
         if (m_js == -1) {
             perror("Could not open joystick");
