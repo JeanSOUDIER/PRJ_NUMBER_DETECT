@@ -8,6 +8,7 @@
 #include "Lidar.hpp"
 #include "Usb.hpp"
 #include "Regression.hpp"
+#include "utility.h"
 
 constexpr int ERREUR_STATIQUE = 2;
 
