@@ -47,6 +47,8 @@ protected:
 
 private :
 
+    bool isSetupCompleted;
+
     SequenceBox* sequenceBox;
 
     QComboBox *direction_comboBox;
@@ -70,6 +72,7 @@ private :
 private slots:
 
     void updateMovement();
+    void go_to_me();
     void kill_me();
 
 };

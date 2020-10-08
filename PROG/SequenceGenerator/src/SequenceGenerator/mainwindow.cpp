@@ -4,7 +4,7 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
 
-    QScreen *screen = QGuiApplication::primaryScreen();
+     QScreen *screen = QGuiApplication::primaryScreen();
      QRect  screenGeometry = screen->geometry();
      const int height = int(screenGeometry.height()*0.6);
      const int width = int(screenGeometry.width()*0.6);
@@ -12,30 +12,31 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
     setup_menu();
     setup_splitter();
     setup_tray();
+    setup_windows();
 
-    last_path = "C:/";
+    last_path = QDir::currentPath();
 
     setGeometry(int(screenGeometry.width()*0.2),int(screenGeometry.height()*0.2),width, height);
     setWindowTitle(QString::fromUtf8("Sequence generator"));
     QWidget::setWindowFlags(Qt::Window);
 
+
 }
 
 MainWindow::~MainWindow(){
 
-    delete mainSplitter;
     delete trayIcon;
+    delete aboutWindow;
     delete menuBar();
     delete layout();
 
 }
-/**/
+/**************************************************************/
 
 void MainWindow::resizeEvent(QResizeEvent *event){
 
     QMainWindow::resizeEvent(event);
-    sequence_box->getScroll()->setMaximumHeight(int(height()*0.8));
-    sequence_box->getScroll()->setMinimumHeight(int(height()*0.8));
+    sequence_box->scaleScroll();
     event->accept();
 
 }
@@ -64,6 +65,16 @@ void MainWindow::setup_menu(){
         file_menu->addAction(save_action);
         file_menu->addSeparator();
         file_menu->addAction(close_action);
+
+
+
+    help_menu = menuBar()->addMenu(tr("&Help"));
+
+        about_action = new QAction(tr("&About") , help_menu);
+        connect(about_action, &QAction::triggered, this, &MainWindow::about);
+
+
+        help_menu->addAction(about_action);
 
 }
 
@@ -97,8 +108,6 @@ void MainWindow::setup_splitter(){
 
                 sequence_box = new SequenceBox(this);
 
-
-
                 QPushButton *generate_button = new QPushButton(tr("Generate"),tabs_input);
                 connect(generate_button , &QPushButton::clicked , this , &MainWindow::generate);
 
@@ -106,6 +115,58 @@ void MainWindow::setup_splitter(){
                 sequence_input_box_layout->addRow(new QLabel(tr("Add a new movement"),sequence_input_box) , addMovement_button);
                 sequence_input_box_layout->addRow(sequence_box);
                 sequence_input_box_layout->addRow(generate_button);
+
+
+                                /*+++++++++++++*/
+
+                preview_parameter_box = new QGroupBox(tabs_input);
+                QFormLayout *preview_parameter_box_layout = new QFormLayout(preview_parameter_box);
+
+                   speed_spinbox = new QSpinBox(preview_parameter_box);
+                   speed_spinbox->setRange(0 , std::numeric_limits<int>::max());
+                   speed_spinbox->setSingleStep(1);
+                   speed_spinbox->setSuffix(" m.s^-1");
+                   connect(speed_spinbox , QOverload<int>::of(&QSpinBox::valueChanged) , this , &MainWindow::updateInfo);
+
+                   begin_x_spinbox = new QSpinBox(preview_parameter_box);
+                   begin_x_spinbox->setRange(std::numeric_limits<int>::min() , std::numeric_limits<int>::max());
+                   begin_x_spinbox->setSingleStep(1);
+                   begin_x_spinbox->setSuffix(" mm");
+                   connect(begin_x_spinbox , QOverload<int>::of(&QSpinBox::valueChanged) , this , &MainWindow::updateInfo);
+
+                   begin_y_spinbox = new QSpinBox(preview_parameter_box);
+                   begin_y_spinbox->setRange(std::numeric_limits<int>::min() , std::numeric_limits<int>::max());
+                   begin_y_spinbox->setSingleStep(1);
+                   begin_y_spinbox->setSuffix(" mm");
+                   connect(begin_y_spinbox , QOverload<int>::of(&QSpinBox::valueChanged) , this , &MainWindow::updateInfo);
+
+                   begin_z_spinbox = new QSpinBox(preview_parameter_box);
+                   begin_z_spinbox->setRange(std::numeric_limits<int>::min() , std::numeric_limits<int>::max());
+                   begin_z_spinbox->setSingleStep(1);
+                   begin_z_spinbox->setSuffix(" mm");
+                   connect(begin_z_spinbox , QOverload<int>::of(&QSpinBox::valueChanged) , this , &MainWindow::updateInfo);
+
+                   item_size_slider = new QSlider(preview_parameter_box);
+                   item_size_slider->setMaximum(100);
+                   item_size_slider->setMinimum(0);
+                   item_size_slider->setOrientation(Qt::Horizontal);
+                   item_size_slider->setValue(100);
+                   connect(item_size_slider , &QSlider::valueChanged , this , &MainWindow::on_slider_update);
+
+                   QLabel *parameters_explain_label = new QLabel(preview_parameter_box);
+                   parameters_explain_label->setTextFormat(Qt::RichText);
+                   parameters_explain_label->setText("<b>"+ tr("N.B.:") + "</b>" + tr(" This data is not saved in the exported file.\n"));
+
+                   preview_parameter_box_layout->addRow(new QLabel(tr("Speed (absolute): "), preview_parameter_box) , speed_spinbox);
+                   preview_parameter_box_layout->addRow(new QLabel(tr("X: "), preview_parameter_box) , begin_x_spinbox);
+                   preview_parameter_box_layout->addRow(new QLabel(tr("Y: "), preview_parameter_box) , begin_y_spinbox);
+                   preview_parameter_box_layout->addRow(new QLabel(tr("Z: "), preview_parameter_box) , begin_z_spinbox);
+                   preview_parameter_box_layout->addRow(parameters_explain_label);
+                   preview_parameter_box_layout->addRow(new QLabel(tr("Item size: "), preview_parameter_box) , item_size_slider);
+
+                preview_parameter_box->setLayout(preview_parameter_box_layout);
+
+
 
                                         /*+++++++++++++*/
 
@@ -139,6 +200,7 @@ void MainWindow::setup_splitter(){
 
 
             tabs_input->addTab(sequence_input_box , tr("Sequence"));
+            tabs_input->addTab(preview_parameter_box , tr("Preview parameters"));
             tabs_input->addTab(file_box , tr("File"));
 
 
@@ -160,51 +222,19 @@ void MainWindow::setup_splitter(){
             QVBoxLayout *render_box_layout = new QVBoxLayout(render_box);
 
 
-            render_box_layout->addWidget(new QLabel("TODO" , render_box));
+            view = new View(this);
+
+            view->addEntity(begin_x_spinbox->value() , begin_y_spinbox->value() , begin_z_spinbox->value() , 0);
+            view->editEntityColour(0x9D1C00 , 0);
+
+            preview_disabled_label = new QLabel(tr("Preview is disabled for direction mode"),render_box);
+            preview_disabled_label->hide();
+
+            render_box_layout->addWidget(view , 1);
+            render_box_layout->addWidget(preview_disabled_label);
             render_box_layout->setAlignment(Qt::AlignCenter);
             render_box->setLayout(render_box_layout);
 
-                             /*+++++++++++++*/
-
-            preview_parameter_box = new QGroupBox(tabs_preview);
-            QFormLayout *preview_parameter_box_layout = new QFormLayout(preview_parameter_box);
-
-                speed_spinbox = new QSpinBox(preview_parameter_box);
-                speed_spinbox->setRange(0 , std::numeric_limits<int>::max());
-                speed_spinbox->setSingleStep(1);
-                speed_spinbox->setSuffix(" m.s^-1");
-                connect(speed_spinbox , QOverload<int>::of(&QSpinBox::valueChanged) , this , &MainWindow::updateInfo);
-
-                begin_x_spinbox = new QSpinBox(preview_parameter_box);
-                begin_x_spinbox->setRange(std::numeric_limits<int>::min() , std::numeric_limits<int>::max());
-                begin_x_spinbox->setSingleStep(1);
-                begin_x_spinbox->setSuffix(" mm");
-                connect(begin_x_spinbox , QOverload<int>::of(&QSpinBox::valueChanged) , this , &MainWindow::updateInfo);
-
-                begin_y_spinbox = new QSpinBox(preview_parameter_box);
-                begin_y_spinbox->setRange(std::numeric_limits<int>::min() , std::numeric_limits<int>::max());
-                begin_y_spinbox->setSingleStep(1);
-                begin_y_spinbox->setSuffix(" mm");
-                connect(begin_y_spinbox , QOverload<int>::of(&QSpinBox::valueChanged) , this , &MainWindow::updateInfo);
-
-                begin_z_spinbox = new QSpinBox(preview_parameter_box);
-                begin_z_spinbox->setRange(std::numeric_limits<int>::min() , std::numeric_limits<int>::max());
-                begin_z_spinbox->setSingleStep(1);
-                begin_z_spinbox->setSuffix(" mm");
-                connect(begin_z_spinbox , QOverload<int>::of(&QSpinBox::valueChanged) , this , &MainWindow::updateInfo);
-
-
-                QLabel *parameters_explain_label = new QLabel(preview_parameter_box);
-                parameters_explain_label->setTextFormat(Qt::RichText);
-                parameters_explain_label->setText("<b>"+ tr("N.B.:") + "</b>" + tr(" This data is not saved in the exported file.\n"));
-
-                preview_parameter_box_layout->addRow(new QLabel(tr("Speed (absolute): "), file_box) , speed_spinbox);
-                preview_parameter_box_layout->addRow(new QLabel(tr("X: "), file_box) , begin_x_spinbox);
-                preview_parameter_box_layout->addRow(new QLabel(tr("Y: "), file_box) , begin_y_spinbox);
-                preview_parameter_box_layout->addRow(new QLabel(tr("Z: "), file_box) , begin_z_spinbox);
-                preview_parameter_box_layout->addRow(parameters_explain_label);
-
-            preview_parameter_box->setLayout(preview_parameter_box_layout);
 
 
 
@@ -227,14 +257,20 @@ void MainWindow::setup_splitter(){
 
                              /*+++++++++++++*/
             tabs_preview->addTab(render_box , tr("Preview"));
-            tabs_preview->addTab(preview_parameter_box , tr("Preview parameters"));
             tabs_preview->addTab(preview_info_box , tr("Drawing information"));
 
-    QPushButton *preview_button = new QPushButton(tr("Preview") , preview_box);
-    connect(preview_button , &QPushButton::clicked , this , &MainWindow::preview);
 
-    preview_box_layout->addWidget(tabs_preview);
-    preview_box_layout->addWidget(preview_button);
+            QPushButton *goToBeginning_button = new QPushButton(tr("Go to beginning") , preview_box);
+            connect(goToBeginning_button , &QPushButton::clicked , this , &MainWindow::goToBeginning);
+
+            preview_button = new QPushButton(tr("Toggle display") , preview_box);
+            preview_button->setCheckable(true);
+            preview_button->setChecked(true);
+            connect(preview_button , &QPushButton::clicked , this , &MainWindow::preview);
+
+            preview_box_layout->addWidget(tabs_preview);
+            preview_box_layout->addWidget(goToBeginning_button);
+            preview_box_layout->addWidget(preview_button);
 
                             /*-------------------------------------*/
 
@@ -255,6 +291,16 @@ void MainWindow::setup_tray(){
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setIcon(QIcon(":/icon/rsc/icon/icon.png"));
     trayIcon->setVisible(true);
+}
+
+void MainWindow::setup_windows(){
+
+
+    aboutWindow = new AboutWindow(this);
+    aboutWindow->hide();
+
+    connect(aboutWindow , &QDialog::accepted , this , [this]{aboutWindow->hide();});
+
 }
 
 /**************************************************************/
@@ -295,6 +341,7 @@ void MainWindow::updateInfo(){
         }
 
 
+        view->moveEntity(-begin_x_spinbox->value() , begin_z_spinbox->value() , -begin_y_spinbox->value() , 0); //Axis of the robot and of the view are not the same
 
     }else{
         if(!sequence_box->getSequence()->getMovements().isEmpty()){
@@ -310,6 +357,9 @@ void MainWindow::updateInfo(){
 
         }
 
+        view->moveEntity(0 , 0, 0 , 0);
+
+
 
 
     }
@@ -323,6 +373,11 @@ void MainWindow::updateInfo(){
 
 }
 
+
+void MainWindow::moveEntity(Movement *mov , const unsigned int index){view->moveEntity(mov , index);}
+
+void MainWindow::deleteEntity(const unsigned index){view->deleteEntity(index);}
+
 /**************************************************************/
 
 void MainWindow::open(){
@@ -334,6 +389,16 @@ void MainWindow::open(){
 
     SequenceReader reader(filepath);
     sequence_box->setSequence(reader.readSequence());
+
+    view->clear();
+    for(int index = 0 ; index < sequence_box->getBoxes().size() ; index++){
+        view->addEntity(sequence_box->getSequence()->getMovements().at(index) , index);
+
+    }
+
+    sequence_box->scaleScroll();
+
+    on_slider_update();
 
 
 }
@@ -364,12 +429,19 @@ void MainWindow::browse(){
 }
 
 
+void MainWindow::about(){aboutWindow->show();}
+
 void MainWindow::addMovement(){
 
     MovementBox *mov_box = new MovementBox(sequence_box);
 
+    view->addEntity(mov_box->getMovement() , sequence_box->getBoxes().indexOf(mov_box));
+
     if(direction_mode_rb->isChecked()){mov_box->toDirection(true , false);}
     else{mov_box->toCoordinates(true , false);}
+
+    sequence_box->scaleScroll();
+    on_slider_update();
 
 
 }
@@ -381,6 +453,12 @@ void MainWindow::updateSequenceMode(){
 
     if(direction_mode_rb->isChecked()){
 
+        view->hide();
+        view->hideAll();
+        preview_button->setChecked(false);
+        preview_button->hide();
+
+        preview_disabled_label->show();
 
         parameters_layout->itemAt(0, QFormLayout::LabelRole)->widget()->show();
         parameters_layout->itemAt(0 , QFormLayout::FieldRole)->widget()->show();
@@ -403,6 +481,14 @@ void MainWindow::updateSequenceMode(){
 
     }
     else{
+
+
+        view->show();
+        view->showAll();
+        preview_button->setChecked(true);
+        preview_button->show();
+
+        preview_disabled_label->hide();
 
         parameters_layout->itemAt(0, QFormLayout::LabelRole)->widget()->hide();
         parameters_layout->itemAt(0 , QFormLayout::FieldRole)->widget()->hide();
@@ -476,4 +562,16 @@ bool MainWindow::generate(){
 
 }
 
-void MainWindow::preview(){}
+void MainWindow::preview(){
+
+    if(preview_button->isChecked()){view->showAll();}
+    else{view->hideAll();}
+
+
+}
+
+void MainWindow::goToEntity(const unsigned int index){view->goToEntity(index);}
+
+void MainWindow::goToBeginning(){view->goToEntity(0);}
+
+void MainWindow::on_slider_update(){view->resizeAll(item_size_slider->value());}

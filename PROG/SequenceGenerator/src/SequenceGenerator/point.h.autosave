@@ -1,0 +1,53 @@
+#ifndef POINT_H
+#define POINT_H
+
+
+
+#include <QtCore/QObject>
+
+#include <Qt3DCore/qentity.h>
+#include <Qt3DCore/qtransform.h>
+
+#include <Qt3DExtras/QTorusMesh>
+#include <Qt3DExtras/QConeMesh>
+#include <Qt3DExtras/QCylinderMesh>
+#include <Qt3DExtras/QCuboidMesh>
+#include <Qt3DExtras/QPlaneMesh>
+#include <Qt3DExtras/QSphereMesh>
+#include <Qt3DExtras/QPhongMaterial>
+
+
+class Point : public Qt3DCore::QEntity{
+
+    Q_OBJECT
+
+public:
+
+    Point(const int _x , const int _y , const int _z , const unsigned int _index);
+
+    void setX(const int _x);
+    void setY(const int _y);
+    void setZ(const int _z);
+    void setIndex(const unsigned int _index);
+
+    int getX();
+    int getY();
+    int getZ();
+    unsigned int getIndex();
+
+
+protected:
+
+
+    void move(const int _x , const int _y , const int _z);
+
+private:
+
+    int x;
+    int y;
+    int z;
+    unsigned int index;
+
+};
+
+#endif // POINT_H

@@ -6,6 +6,8 @@
 
 MovementBox::MovementBox(SequenceBox *_sequenceBox , Movement* _movement, bool fromSequence){
 
+    isSetupCompleted = false;
+
     movement = _movement;
     sequenceBox = _sequenceBox;
     setup();
@@ -16,9 +18,12 @@ MovementBox::MovementBox(SequenceBox *_sequenceBox , Movement* _movement, bool f
     else{toDirection(false , true);}
 
 
+    isSetupCompleted = true;
 }
 
 MovementBox::MovementBox(SequenceBox *_sequenceBox){
+
+    isSetupCompleted = false;
 
     movement = new Movement();
     sequenceBox = _sequenceBox;
@@ -30,6 +35,8 @@ MovementBox::MovementBox(SequenceBox *_sequenceBox){
     if(movement->getMode() == MovementMode::COORDINATES){toCoordinates(false, false);}
     else{toDirection(false, false);}
 
+
+    isSetupCompleted = true;
 }
 
 MovementBox::~MovementBox(){
@@ -45,11 +52,6 @@ void MovementBox::setup(){
 
     QFormLayout *main_layout = new QFormLayout(this);
 
-    delete_me_button = new QToolButton(this);
-    delete_me_button->setToolTip(tr("Delete this movement"));
-    delete_me_button->setToolButtonStyle(Qt::ToolButtonIconOnly);
-    delete_me_button->setIcon(QIcon(QPixmap(":/buttons/rsc/buttons/remove_button.png")));
-    connect(delete_me_button , &QToolButton::clicked , this , &MovementBox::kill_me);
 
     duration_spinBox = new QSpinBox(this);
     duration_spinBox->setRange(0 , std::numeric_limits<int>::max());
@@ -84,11 +86,27 @@ void MovementBox::setup(){
     connect(z_spinBox , QOverload<int>::of(&QSpinBox::valueChanged), this , &MovementBox::updateMovement);
 
 
+    QToolButton *go_to_me_button = new QToolButton(this);
+    go_to_me_button->setToolTip(tr("Go to this button"));
+    go_to_me_button->setToolButtonStyle(Qt::ToolButtonIconOnly);
+    go_to_me_button->setIcon(QIcon(QPixmap(":/buttons/rsc/buttons/target.png")));
+    connect(go_to_me_button , &QToolButton::clicked , this , &MovementBox::go_to_me);
+
+    delete_me_button = new QToolButton(this);
+    delete_me_button->setToolTip(tr("Delete this movement"));
+    delete_me_button->setToolButtonStyle(Qt::ToolButtonIconOnly);
+    delete_me_button->setIcon(QIcon(QPixmap(":/buttons/rsc/buttons/remove_button.png")));
+    connect(delete_me_button , &QToolButton::clicked , this , &MovementBox::kill_me);
+
+
+
+
     main_layout->addRow(new QLabel(tr("Direction:") , this) , direction_comboBox);
     main_layout->addRow(new QLabel(tr("X:") , this) , x_spinBox);
     main_layout->addRow(new QLabel(tr("Y:") , this) , y_spinBox);
     main_layout->addRow(new QLabel(tr("Z:") , this) , z_spinBox);
     main_layout->addRow(new QLabel(tr("Duration:") , this) , duration_spinBox);
+    main_layout->addRow(new QLabel(tr("Go to this point:") , this) , go_to_me_button);
     main_layout->addRow(new QLabel(tr("Delete movement:") , this) , delete_me_button);
 
 
@@ -198,9 +216,20 @@ void MovementBox::updateMovement(){
     movement->setZ(z_spinBox->value());
 
     sequenceBox->getSequence()->replaceMovement(index, movement);
-    sequenceBox->getMainWindow()->updateInfo();
 
     sequenceBox->getMainWindow()->updateInfo();
+
+
+    if(isSetupCompleted){
+
+
+
+        sequenceBox->getMainWindow()->moveEntity(movement , index+1);
+
+
+    }
+
+
 }
 
 void MovementBox::updateFields(){
@@ -230,9 +259,18 @@ void MovementBox::updateFields(){
 
 }
 
+void MovementBox::go_to_me(){
+
+    sequenceBox->getMainWindow()->goToEntity(sequenceBox->getBoxes().indexOf(this)+1);
+
+}
+
 void MovementBox::kill_me(){
 
+    const int index = sequenceBox->getBoxes().indexOf(this);
     sequenceBox->removeMovement(this);
+    sequenceBox->getMainWindow()->deleteEntity(index+1);
+
     delete this;
 
 }

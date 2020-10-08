@@ -19,8 +19,7 @@ SequenceBox::SequenceBox(MainWindow *_mainWindow) : QGroupBox(_mainWindow){
 
     scroll->setWidget(scroll_contents);
     scroll->setWidgetResizable(true);
-    scroll->setMinimumHeight(int(mainWindow->height()*0.8));
-
+    scaleScroll();
 
      main_layout->addWidget(scroll);
 
@@ -31,7 +30,13 @@ SequenceBox::~SequenceBox(){qDeleteAll(children());}
 
 /**************************************************************/
 
+void SequenceBox::scaleScroll(){
 
+    scroll->setMinimumHeight((scroll->widget()->height() > mainWindow->height()*.8) ? scroll->height() : scroll->widget()->height());
+    scroll->resize(scroll->width() , (scroll->widget()->height() > mainWindow->height()*.8) ? scroll->height() : scroll->widget()->height());
+
+
+}
 
 void SequenceBox::addMovement(MovementBox *mov_box){
 

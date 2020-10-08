@@ -29,12 +29,17 @@ public:
 
     long int getCoordinate(const Coordinate coor);
     long int getX();
+    long int getX() const;
     long int getY();
+    long int getY() const;
     long int getZ();
+    long int getZ() const;
 
     uint64_t getDuration();
+    uint64_t getDuration() const;
 
     MovementMode getMode();
+    MovementMode getMode() const;
 
     bool operator ==(const Movement& mov) const;
     static bool equals (const Movement &mov1 , const Movement &mov2);

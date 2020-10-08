@@ -33,6 +33,7 @@ protected:
     void addMovement(MovementBox *);
     void addBox(MovementBox *);
     void removeMovement(MovementBox*);
+    void scaleScroll();
 
 private:
 

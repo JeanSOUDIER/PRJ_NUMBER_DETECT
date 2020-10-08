@@ -53,12 +53,16 @@ long int Movement::getCoordinate(const Coordinate coor){
 }
 
 long int Movement::getX(){return x;}
+long int Movement::getX() const {return x;}
 long int Movement::getY(){return y;}
+long int Movement::getY() const {return y;}
 long int Movement::getZ(){return z;}
-
+long int Movement::getZ() const {return z;}
 uint64_t Movement::getDuration(){return duration_ms;}
+uint64_t Movement::getDuration() const{return duration_ms;}
 
 MovementMode Movement::getMode(){return mode;}
+MovementMode Movement::getMode() const {return mode;}
 
 
 /*******************************************************************/

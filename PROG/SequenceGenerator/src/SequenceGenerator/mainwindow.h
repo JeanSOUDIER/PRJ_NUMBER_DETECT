@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "aboutwindow.h"
+
 #include <filenamefield.h>
 
 #include "global.h"
@@ -11,6 +13,8 @@
 #include "sequencebox.h"
 #include "sequencewriter.h"
 #include "sequencereader.h"
+
+#include "view.h"
 
 
 #include <QAction>
@@ -39,6 +43,7 @@
 #include <QRadioButton>
 
 #include <QScreen>
+#include <QSlider>
 #include <QSplitter>
 #include <QSystemTrayIcon>
 
@@ -58,6 +63,8 @@ public:
 
 private:
 
+    AboutWindow* aboutWindow;
+
     QSplitter *mainSplitter;
     QSystemTrayIcon *trayIcon;
 
@@ -65,6 +72,9 @@ private:
     QAction *open_action;
     QAction *save_action;
     QAction *close_action;
+
+    QMenu *help_menu;
+    QAction *about_action;
 
 
     SequenceBox *sequence_box;
@@ -76,10 +86,14 @@ private:
     FileNameField *file_name_field;
 
 
+    View *view;
+    QPushButton *preview_button;
+
     QGroupBox *preview_parameter_box;
     QSpinBox *begin_x_spinbox;
     QSpinBox *begin_y_spinbox;
     QSpinBox *begin_z_spinbox;
+    QSlider *item_size_slider;
 
     QSpinBox *speed_spinbox;
 
@@ -87,10 +101,12 @@ private:
     QLabel *total_distance_label;
 
     QString last_path;
+    QLabel* preview_disabled_label;
 
     void setup_splitter();
     void setup_tray();
     void setup_menu();
+    void setup_windows();
 
     void open_Path(const QString& path);
 
@@ -99,15 +115,22 @@ protected:
 
     void resizeEvent(QResizeEvent *event) override;
 
+    void deleteEntity(const unsigned index);
+    void moveEntity(Movement * mov, const unsigned int index);
+
 protected slots:
 
     void updateInfo();
+
+
 
 private slots:
 
     void open();
     void close();
     void save();
+
+    void about();
 
     void browse();
 
@@ -117,8 +140,11 @@ private slots:
     bool generate();
     void preview();
 
+    void goToEntity(const unsigned int index);
+    void goToBeginning();
 
 
+    void on_slider_update();
 
 
 };

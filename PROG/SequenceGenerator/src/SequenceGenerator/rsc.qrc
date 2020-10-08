@@ -2,8 +2,12 @@
     <qresource prefix="/buttons">
         <file>rsc/buttons/add_button.png</file>
         <file>rsc/buttons/remove_button.png</file>
+        <file>rsc/buttons/target.png</file>
     </qresource>
     <qresource prefix="/icon">
         <file>rsc/icon/icon.png</file>
+    </qresource>
+    <qresource prefix="/img">
+        <file>rsc/img/logo.png</file>
     </qresource>
 </RCC>

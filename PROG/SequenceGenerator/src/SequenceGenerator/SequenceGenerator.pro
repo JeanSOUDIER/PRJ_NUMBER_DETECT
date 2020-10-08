@@ -1,9 +1,14 @@
 QT       += core gui  \
           xml \
+         3dcore  \
+         3drender \
+         3dinput  \
+         3dextras
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++11
+CONFIG += c++11 \
+            resources_big
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -17,26 +22,32 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    aboutwindow.cpp \
     filenamefield.cpp \
     main.cpp \
     mainwindow.cpp \
     movement.cpp \
     movementbox.cpp \
+    pointentity.cpp \
     sequence.cpp \
     sequencebox.cpp \
     sequencereader.cpp \
-    sequencewriter.cpp
+    sequencewriter.cpp \
+    view.cpp
 
 HEADERS += \
+    aboutwindow.h \
     filenamefield.h \
     global.h \
     mainwindow.h \
     movement.h \
     movementbox.h \
+    pointentity.h \
     sequence.h \
     sequencebox.h \
     sequencereader.h \
-    sequencewriter.h
+    sequencewriter.h \
+    view.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
