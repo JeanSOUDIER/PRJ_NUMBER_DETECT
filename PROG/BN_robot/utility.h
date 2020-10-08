@@ -12,6 +12,8 @@
 #include <vector>
 #include <string>
 
+#define EU_FORMAT //If this is defined, replaces all "." by "," in doubles when converting them to strings. This is to compensate for Excel using strange conventions
+
 
 namespace Utility {
 
@@ -30,8 +32,13 @@ namespace Utility {
 
     bool writeCSV(const std::string &path , const std::vector<std::vector<double>> &data);
     bool writeCSV(const std::string &path, const std::vector<std::vector<std::string>> &data);
-    
-    template <typename T> int sign(T val) {return (T(0) < val) - (val < T(0));};
+
+
+
+    template <typename T> int sign(T val) {
+        return (T(0) < val) - (val < T(0));
+    }
+
 
 }
 #endif // UTILITY_H
