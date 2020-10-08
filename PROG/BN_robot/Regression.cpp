@@ -50,7 +50,7 @@ std::vector<double> Regression::RegressionLineaire(std::vector<double> xi, std::
 	double SE_My = 0;
 	std::for_each(E_My.begin(), E_My.end(), [&] (int n) {SE_My += E_My[n];});
 
-	m_r = sqrt(((m_a*m_a)*SE_Mx)/SE_My)*sign(m_a);
+	m_r = sqrt(((m_a*m_a)*SE_Mx)/SE_My)*Utility::sign(m_a);
 
 	res[0] = m_a;
 	res[1] = m_b;
@@ -59,10 +59,3 @@ std::vector<double> Regression::RegressionLineaire(std::vector<double> xi, std::
 	return res;
 }
 
-int Regression::sign(const double test) {
-	if(test < 0) {
-		return -1;
-	} else {
-		return 1;
-	}
-}
