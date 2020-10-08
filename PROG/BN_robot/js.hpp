@@ -1,14 +1,18 @@
 #ifndef JS_H
 #define JS_H
 
-#include <iostream>
-#include <vector>
+#include <wiringPi.h>
+
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <wiringPi.h>
-#include <cmath>
 #include <linux/joystick.h>
+
+#include <cmath>
+#include <iostream>
+#include <string>
+#include <vector>
+
 
 struct axis_state {
     short x, y;
