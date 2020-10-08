@@ -65,11 +65,11 @@ void MobileBase::GoPos(const double x, const double y, const double a) {
     gamma = std::fmod(gamma,2*M_PI);
     gamma -= M_PI;
     if(gamma != 0) {
-    	SetSpeed(50*sign(gamma),-50*sign(gamma));
+    	SetSpeed(50*Utility::sign(gamma),-50*Utility::sign(gamma));
 		delay(std::abs(gamma)*SPEED_ANGLE);
     }
 	if(r != 0) {
-		SetSpeed(50*sign(r),50*sign(r));
+		SetSpeed(50*Utility::sign(r),50*Utility::sign(r));
 		delay(r*SPEED_NORM);
 	}
 	SetSpeed(0, 0);
@@ -138,12 +138,4 @@ void MobileBase::SetSpeed(int L, int R) {
 	unsigned char Rc = R+128;
 	std::vector<char> sending{char(255), static_cast<char>(Rc), static_cast<char>(Lc)};
 	m_usb->SendBytes(sending);
-}
-
-int MobileBase::sign(const double test) {
-	if(test < 0) {
-		return -1;
-	} else {
-		return 1;
-	}
 }
