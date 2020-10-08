@@ -30,8 +30,6 @@ std::vector<std::string> split(const std::string &str , const char &delimiter){r
 
 
 
-
-
 std::string readAllFile(const std::string &path){
 
     const uint64_t size = fileSize(path);
@@ -69,7 +67,27 @@ bool writeCSV(const std::string &path, const std::vector<std::vector<double> > &
     data_str.reserve(data.size());
     for(auto &vect:data){
         std::vector<std::string> str_vect;
-        std::transform(vect.begin(), vect.end() , std::back_inserter(str_vect), [](double d) {return std::to_string(d);});
+
+
+    #ifdef EU_FORMAT //If this is defined, replaces all "." by "," in doubles when converting them to strings. This is to compensate for Excel using strange conventions
+    std::for_each(str_vect.begin() , str_vect.end() , [](std::string str){
+
+       std::replace(str.begin() , str.end() , '.' , ',');
+
+    });
+
+    std::transform(vect.begin(), vect.end() , std::back_inserter(str_vect), [](double d) {
+
+        std::string double_str = std::to_string(d);
+        std::replace(double_str.begin() , double_str.end() , '.' , ',');
+        return double_str;
+    });
+
+    #else
+    std::transform(vect.begin(), vect.end() , std::back_inserter(str_vect), [](double d) {return std::to_string(d);});
+    #endif
+
+
         data_str.push_back(str_vect);
     }
 
@@ -105,8 +123,5 @@ bool writeCSV(const std::string &path, const std::vector<std::vector<std::string
 bool writeCSV(const std::string &path , const std::vector<std::vector<double>> &data){return Utility::writeCSV(path , data , ";");}
 bool writeCSV(const std::string &path, const std::vector<std::vector<std::string>> &data){return Utility::writeCSV(path , data , ";");}
 
-template <typename T> int sign(T val) {
-    return (T(0) < val) - (val < T(0));
-}
 
 }
