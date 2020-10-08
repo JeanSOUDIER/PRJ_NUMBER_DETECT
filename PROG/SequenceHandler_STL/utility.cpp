@@ -105,4 +105,8 @@ bool writeCSV(const std::string &path, const std::vector<std::vector<std::string
 bool writeCSV(const std::string &path , const std::vector<std::vector<double>> &data){return Utility::writeCSV(path , data , ";");}
 bool writeCSV(const std::string &path, const std::vector<std::vector<std::string>> &data){return Utility::writeCSV(path , data , ";");}
 
+template <typename T> int sign(T val) {
+    return (T(0) < val) - (val < T(0));
+}
+
 }
