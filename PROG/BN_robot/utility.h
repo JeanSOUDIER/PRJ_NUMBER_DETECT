@@ -30,6 +30,8 @@ namespace Utility {
 
     bool writeCSV(const std::string &path , const std::vector<std::vector<double>> &data);
     bool writeCSV(const std::string &path, const std::vector<std::vector<std::string>> &data);
+    
+    template <typename T> int sign(T val);
 
 }
 #endif // UTILITY_H
