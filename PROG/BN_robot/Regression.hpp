@@ -1,6 +1,8 @@
 #ifndef REGRESSION_H
 #define REGRESSION_H
 
+#include "utility.h"
+
 #include <iostream>
 #include <cmath>
 #include <numeric>
@@ -12,8 +14,6 @@ class Regression {
 		Regression();
 		~Regression();
 		std::vector<double> RegressionLineaire(std::vector<double> xi, std::vector<double> yi);
-	protected:
-		int sign(const double test);
 	private:
 		std::vector<double> m_x;
 		std::vector<double> m_y;
