@@ -8,7 +8,7 @@ Js::Js(bool active, int lim_min, int lim_max) {
 	m_lim2 = 65536/(lim_max-lim_min);
     m_active = active;
     if(m_active) {
-	    const std::string device = "/dev/input/js0";
+	const std::string device = "/dev/input/js0";
         m_js = open(&device[0], O_RDONLY);
 
         if (m_js == -1) {
@@ -46,10 +46,10 @@ std::vector<int> Js::GetEvent() {
 	    		    axis = get_axis_state(&event, axes);
 	                if(axis == 0) {
 	                    x = (int)(axes[axis].x);
-	                    if(abs(x) < 1000) {x = 0;}
+	                    if(std::abs(x) < 1000) {x = 0;}
 	                    x = -x/m_lim1;
 	                    y = (int)(axes[axis].y);
-	                    if(abs(y) < 1000) {y = 0;}
+	                    if(std::abs(y) < 1000) {y = 0;}
 	                    y = -y/m_lim1;
 	                } else {
 	                	if(static_cast<int>(axes[axis].x) != -32768 && static_cast<int>(axes[axis].y) != -32768) {
