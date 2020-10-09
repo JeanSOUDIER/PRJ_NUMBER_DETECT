@@ -25,8 +25,8 @@
 *
 * • Added a namespace
 * • Removed dangerous casts and C array, and replaced them by clean C++ casts, std::vector s and std::string s
-* • Added convience OpenComport(const std::string &, const unsigned int &baudrate ,const std::string &mode , const bool &flowctrl)
-*   that allows to put a std::string as argument without having to mention is number (which is deduced)
+* • Added convience OpenComport(const std::string &portname, const unsigned int &baudrate ,const std::string &mode , const bool &flowctrl)
+*   that allows to put a std::string as argument without having to mention the port number (which is deduced)
 *
 * • Marqued most arguments as const and passed them by reference
 * • Replaced int by unsigned for comport_number arguments.
