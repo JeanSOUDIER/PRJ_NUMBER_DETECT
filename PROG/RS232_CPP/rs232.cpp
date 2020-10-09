@@ -215,7 +215,7 @@ int RS232::OpenComport(const unsigned int &comport_number, const unsigned int &b
     return(1);
   }
 
-  error = tcgetattr(&RS232::comports[comport_number][0], &old_port_settings[0] + comport_number);
+  error = tcgetattr(&RS232::comports[comport_number][0], &old_port_settings[comport_number]); //??????????????????????????????????????
   if(error==-1){
     close(RS232::Cport[comport_number]);
     flock(RS232::Cport[comport_number], LOCK_UN);  // free the port so that others can use it.
