@@ -39,6 +39,13 @@ namespace Utility {
         return (T(0) < val) - (val < T(0));
     }
 
+    template <typename T> unsigned indexof(const std::vector<T> &vector , const T &data){
+    return (std::find(vector.begin(), vector.end(), data) != vector.end())
+            ?
+            std::distance(vector.begin(), std::find(vector.begin(), vector.end(), data))
+            : -1;
+    }
+
 
 }
 #endif // UTILITY_H
