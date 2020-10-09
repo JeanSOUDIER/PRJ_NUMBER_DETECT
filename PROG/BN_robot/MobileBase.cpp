@@ -81,8 +81,9 @@ double MobileBase::getDistBoard() {
 
 void MobileBase::GetLidarPoints() {
 	if(m_lidar_start) {
-		std::vector<int> xP = m_RPLidar->GetXPos();
-		std::vector<int> yP = m_RPLidar->GetYPos();
+		std::vector<double> xP = m_RPLidar->GetXPos();
+		std::vector<double> yP = m_RPLidar->GetYPos();
+		std::vector<int> range = m_RPLidar->GetRange();
 		m_x.clear();
 		m_y.clear();
 		for(unsigned int i=0;i<xP.size();i++) {
@@ -90,8 +91,8 @@ void MobileBase::GetLidarPoints() {
 				m_x.push_back(std::numeric_limits<double>::infinity());
 				m_y.push_back(std::numeric_limits<double>::infinity());
 			} else {
-				m_x.push_back(static_cast<double>(xP));
-				m_y.push_back(static_cast<double>(yP));
+				m_x.push_back(xP.at(i));
+				m_y.push_back(yP.at(i));
 			}
 		}
 		m_RPLidar->Display(true);
@@ -101,7 +102,7 @@ void MobileBase::GetLidarPoints() {
 }
 
 void MobileBase::GetPosBase() {
-	std::vector<double> res = FindSegment(0,89);
+	std::vector<double> res = FindSegment(12,27);
 	std::cout << res[0] << " " << res[1] << " " << res[2] << std::endl;
 	/*res = FindSegment(910,179);
 	std::cout << res[0] << " " << res[1] << " " << res[2] << std::endl;
@@ -115,14 +116,37 @@ void MobileBase::GetPosBase() {
 }
 
 std::vector<double> MobileBase::FindSegment(int start, int stop) {
-	std::vector<double> subvectorX = {m_x.begin()+start, m_x.begin()+stop+1};
-	std::vector<double> subvectorY = {m_y.begin()+start, m_y.begin()+stop+1};
+	std::vector<double> subvectorX;
+	std::vector<double> subvectorY;
+	if(start < stop) {
+		for(int i=start;i<stop;i++) {
+			subvectorX.push_back(m_x.at(i));
+			subvectorY.push_back(m_y.at(i));
+		}
+	} else {
+		for(unsigned int i=start;i<m_x.size();i++) {
+			subvectorX.push_back(m_x.at(i));
+			subvectorY.push_back(m_y.at(i));
+		}
+		for(int i=0;i<stop;i++) {
+			subvectorX.push_back(m_x.at(i));
+			subvectorY.push_back(m_y.at(i));
+		}
+	}
 	for(unsigned int i=0;i<subvectorX.size();i++) {
 		if(std::isinf(subvectorX.at(i))) {
 			subvectorX.erase(subvectorX.begin()+i);
 			subvectorY.erase(subvectorY.begin()+i);
 		}
 	}
+	std::vector<std::vector<double>> v = {std::vector<double>() , std::vector<double>()};
+
+    for(unsigned int i=0;i<subvectorX.size();i++) {
+      v.at(0).push_back(subvectorX.at(i));
+      v.at(1).push_back(subvectorY.at(i));
+    }
+
+    Utility::writeCSV("graphXYreduit",v,";");
 	Regression reg;
 	std::vector<double> res = reg.RegressionLineaire(subvectorX,subvectorY);
 	return res;

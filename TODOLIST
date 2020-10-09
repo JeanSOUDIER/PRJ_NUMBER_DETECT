@@ -2,7 +2,6 @@ LOW :
  RPI
  - trajectory follower
  - rs232
- - lidar (tests -Jean)
 
 HIGH :
  RPI
@@ -23,8 +22,8 @@ PRJ RT :
  - thread à définir
 
 PRJ MOBI :
- - éstimation batterie
+ - estimation batterie
 
 MECA :
- - support camera
+ - support caméra
 

@@ -7,8 +7,8 @@ Lidar::Lidar(const bool start, const int nb_usb, const int bdrate) {
 
     for(auto &item:m_range){std::atomic_init(&item,0);}
     for(auto &item:m_intensity){std::atomic_init(&item,0);}
-    for(auto &item:m_xPos){std::atomic_init(&item,0);}
-    for(auto &item:m_yPos){std::atomic_init(&item,0);}
+    for(auto &item:m_xPos){std::atomic_init(&item,0.0);}
+    for(auto &item:m_yPos){std::atomic_init(&item,0.0);}
 
     m_usb = new Usb(nb_usb, bdrate);
     m_start.store(start, std::memory_order_release);
@@ -93,8 +93,8 @@ void Lidar::Poll(void) {
                 if(temp > 3500) {temp = 3500;}
                 m_range.at(359 - index - degree_count_num).store(temp,std::memory_order_release);
                 m_intensity.at(359 - index - degree_count_num).store(intensity,std::memory_order_release);
-                m_xPos.at(359 - index - degree_count_num).store(range*std::cos((359 - index - degree_count_num)*M_PI/180),std::memory_order_release);
-                m_yPos.at(359 - index - degree_count_num).store(range*std::sin((359 - index - degree_count_num)*M_PI/180),std::memory_order_release);
+                m_xPos.at(359 - index - degree_count_num).store(static_cast<double>(range)*std::cos(static_cast<double>(359 - index - degree_count_num)*M_PI/180),std::memory_order_release);
+                m_yPos.at(359 - index - degree_count_num).store(static_cast<double>(range)*std::sin(static_cast<double>(359 - index - degree_count_num)*M_PI/180),std::memory_order_release);
 
                 degree_count_num++;
               }      
@@ -134,24 +134,24 @@ std::vector<int> Lidar::GetIntensity(void) {
 
    return returnValue;
 }
-std::vector<int> Lidar::GetXPos(void) {
+std::vector<double> Lidar::GetXPos(void) {
 
-    std::vector<int> returnValue(m_xPos.size());
+    std::vector<double> returnValue(m_xPos.size());
     std::generate(returnValue.begin() , returnValue.end() , [this]{
         static unsigned int index = 0;
-        const int currentItem = m_xPos.at(index).load();
+        const double currentItem = m_xPos.at(index).load();
         index++;
         return currentItem;
     });
 
    return returnValue;
 }
-std::vector<int> Lidar::GetYPos(void) {
+std::vector<double> Lidar::GetYPos(void) {
 
-    std::vector<int> returnValue(m_yPos.size());
+    std::vector<double> returnValue(m_yPos.size());
     std::generate(returnValue.begin() , returnValue.end() , [this]{
         static unsigned int index = 0;
-        const int currentItem = m_yPos.at(index).load();
+        const double currentItem = m_yPos.at(index).load();
         index++;
         return currentItem;
     });

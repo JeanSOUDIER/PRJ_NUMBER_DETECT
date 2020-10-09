@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <iterator>
-#include "rs232.h"
+#include "rs232.hpp"
 
 class Usb {
 	public:

@@ -10,7 +10,7 @@ Usb::Usb(const int nb_usb, const int baudrate) {
  
     std::vector<char> mode={'8','N','1',0}; // 8 data bits, no parity, 1 stop bit
   
-    if(RS232_OpenComport(m_port_nr, m_bdrate, &mode[0], 0)) {
+    if(RS232::OpenComport(m_port_nr, m_bdrate, &mode[0], 0)) {
         std::cout << "Can not open comport\n" << std::endl;
         m_active = false;
     } else {

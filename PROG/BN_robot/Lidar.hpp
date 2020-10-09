@@ -35,8 +35,8 @@ class Lidar{
         bool GetSat();
         std::vector<int> GetRange(void);
         std::vector<int> GetIntensity(void);
-        std::vector<int> GetXPos(void);
-        std::vector<int> GetYPos(void);
+        std::vector<double> GetXPos(void);
+        std::vector<double> GetYPos(void);
 
         void Display(const bool isXY);
         void DisplayGraph();
@@ -59,8 +59,8 @@ private:
 
         std::array<std::atomic<int> , 360> m_range;
         std::array<std::atomic<int> , 360> m_intensity;
-        std::array<std::atomic<int> , 360> m_xPos;
-        std::array<std::atomic<int> , 360> m_yPos;
+        std::array<std::atomic<double> , 360> m_xPos;
+        std::array<std::atomic<double> , 360> m_yPos;
 
         bool m_sat = true;
 
