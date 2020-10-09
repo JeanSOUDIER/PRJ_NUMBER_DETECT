@@ -92,17 +92,7 @@ namespace RS232{
 	
 #if defined(__linux__) || defined(__FreeBSD__)
     static constexpr unsigned PORTNR  = 40;
-    static const std::vector<std::string> comports = {
-        "/dev/ttyS0","/dev/ttyS1","/dev/ttyS2","/dev/ttyS3","/dev/ttyS4","/dev/ttyS5",
-        "/dev/ttyS6","/dev/ttyS7","/dev/ttyS8","/dev/ttyS9","/dev/ttyS10","/dev/ttyS11",
-        "/dev/ttyS12","/dev/ttyS13","/dev/ttyS14","/dev/ttyS15","/dev/ttyUSB0",
-        "/dev/ttyUSB1","/dev/ttyUSB2","/dev/ttyUSB3","/dev/ttyUSB4","/dev/ttyUSB5",
-        "/dev/ttyAMA0","/dev/ttyAMA1","/dev/ttyACM0","/dev/ttyACM1",
-        "/dev/rfcomm0","/dev/rfcomm1","/dev/ircomm0","/dev/ircomm1",
-        "/dev/cuau0","/dev/cuau1","/dev/cuau2","/dev/cuau3",
-        "/dev/cuaU0","/dev/cuaU1","/dev/cuaU2","/dev/cuaU3",
-        "/dev/ttyUSB_ARBO", "/dev/ttyUSB_LDS"
-        };
+    extern std::vector<std::string> comports;
 
     extern struct termios new_port_settings;
     extern std::vector<struct termios> old_port_settings;
@@ -111,16 +101,7 @@ namespace RS232{
 
 #else
     static constexpr unsigned PORTNR  = 32;
-    static const std::vector<std::string> comports ={
-    "\\\\.\\COM1",  "\\\\.\\COM2",  "\\\\.\\COM3",  "\\\\.\\COM4",
-    "\\\\.\\COM5",  "\\\\.\\COM6",  "\\\\.\\COM7",  "\\\\.\\COM8",
-    "\\\\.\\COM9",  "\\\\.\\COM10", "\\\\.\\COM11", "\\\\.\\COM12",
-    "\\\\.\\COM13", "\\\\.\\COM14", "\\\\.\\COM15", "\\\\.\\COM16",
-    "\\\\.\\COM17", "\\\\.\\COM18", "\\\\.\\COM19", "\\\\.\\COM20",
-    "\\\\.\\COM21", "\\\\.\\COM22", "\\\\.\\COM23", "\\\\.\\COM24",
-    "\\\\.\\COM25", "\\\\.\\COM26", "\\\\.\\COM27", "\\\\.\\COM28",
-    "\\\\.\\COM29", "\\\\.\\COM30", "\\\\.\\COM31", "\\\\.\\COM32"
-    };
+    extern std::vector<std::string> comports;
     extern std::vector<HANDLE> Cport;
     extern std::string mode_str;
 

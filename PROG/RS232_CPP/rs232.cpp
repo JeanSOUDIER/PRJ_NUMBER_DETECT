@@ -64,6 +64,18 @@
 #if defined(__linux__) || defined(__FreeBSD__)   /* Linux & FreeBSD */
 
 int RS232::error = 0;
+
+std::vector<std::string> RS232::comports  = {
+        "/dev/ttyS0","/dev/ttyS1","/dev/ttyS2","/dev/ttyS3","/dev/ttyS4","/dev/ttyS5",
+        "/dev/ttyS6","/dev/ttyS7","/dev/ttyS8","/dev/ttyS9","/dev/ttyS10","/dev/ttyS11",
+        "/dev/ttyS12","/dev/ttyS13","/dev/ttyS14","/dev/ttyS15","/dev/ttyUSB0",
+        "/dev/ttyUSB1","/dev/ttyUSB2","/dev/ttyUSB3","/dev/ttyUSB4","/dev/ttyUSB5",
+        "/dev/ttyAMA0","/dev/ttyAMA1","/dev/ttyACM0","/dev/ttyACM1",
+        "/dev/rfcomm0","/dev/rfcomm1","/dev/ircomm0","/dev/ircomm1",
+        "/dev/cuau0","/dev/cuau1","/dev/cuau2","/dev/cuau3",
+        "/dev/cuaU0","/dev/cuaU1","/dev/cuaU2","/dev/cuaU3",
+        "/dev/ttyUSB_ARBO", "/dev/ttyUSB_LDS"
+        };
 std::vector<int> RS232::Cport(RS232::PORTNR);
 
 struct termios RS232::new_port_settings;
@@ -257,12 +269,18 @@ int RS232::OpenComport(const unsigned int &comport_number, const unsigned int &b
 int RS232::OpenComport(const std::string &str, const unsigned int &baudrate , const std::string &mode , const bool &flowctrl){
   
     const std::ptrdiff_t index =
-    (std::find(comports.begin(), comports.end(), "/dev/"+str) != comports.end()) 
+    (std::find(RS232::comports.begin(), RS232::comports.end(), "/dev/"+str) != RS232::comports.end()) 
     ? 
-    std::distance(comports.begin(), std::find(comports.begin(), comports.end(), "/dev/"+str)) 
+    std::distance(RS232::comports.begin(), std::find(RS232::comports.begin(), RS232::comports.end(), "/dev/"+str)) 
     : -1;
     
-    return (index > -1) ? RS232::OpenComport(index ,baudrate ,mode , flowctrl): -1;
+
+    if(index == -1){
+      RS232::comports.push_back( "/dev/"+str);
+      return  RS232::OpenComport(RS232::comports.size()-1 ,baudrate ,mode , flowctrl);
+
+    }
+    return  RS232::OpenComport(index ,baudrate ,mode , flowctrl);
 
   
 }
@@ -364,7 +382,7 @@ int RS232::IsRINGEnabled(const unsigned &port){
 
   ioctl(RS232::Cport[port], TIOCMGET, &status);
 
-  if(status&TIOCM_RNG{return(1);}
+  if(status&TIOCM_RNG){return(1);}
   else {return(0);}
 }
 
@@ -445,6 +463,16 @@ void RS232::flushRXTX(const unsigned &port){tcflush(RS232::Cport[port], TCIOFLUS
 
 #else  // windows
 
+std::vector<std::string> RS232::comports ={
+    "\\\\.\\COM1",  "\\\\.\\COM2",  "\\\\.\\COM3",  "\\\\.\\COM4",
+    "\\\\.\\COM5",  "\\\\.\\COM6",  "\\\\.\\COM7",  "\\\\.\\COM8",
+    "\\\\.\\COM9",  "\\\\.\\COM10", "\\\\.\\COM11", "\\\\.\\COM12",
+    "\\\\.\\COM13", "\\\\.\\COM14", "\\\\.\\COM15", "\\\\.\\COM16",
+    "\\\\.\\COM17", "\\\\.\\COM18", "\\\\.\\COM19", "\\\\.\\COM20",
+    "\\\\.\\COM21", "\\\\.\\COM22", "\\\\.\\COM23", "\\\\.\\COM24",
+    "\\\\.\\COM25", "\\\\.\\COM26", "\\\\.\\COM27", "\\\\.\\COM28",
+    "\\\\.\\COM29", "\\\\.\\COM30", "\\\\.\\COM31", "\\\\.\\COM32"
+    };
 std::vector<HANDLE> RS232::Cport(RS232::PORTNR);
 std::string RS232::mode_str = "";
 
@@ -569,12 +597,20 @@ int RS232::OpenComport(const unsigned int &comport_number, const unsigned int &b
 int RS232::OpenComport(const std::string &str, const unsigned int &baudrate , const std::string &mode , const bool &flowctrl){
 
     const std::ptrdiff_t index =
-    (std::find(comports.begin(), comports.end(), "\\\\.\\"+str) != comports.end())
+    (std::find(RS232::comports.begin(), RS232::comports.end(), "\\\\.\\"+str) != RS232::comports.end())
     ?
-    std::distance(comports.begin(), std::find(comports.begin(), comports.end(), "\\\\.\\COM"+str))
+    std::distance(RS232::comports.begin(), std::find(RS232::comports.begin(), RS232::comports.end(), "\\\\.\\COM"+str))
     : -1;
 
-    return (index > -1) ? RS232::OpenComport(index ,baudrate ,mode , flowctrl): -1;
+
+    if(index == -1){
+        RS232::comports.push_back("\\\\.\\COM"+str);
+        RS232::OpenComport(RS232::comports.size()-1 ,baudrate ,mode , flowctrl)
+        return 
+
+    }
+
+    return RS232::OpenComport(index ,baudrate ,mode , flowctrl);
 }
 
 int RS232::PollComport(const int &comport_number, std::vector<unsigned char> &buffer, const int &size){
