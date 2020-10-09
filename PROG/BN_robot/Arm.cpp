@@ -91,13 +91,13 @@ bool Arm::PlaceArm(double x, double y, double z) {
             //test distance no in the bottom
             if(z > Lz) {
                 //test arm not to short
-                const double d = sqrt(rA3*rA3+z*z);
+                const double d = std::sqrt(rA3*rA3+z*z);
                 if(d < A1+A2) {
-                    const double thet = acos(z/d);
-                    const double thetLoi = acos(-(A1*A1+d*d-A2*A2)/(2*d*A1));
+                    const double thet = std::acos(z/d);
+                    const double thetLoi = std::acos(-(A1*A1+d*d-A2*A2)/(2*d*A1));
                     const double theta1 = -thetLoi+thet+A1thet;
 
-                    const double thetLoi2 = acos(-(A1*A1+A2*A2-d*d)/(2*A2*A1));
+                    const double thetLoi2 = std::acos(-(A1*A1+A2*A2-d*d)/(2*A2*A1));
                     const double theta2 = M_PI/2-thetLoi2;
 
                     const double theta3 = -theta1-theta2;

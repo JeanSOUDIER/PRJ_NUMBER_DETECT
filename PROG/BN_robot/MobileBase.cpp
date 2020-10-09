@@ -81,23 +81,22 @@ double MobileBase::getDistBoard() {
 
 void MobileBase::GetLidarPoints() {
 	if(m_lidar_start) {
-		std::vector<int> range = m_RPLidar->GetRange();
-		std::vector<int> intensity = m_RPLidar->GetIntensity();
+		std::vector<int> xP = m_RPLidar->GetXPos();
+		std::vector<int> yP = m_RPLidar->GetYPos();
 		m_x.clear();
 		m_y.clear();
-		for(unsigned int i=0;i<range.size();i++) {
+		for(unsigned int i=0;i<xP.size();i++) {
 			if(range[i] == 3500) {
-				m_x.push_back(std::numeric_limits<double>::quiet_NaN());
-				m_y.push_back(std::numeric_limits<double>::quiet_NaN());
+				m_x.push_back(std::numeric_limits<double>::infinity());
+				m_y.push_back(std::numeric_limits<double>::infinity());
 			} else {
-				m_x.push_back(static_cast<double>(range[i])*std::cos(static_cast<double>(intensity[i])));
-				m_y.push_back(static_cast<double>(range[i])*std::sin(static_cast<double>(intensity[i])));
+				m_x.push_back(static_cast<double>(xP));
+				m_y.push_back(static_cast<double>(yP));
 			}
 		}
 		m_RPLidar->Display(true);
 		std::cout << "out : " << m_RPLidar->SaveLidarPoints() << std::endl;
 		GetPosBase();
-		//m_RPLidar->Display(true);
 	}
 }
 
@@ -119,7 +118,7 @@ std::vector<double> MobileBase::FindSegment(int start, int stop) {
 	std::vector<double> subvectorX = {m_x.begin()+start, m_x.begin()+stop+1};
 	std::vector<double> subvectorY = {m_y.begin()+start, m_y.begin()+stop+1};
 	for(unsigned int i=0;i<subvectorX.size();i++) {
-		if(std::isnan(subvectorX.at(i))) {
+		if(std::isinf(subvectorX.at(i))) {
 			subvectorX.erase(subvectorX.begin()+i);
 			subvectorY.erase(subvectorY.begin()+i);
 		}

@@ -2,20 +2,15 @@ LOW :
  RPI
  - trajectory follower [vendredi]
  - rs232 [vendredi]
- - lidar [vendredi] (x,y et atomic -Jean)
- - writeCSV (string)
+ - lidar (tests -Jean)
 
 HIGH :
  RPI
  - test dessin (améliorer)
  - lidar regression [vendredi]
  Jetson
- - RNN (? CNN non ?- Erwan)
  - CNN (-Erwan)
  - Compilation CUDA sur Qt (-Erwan)
  - Interface graphique rendu CNN [en cours] (-Erwan)
  - pre traitement
  - réponse ?
-
-MAT :
- - Paper shapes

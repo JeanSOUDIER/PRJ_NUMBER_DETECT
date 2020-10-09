@@ -7,6 +7,8 @@ Lidar::Lidar(const bool start, const int nb_usb, const int bdrate) {
 
     for(auto &item:m_range){std::atomic_init(&item,0);}
     for(auto &item:m_intensity){std::atomic_init(&item,0);}
+    for(auto &item:m_xPos){std::atomic_init(&item,0);}
+    for(auto &item:m_yPos){std::atomic_init(&item,0);}
 
     m_usb = new Usb(nb_usb, bdrate);
     m_start.store(start, std::memory_order_release);
@@ -89,8 +91,10 @@ void Lidar::Poll(void) {
                 int temp = range;
                 if(temp < 150 && m_sat) {temp = 3500;}
                 if(temp > 3500) {temp = 3500;}
-                m_intensity.at(359 - index - degree_count_num).store(temp,std::memory_order_release);
-                m_range.at(359 - index - degree_count_num).store(intensity,std::memory_order_release);
+                m_range.at(359 - index - degree_count_num).store(temp,std::memory_order_release);
+                m_intensity.at(359 - index - degree_count_num).store(intensity,std::memory_order_release);
+                m_xPos.at(359 - index - degree_count_num).store(range*std::cos((359 - index - degree_count_num)*M_PI/180),std::memory_order_release);
+                m_yPos.at(359 - index - degree_count_num).store(range*std::sin((359 - index - degree_count_num)*M_PI/180),std::memory_order_release);
 
                 degree_count_num++;
               }      
@@ -130,6 +134,30 @@ std::vector<int> Lidar::GetIntensity(void) {
 
    return returnValue;
 }
+std::vector<int> Lidar::GetXPos(void) {
+
+    std::vector<int> returnValue(m_xPos.size());
+    std::generate(returnValue.begin() , returnValue.end() , [this]{
+        static unsigned int index = 0;
+        const int currentItem = m_xPos.at(index).load();
+        index++;
+        return currentItem;
+    });
+
+   return returnValue;
+}
+std::vector<int> Lidar::GetYPos(void) {
+
+    std::vector<int> returnValue(m_yPos.size());
+    std::generate(returnValue.begin() , returnValue.end() , [this]{
+        static unsigned int index = 0;
+        const int currentItem = m_yPos.at(index).load();
+        index++;
+        return currentItem;
+    });
+
+   return returnValue;
+}
 bool Lidar::GetStart(void) {return m_start.load();}
 
 void* Lidar::LidarHelper(void *context) { 
@@ -157,10 +185,10 @@ void Lidar::Display(const bool isXY) {
 
                     const std::string currentItem =  (index < m_range.size()) ?
                                 "Point " + std::to_string(index) + " : (" +
-                                std::to_string(m_intensity.at(index).load()*std::cos(m_range.at(index).load())) +
+                                std::to_string(m_xPos.at(index).load()) +
                                 " ; " +
-                                std::to_string(m_intensity.at(index).load()*std::sin(m_range.at(index).load())) +
-                                ")"
+                                std::to_string(m_yPos.at(index).load())
+                                +")"
                                 : "";
                     index++;
                     return currentItem;
@@ -198,7 +226,7 @@ void Lidar::DisplayGraph() {
     std::generate(dispX.begin() , dispX.end(),
         [this]{
             static unsigned index = 0;
-            const int currentItem =  m_intensity.at(index).load()*std::cos(m_range.at(index).load());
+            const int currentItem =  m_xPos.at(index).load();
             index++;
             return currentItem;
         }
@@ -206,7 +234,7 @@ void Lidar::DisplayGraph() {
     std::generate(dispY.begin() , dispY.end(),
         [this]{
             static unsigned index = 0;
-            const int currentItem =  m_intensity.at(index).load()*std::sin(m_range.at(index).load());
+            const int currentItem =  m_yPos.at(index).load();
             index++;
             return currentItem;
         }
@@ -232,8 +260,8 @@ bool Lidar::SaveLidarPoints() {
   std::vector<std::vector<double>> u = {std::vector<double>() , std::vector<double>()};
 
   for(int i=0;i<360;i++) {
-    v.at(0).push_back(m_intensity.at(i).load()*std::cos(m_range.at(i).load()));
-    v.at(1).push_back(m_intensity.at(i).load()*std::sin(m_range.at(i).load()));
+    v.at(0).push_back(m_xPos.at(i).load());
+    v.at(1).push_back(m_yPos.at(i).load());
     u.at(0).push_back(m_intensity.at(i).load());
     u.at(1).push_back(m_range.at(i).load());
   }
