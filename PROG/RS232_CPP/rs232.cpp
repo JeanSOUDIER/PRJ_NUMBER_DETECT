@@ -63,9 +63,8 @@
 
 #if defined(__linux__) || defined(__FreeBSD__)   /* Linux & FreeBSD */
 
-int RS232::error = 0;
-
-std::vector<std::string> RS232::comports  = {
+unsigned RS232::PORTNR = 40;
+std::vector<std::string> RS232::comports = {
         "/dev/ttyS0","/dev/ttyS1","/dev/ttyS2","/dev/ttyS3","/dev/ttyS4","/dev/ttyS5",
         "/dev/ttyS6","/dev/ttyS7","/dev/ttyS8","/dev/ttyS9","/dev/ttyS10","/dev/ttyS11",
         "/dev/ttyS12","/dev/ttyS13","/dev/ttyS14","/dev/ttyS15","/dev/ttyUSB0",
@@ -75,7 +74,10 @@ std::vector<std::string> RS232::comports  = {
         "/dev/cuau0","/dev/cuau1","/dev/cuau2","/dev/cuau3",
         "/dev/cuaU0","/dev/cuaU1","/dev/cuaU2","/dev/cuaU3",
         "/dev/ttyUSB_ARBO", "/dev/ttyUSB_LDS"
-        };
+};
+
+
+int RS232::error = 0;
 std::vector<int> RS232::Cport(RS232::PORTNR);
 
 struct termios RS232::new_port_settings;
@@ -213,7 +215,7 @@ int RS232::OpenComport(const unsigned int &comport_number, const unsigned int &b
     return(1);
   }
 
-  error = tcgetattr(&RS232::comports[comport_number][0], old_port_settings + comport_number);
+  error = tcgetattr(&RS232::comports[comport_number][0], &old_port_settings[0] + comport_number);
   if(error==-1){
     close(RS232::Cport[comport_number]);
     flock(RS232::Cport[comport_number], LOCK_UN);  // free the port so that others can use it.
@@ -238,7 +240,7 @@ int RS232::OpenComport(const unsigned int &comport_number, const unsigned int &b
 
   error = tcsetattr(RS232::Cport[comport_number], TCSANOW, &new_port_settings);
   if(error==-1){
-    tcsetattr(RS232::Cport[comport_number], TCSANOW, old_port_settings + comport_number);
+    tcsetattr(RS232::Cport[comport_number], TCSANOW, &old_port_settings[0] + comport_number);
     close(RS232::Cport[comport_number]);
     flock(RS232::Cport[comport_number], LOCK_UN);  // free the port so that others can use it.
     std::cerr << ("unable to adjust portsettings ");
@@ -246,7 +248,7 @@ int RS232::OpenComport(const unsigned int &comport_number, const unsigned int &b
   }
 
   if(ioctl(RS232::Cport[comport_number], TIOCMGET, &status) == -1){
-    tcsetattr(RS232::Cport[comport_number], TCSANOW, old_port_settings + comport_number);
+    tcsetattr(RS232::Cport[comport_number], TCSANOW, &old_port_settings[0] + comport_number);
     flock(RS232::Cport[comport_number], LOCK_UN);  /* free the port so that others can use it. */
     std::cerr << ("unable to get portstatus");
     return(1);
@@ -256,7 +258,7 @@ int RS232::OpenComport(const unsigned int &comport_number, const unsigned int &b
   status |= TIOCM_RTS;    /* turn on RTS */
 
   if(ioctl(RS232::Cport[comport_number], TIOCMSET, &status) == -1){
-    tcsetattr(RS232::Cport[comport_number], TCSANOW, old_port_settings + comport_number);
+    tcsetattr(RS232::Cport[comport_number], TCSANOW, &old_port_settings[0] + comport_number);
     flock(RS232::Cport[comport_number], LOCK_UN);  /* free the port so that others can use it. */
     std::cerr << ("unable to set portstatus");
     return(1);
@@ -269,18 +271,20 @@ int RS232::OpenComport(const unsigned int &comport_number, const unsigned int &b
 int RS232::OpenComport(const std::string &str, const unsigned int &baudrate , const std::string &mode , const bool &flowctrl){
   
     const std::ptrdiff_t index =
-    (std::find(RS232::comports.begin(), RS232::comports.end(), "/dev/"+str) != RS232::comports.end()) 
-    ? 
-    std::distance(RS232::comports.begin(), std::find(RS232::comports.begin(), RS232::comports.end(), "/dev/"+str)) 
+    (std::find(RS232::comports.begin(), RS232::comports.end(), "/dev/"+str) != RS232::comports.end())
+    ?
+    std::distance(RS232::comports.begin(), std::find(RS232::comports.begin(), RS232::comports.end(), "/dev/"+str))
     : -1;
-    
+
 
     if(index == -1){
       RS232::comports.push_back( "/dev/"+str);
+      RS232::PORTNR++;
       return  RS232::OpenComport(RS232::comports.size()-1 ,baudrate ,mode , flowctrl);
 
     }
     return  RS232::OpenComport(index ,baudrate ,mode , flowctrl);
+
 
   
 }
@@ -314,14 +318,12 @@ int RS232::SendByte(const unsigned &port, unsigned char byte){
 
 
 int RS232::SendBuf(const unsigned &port, std::vector<unsigned char> &buffer){
+
   int n = write(RS232::Cport[port], &buffer[0], buffer.size());
+
   if(n < 0){
-    if(errno == EAGAIN){
-      return 0;
-    }
-    else{
-      return -1;
-    }
+    if(errno == EAGAIN){return 0;}
+    else{return -1;}
   }
 
   return(n);
@@ -335,17 +337,17 @@ void RS232::CloseComport(const unsigned &port){
     std::cerr << ("unable to get portstatus");
   }
 
-  status &= ~TIOCM_DTR;    /* turn off DTR */
-  status &= ~TIOCM_RTS;    /* turn off RTS */
+  status &= ~TIOCM_DTR;    // turn off DTR
+  status &= ~TIOCM_RTS;    // turn off RTS
 
   if(ioctl(RS232::Cport[port], TIOCMSET, &status) == -1){
     std::cerr << ("unable to set portstatus");
   }
 
-  tcsetattr(RS232::Cport[port], TCSANOW, old_port_settings + comport_number);
+  tcsetattr(RS232::Cport[port], TCSANOW, &old_port_settings[0] + port);
   close(RS232::Cport[port]);
 
-  flock(RS232::Cport[port], LOCK_UN);  /* free the port so that others can use it. */
+  flock(RS232::Cport[port], LOCK_UN);  //free the port so that others can use it.
 }
 
 
@@ -382,7 +384,7 @@ int RS232::IsRINGEnabled(const unsigned &port){
 
   ioctl(RS232::Cport[port], TIOCMGET, &status);
 
-  if(status&TIOCM_RNG){return(1);}
+  if(status&TIOCM_RNG{return(1);}
   else {return(0);}
 }
 
@@ -463,6 +465,9 @@ void RS232::flushRXTX(const unsigned &port){tcflush(RS232::Cport[port], TCIOFLUS
 
 #else  // windows
 
+unsigned RS232::PORTNR = 32;
+std::vector<HANDLE> RS232::Cport(RS232::PORTNR);
+std::string RS232::mode_str = "";
 std::vector<std::string> RS232::comports ={
     "\\\\.\\COM1",  "\\\\.\\COM2",  "\\\\.\\COM3",  "\\\\.\\COM4",
     "\\\\.\\COM5",  "\\\\.\\COM6",  "\\\\.\\COM7",  "\\\\.\\COM8",
@@ -473,9 +478,6 @@ std::vector<std::string> RS232::comports ={
     "\\\\.\\COM25", "\\\\.\\COM26", "\\\\.\\COM27", "\\\\.\\COM28",
     "\\\\.\\COM29", "\\\\.\\COM30", "\\\\.\\COM31", "\\\\.\\COM32"
     };
-std::vector<HANDLE> RS232::Cport(RS232::PORTNR);
-std::string RS232::mode_str = "";
-
 
 int RS232::OpenComport(const unsigned int &comport_number, const unsigned int &baudrate, const std::string &mode, const bool &flowctrl){
 
@@ -605,8 +607,8 @@ int RS232::OpenComport(const std::string &str, const unsigned int &baudrate , co
 
     if(index == -1){
         RS232::comports.push_back("\\\\.\\COM"+str);
-        RS232::OpenComport(RS232::comports.size()-1 ,baudrate ,mode , flowctrl)
-        return 
+        RS232::PORTNR++;
+        return RS232::OpenComport(RS232::comports.size()-1 ,baudrate ,mode , flowctrl);
 
     }
 

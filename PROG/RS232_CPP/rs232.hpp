@@ -91,7 +91,7 @@
 namespace RS232{
 	
 #if defined(__linux__) || defined(__FreeBSD__)
-    static constexpr unsigned PORTNR  = 40;
+    extern unsigned PORTNR;
     extern std::vector<std::string> comports;
 
     extern struct termios new_port_settings;
@@ -100,7 +100,7 @@ namespace RS232{
     extern int error;
 
 #else
-    static constexpr unsigned PORTNR  = 32;
+    extern unsigned PORTNR;
     extern std::vector<std::string> comports;
     extern std::vector<HANDLE> Cport;
     extern std::string mode_str;
