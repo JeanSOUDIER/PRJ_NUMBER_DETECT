@@ -80,7 +80,7 @@
 #include <limits.h>
 #include <sys/file.h>
 #include <errno.h>
-
+#include <cstring>
 #else
 
 #include <windows.h>

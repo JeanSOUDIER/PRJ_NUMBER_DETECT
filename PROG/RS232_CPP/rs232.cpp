@@ -384,7 +384,7 @@ int RS232::IsRINGEnabled(const unsigned &port){
 
   ioctl(RS232::Cport[port], TIOCMGET, &status);
 
-  if(status&TIOCM_RNG{return(1);}
+  if(status&TIOCM_RNG){return(1);}
   else {return(0);}
 }
 
