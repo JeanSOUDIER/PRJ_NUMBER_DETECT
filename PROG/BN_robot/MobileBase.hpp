@@ -6,12 +6,12 @@
 #include <complex>
 #include <vector>
 #include <limits>
+#include <pthread.h>
+#include <atomic>
 #include "Lidar.hpp"
 #include "Usb.hpp"
 #include "Regression.hpp"
 #include "utility.h"
-
-constexpr int ERREUR_STATIQUE = 2;
 
 class MobileBase {
 	public:
@@ -28,6 +28,11 @@ class MobileBase {
 		void SetMotBalance(const double rho, const double theta);
 		void SetSpeed(int L, int R);
 		void GetLidarPoints();
+
+		static void* MobileBaseHelper(void *context);
+        void StartThread();
+	protected:
+        void* ThreadRun();
 	private:
 		void GetPosBase();
 		std::vector<double> FindSegment(int start, int stop);
@@ -48,6 +53,9 @@ class MobileBase {
 		double m_posX = 0;
 		double m_posY = 0;
 		double m_angle = 0;
+		double m_posXgoal = 0;
+		double m_posYgoal = 0;
+		double m_angle_goal = 0;
 		double m_dist_board = 0;
 };
 

@@ -27,6 +27,7 @@ MobileBase::MobileBase(const double posX, const double posY, const double angle,
 	if(m_lidar_start) {
 		m_RPLidar->StartThread();
 	}
+	StartThread();
     std::cout << "MobileBase start" << std::endl;
 }
 
@@ -42,13 +43,12 @@ void MobileBase::StartPlacing() {
 
 }
 
+
+
 void MobileBase::Go(const double x, const double y, const double a) {
-	//TODO asserv lidar + deplacement
-	while(std::abs(x-m_posX) > ERREUR_STATIQUE && std::abs(y-m_posY) > ERREUR_STATIQUE) {
-		GetLidarPoints();
-		GetPosBase();
-		GoPos(m_posX, m_posY, m_angle);
-	}
+	m_posXgoal = x;
+	m_posYgoal = y;
+	m_angle_goal = a;
 }
 
 void MobileBase::GoPos(const double x, const double y, const double a) {
@@ -168,4 +168,31 @@ void MobileBase::SetSpeed(int L, int R) {
 	unsigned char Rc = R+128;
 	std::vector<char> sending{char(255), static_cast<char>(Rc), static_cast<char>(Lc)};
 	m_usb->SendBytes(sending);
+}
+
+void* MobileBase::ThreadRun() {
+    
+    int stateR = 0, stateS = 0, len = 0, ccR, ccW, cpt = 0;
+    std::vector<unsigned char> r(1);
+    while(m_start.load(std::memory_order_acquire)) {
+    	//TODO asserv lidar + deplacement
+		GetLidarPoints();
+		GetPosBase();
+		GoPos(m_posX-m_posXgoal, m_posY-m_posXgoal, m_angle-m_angle_goal);
+    }
+
+    pthread_exit(NULL);
+    return 0;
+}
+
+void* MobileBase::MobileBaseHelper(void *context) {
+    return static_cast<MobileBase*>(context)->ThreadRun();
+}
+
+void MobileBase::StartThread() {
+    inc_x_thread = new pthread_t();
+    const int rcL = pthread_create(inc_x_thread, NULL, &MobileBase::MobileBaseHelper, this);
+    if (rcL) {
+        std::cout << "Error:unable to create thread MobileBase," << rcL << std::endl;
+    }
 }
