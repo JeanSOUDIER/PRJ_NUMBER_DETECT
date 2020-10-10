@@ -1,19 +1,18 @@
 LOW :
  RPI
- - trajectory follower
  - rs232
 
 HIGH :
  RPI
  - test dessin (améliorer)
- - lidar regression (tests -Jean)
+ - lidar regression (revoir -Jean)
+ - asserv pos
  Jetson
  - CNN (-Erwan)
  - Compilation CUDA sur Qt (-Erwan)
  - Interface graphique rendu CNN [en cours] (-Erwan)
  - pre traitement
  - réponse ?
-
 
 PRJ AUTOM :
  - faire le simulink

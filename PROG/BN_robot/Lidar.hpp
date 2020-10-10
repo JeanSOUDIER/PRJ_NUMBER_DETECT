@@ -44,7 +44,7 @@ class Lidar{
         static void* LidarHelper(void *context);
         void StartThread();
 protected:
-        void* ThreadLidar();
+        void* ThreadRun();
 
 private:
         void StartLidar(void);

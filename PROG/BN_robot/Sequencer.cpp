@@ -27,7 +27,7 @@ Sequencer::~Sequencer() {
 }
 
 bool Sequencer::Execute() {
-	unsigned char length = 1, re = 0;
+	/*unsigned char length = 1, re = 0;
 	if(m_BLE_start) {
 		while(m_BLE->Read() != 255) {}
 		length = m_BLE->Read();
@@ -54,6 +54,28 @@ bool Sequencer::Execute() {
 		} else {
 			std::cout << i << " : ";
 			std::cin >> reading.at(i);
+		}
+	}*/
+	if(m_BLE_start) {
+		std::vector<unsigned char> reading = {-1};
+		while(reading.at(0) == -1) {
+			reading = m_BLE->GetRX();
+		}
+		if(reading.at(0) == 254) {return false;}
+	} else {
+		std::cout << "length = ";
+		int l;
+		std::cin >> l;
+		if(l == -1) {return false;}
+		length = static_cast<unsigned char>(l);
+		length++;
+		std::cout << static_cast<unsigned char>(length) << std::endl;
+		int inp;
+		for(unsigned int i=1;i<length;i++) {
+			std::cout << i << " : ";
+			reading.clear();
+			std::cin >> inp;
+			reading.push_back(static_cast<unsigned char>(inp));
 		}
 	}
 	//m_TurtleBot->GoPos(0,0,0);
@@ -82,6 +104,6 @@ bool Sequencer::Execute() {
 			m_WidowXL->MoveArm(true);
 		}
 	}
-	if(m_BLE_start) {m_BLE->WriteEnd();}
+	if(m_BLE_start) {m_BLE->SetTX("done");}
 	return true;
 }

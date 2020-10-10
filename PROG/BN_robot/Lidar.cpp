@@ -23,6 +23,7 @@ Lidar::~Lidar() {
     /*const std::vector<char> data = {'e'};
     m_usb->SendBytes(data);
     delay(1000);*/
+    m_start.store(false, std::memory_order_release);
     delete inc_x_thread; //Delete first because otherwise the function called in the thread will have undefined behaviour when executed after calling delete on lidar
     delete m_usb;
 }
@@ -161,10 +162,10 @@ std::vector<double> Lidar::GetYPos(void) {
 bool Lidar::GetStart(void) {return m_start.load();}
 
 void* Lidar::LidarHelper(void *context) { 
-    return static_cast<Lidar*>(context)->ThreadLidar();
+    return static_cast<Lidar*>(context)->ThreadRun();
 }
 
-void* Lidar::ThreadLidar() {
+void* Lidar::ThreadRun() {
     
     while(m_start.load(std::memory_order_acquire)) {Poll();}
 
