@@ -1,6 +1,6 @@
 LOW :
  RPI
- - rs232
+ - rs232 (unsigned char)
 
 HIGH :
  RPI

@@ -33,8 +33,8 @@ protected:
 		std::atomic<bool> m_rec;
 		std::atomic<bool> m_sen;
 
-        std::deque<std::array<std::atomic<char>>> m_tx(1,std::array<std::atomic<char>> (256,0));
-        std::deque<std::array<std::atomic<unsigned char>>> m_rx(1,std::array<std::atomic<unsigned char>> (256,0));
+        std::deque<std::array<std::atomic<char>>> m_tx(0,std::array<std::atomic<char>> (256,0));
+        std::deque<std::array<std::atomic<unsigned char>>> m_rx(0,std::array<std::atomic<unsigned char>> (256,0));
 
         int m_length;
         std::vector<unsigned char> m_msg;
