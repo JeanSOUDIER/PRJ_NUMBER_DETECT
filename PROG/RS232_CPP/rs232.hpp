@@ -111,7 +111,7 @@ int OpenComport(const unsigned int &comport_number, const unsigned int &baudrate
 int OpenComport(const std::string &, const unsigned int &baudrate ,const std::string &mode , const bool &flowctrl);
 void CloseComport(const unsigned &port);
 
-int PollComport(const int &comport_number, std::vector<unsigned char> &buffer, const int &size);
+int PollComport(const int &comport_number, unsigned char *buffer, const int &size); //Buffer needs to be converted to unsigned char* anyway when calling the system function, so no need to pass a vector as argument.
 
 int SendByte(const unsigned &port, unsigned char byte);
 int SendBuf(const unsigned &port, std::vector<unsigned char> &buffer);
