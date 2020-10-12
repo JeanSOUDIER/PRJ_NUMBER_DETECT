@@ -1,7 +1,7 @@
 LOW :
  RPI
- - rs232 (unsigned char + pb read())
- - test bluetooth
+ - rs232 (unsigned char)
+ - test bluetooth (read)
 
 HIGH :
  RPI
@@ -19,11 +19,9 @@ PRJ AUTOM :
  - faire le simulink
 
 PRJ RT :
- - thread à définir
 
 PRJ MOBI :
  - estimation batterie
 
 MECA :
- - support caméra
 

@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <iterator>
-#include "rs232.hpp"
+#include "rs232.h"
 
 class Usb {
 	public:
@@ -18,7 +18,7 @@ class Usb {
         bool GetActive(void);
 
         void SendBytes(const std::vector<char> &data);
-        std::vector<unsigned char> ReadBytes(const int n);
+        std::vector<char> ReadBytes(const int n);
 	private:
         bool m_active;
         int m_port_nr;

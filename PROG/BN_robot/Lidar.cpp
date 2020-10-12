@@ -58,7 +58,7 @@ void Lidar::StartLidar(void) {
 
 void Lidar::Poll(void) {
     bool got_scan = false;
-    std::vector<unsigned char> raw_bytes(42);
+    std::vector<char> raw_bytes(42);
     uint8_t good_sets = 0;
     uint32_t m_motor_speed = 0;
     int index;
@@ -166,7 +166,6 @@ void* Lidar::LidarHelper(void *context) {
 }
 
 void* Lidar::ThreadRun() {
-    
     while(m_start.load(std::memory_order_acquire)) {Poll();}
 
     pthread_exit(NULL);

@@ -27,6 +27,7 @@ MobileBase::MobileBase(const double posX, const double posY, const double angle,
 	if(m_lidar_start) {
 		m_RPLidar->StartThread();
 	}
+	m_start.store(true,std::memory_order_release);
 	StartThread();
     std::cout << "MobileBase start" << std::endl;
 }
@@ -36,6 +37,7 @@ MobileBase::~MobileBase() {
 		m_RPLidar->SetStart(false);
 		delete m_RPLidar;
 	}
+	m_start.store(false,std::memory_order_release);
 	delete m_usb;
 }
 
@@ -95,9 +97,9 @@ void MobileBase::GetLidarPoints() {
 				m_y.push_back(yP.at(i));
 			}
 		}
-		m_RPLidar->Display(true);
+		m_RPLidar->Display(false);
 		std::cout << "out : " << m_RPLidar->SaveLidarPoints() << std::endl;
-		GetPosBase();
+		//GetPosBase();
 	}
 }
 
@@ -173,9 +175,9 @@ void MobileBase::SetSpeed(int L, int R) {
 void* MobileBase::ThreadRun() {
     while(m_start.load(std::memory_order_acquire)) {
     	//TODO asserv lidar + deplacement
-		GetLidarPoints();
-		GetPosBase();
-		GoPos(m_posX-m_posXgoal, m_posY-m_posXgoal, m_angle-m_angle_goal);
+		//GetLidarPoints();
+		//GetPosBase();
+		//GoPos(m_posX-m_posXgoal, m_posY-m_posXgoal, m_angle-m_angle_goal);
     }
 
     pthread_exit(NULL);

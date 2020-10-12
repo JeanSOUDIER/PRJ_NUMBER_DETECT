@@ -25,7 +25,7 @@ int main() {
     while(Prgm.Execute()) {}*/
 
     //Arm WidowXL(6, ttyUSB_ARBO, 115200);
-    //WidowXL.ToKeyboard(true);
+    //WidowXL.ToKeyboard(false);
 
 
     //MobileBase OpenCR(ttyACM0, 115200, nullptr);
@@ -33,19 +33,23 @@ int main() {
 
     //Bluetooth BLE(rfcomm0, 9600);
     //BLE.WriteEnd();
-    /*Bluetooth BLE(ttyS0, 9600);
-    unsigned char temp = '\0';
-    while(temp != '1') {
-        temp = BLE.Read();
-        if(temp) {std::cout << temp << std::endl;}
+    Bluetooth BLE(ttyS0, 9600);
+    /*std::vector<unsigned char> temp = {'\0'};
+    while(temp.at(0) != '1') {
+        temp = BLE.GetRX();
+        if(temp.at(0)) {
+            for(unsigned int i=0;i<temp.size();i++) {
+                std::cout << temp.at(i) << " ";
+            }
+            std::cout << std::endl;
+        }
     }*/
+    BLE.SetTX("hello world");
+    delay(1000);
 
-    //std::vector<char> v = {'h','e','l','l','o'};
-    //BLE.SendBytes(v);
-
-    MobileBase OpenCR(ttyACM0, 115200, new Lidar(ttyUSB_LDS, 230400));
-    delay(10000);
-    OpenCR.GetLidarPoints();
+    //MobileBase OpenCR(ttyACM0, 115200, new Lidar(ttyUSB_LDS, 230400));
+    //delay(10000);
+    //OpenCR.GetLidarPoints();
     
     //Lidar RPLidar(true, ttyUSB_LDS, 230400);
     //std::vector<int> range = RPLidar.GetRange();
