@@ -289,10 +289,10 @@ int RS232::OpenComport(const std::string &str, const unsigned int &baudrate , co
   
 }
 
-int RS232::PollComport(const int &comport_number, std::vector<unsigned char> &buffer, const int &size){
+int RS232::PollComport(const int &comport_number, unsigned char *buffer, const int &size){
   int n;
 
-  n = read(RS232::Cport[comport_number], &buffer[0], size);
+  n = read(RS232::Cport[comport_number], buffer, size);
 
   if(n < 0){
     if(errno == EAGAIN){return 0;}
@@ -615,11 +615,11 @@ int RS232::OpenComport(const std::string &str, const unsigned int &baudrate , co
     return RS232::OpenComport(index ,baudrate ,mode , flowctrl);
 }
 
-int RS232::PollComport(const int &comport_number, std::vector<unsigned char> &buffer, const int &size){
+int RS232::PollComport(const int &comport_number, unsigned char *buffer, const int &size){
 
   int n;
   //ReadFile(&RS232::Cport[comport_number], buf, size, (LPDWORD)((void *)&n), NULL);
-    ReadFile(&RS232::Cport[comport_number], &buffer[0], size, LPDWORD(&n), NULL);
+    ReadFile(&RS232::Cport[comport_number], buffer, size, LPDWORD(&n), NULL);
   return(n);
 }
 
