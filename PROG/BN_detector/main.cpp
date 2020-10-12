@@ -33,13 +33,14 @@ int main() {
     //MobileBase OpenCR(ttyACM0, 115200, nullptr);
     //OpenCR.GoPos(0,0,M_PI);
 	Cam CPI2;
-	CPI2.TakePhoto("ttr");
+	CPI2.ImgShow();
 
     /*Bluetooth BLE(ttyTHS1, 9600);
     while(1) {
     	BLE.WriteEnd();
-	}*/
-    //BLE.WriteEnd();
+    }
+    BLE.WriteEnd();
+	*/
 
     //MobileBase OpenCR(ttyACM0, 115200, new Lidar(ttyUSB_LDS, 230400));
     //delay(10000);
