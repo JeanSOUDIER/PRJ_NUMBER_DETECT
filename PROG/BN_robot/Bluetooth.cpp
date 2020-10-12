@@ -57,9 +57,9 @@ bool Bluetooth::IsAddrValid(std::string addr) {
 
 void* Bluetooth::ThreadRun() {
     while(m_start.load(std::memory_order_acquire)) {
+    	UpdateThread();
     	ReadThread();
     	WriteThread();
-    	UpdateThread();
     }
 
     pthread_exit(NULL);
@@ -70,6 +70,8 @@ void Bluetooth::ReadThread() {
 	std::vector<unsigned char> r(1);
 	r = m_usb->ReadBytes(1);
 	if(r.at(0) && m_start.load(std::memory_order_acquire)) {
+		DEBUG_BLUETOOTH_PRINT("read");
+		DEBUG_BLUETOOTH_PRINT(static_cast<int>(r.at(0));
 		switch(m_stateR) {
     		case 0:{
     			if(r.at(0) == 255) {m_stateR = 1;}
@@ -105,14 +107,17 @@ void Bluetooth::ReadThread() {
 
 void Bluetooth::WriteThread() {
 	if(m_buff_tx.size() && m_start.load(std::memory_order_acquire)) {
+		DEBUG_BLUETOOTH_PRINT("send");
 		switch(m_stateS) {
     		case 0:{
     			m_usb->SendBytes(static_cast<std::vector<char>>(255));
+			DEBUG_BLUETOOTH_PRINT(static_cast<int>(255));
     			m_stateS = 1;
     			break;
     		}
     		case 1:{
     			m_usb->SendBytes(static_cast<std::vector<char>>(m_buff_tx.at(0).size()));
+			DEBUG_BLUETOOTH_PRINT(static_cast<int>(m_buff_tx.at(0).size()));
     			m_ccS = m_buff_tx.at(0).size();
     			m_cpt = 0;
     			m_stateS = 2;
@@ -120,6 +125,7 @@ void Bluetooth::WriteThread() {
     		}
     		case 2:{
     			m_usb->SendBytes(static_cast<std::vector<char>>(m_buff_tx.at(0).at(m_cpt)));
+			DEBUG_BLUETOOTH_PRINT(static_cast<int>(m_buff_tx.at(0).at(m_cpt)));
     			m_ccS += m_buff_tx.at(0).at(m_cpt);
     			m_cpt++;
     			if(static_cast<unsigned int>(m_cpt) > m_buff_tx.at(0).size()-1) {
@@ -130,6 +136,9 @@ void Bluetooth::WriteThread() {
     		}
     		case 3:{
     			m_usb->SendBytes(static_cast<std::vector<char>>(m_ccS));
+			DEBUG_BLUETOOTH_PRINT(static_cast<int>(m_ccS));
+			DEBUG_BLUETOOTH_PRINT("end : ");
+			DEBUG_BLUETOOTH_PRINT(static_cast<int>(m_buff_tx.size()));
     			m_stateR = 0;
     			break;
     		}
@@ -142,12 +151,13 @@ void Bluetooth::WriteThread() {
 
 void Bluetooth::UpdateThread() {
 	if(m_start.load(std::memory_order_acquire) && !m_sen.load(std::memory_order_acquire)) {
-		for(unsigned int i=0;i<m_tx.size();i++) {
-			m_buff_tx.at(i).push_back(m_tx.at(i).load(std::memory_order_acquire));
-		}
+		DEBUG_BLUETOOTH_PRINT("update TX");
+		m_buff_tx.push_back(m_tx.load(std::memory_order_acquire));
+		DEBUG_BLUETOOTH_PRINT(static_cast<int>(m_buff_tx.size()));
 		m_sen.store(true,std::memory_order_release);
 	}
 	if(m_start.load(std::memory_order_acquire) && m_buff_rx.size()) {
+		DEBUG_BLUETOOTH_PRINT("update RX");
 		for(unsigned int i=0;i<m_buff_rx.at(0).size();i++) {
 			m_rx.at(i).store(m_buff_rx.at(0).at(i),std::memory_order_release);
 		}
@@ -169,21 +179,25 @@ void Bluetooth::StartThread() {
 }
 
 std::vector<unsigned char> Bluetooth::GetRX(void) {
+	DEBUG_BLUETOOTH_PRINT("read main thread");
 	while(!m_rec.load(std::memory_order_acquire)) {}
+	DEBUG_BLUETOOTH_PRINT("read op");
 	std::vector<unsigned char> returnValue(m_rx.size());
 	std::generate(returnValue.begin() , returnValue.end() , [this]{
         static unsigned int index = 0;
         const unsigned char currentItem = m_rx.at(index).load();
-        m_rx.at(index).store(0, std::memory_order_release);
         index++;
         return currentItem;
 	});
 	m_rec.store(false,std::memory_order_release);
+	DEBUG_BLUETOOTH_PRINT("read end");
     return returnValue;
 }
 
 void Bluetooth::SetTX(std::vector<char> txt) {
+	DEBUG_BLUETOOTH_PRINT("send main thread");
 	while(!m_sen.load(std::memory_order_acquire)) {}
+	DEBUG_BLUETOOTH_PRINT("send op");
 	if(txt.size() < 256) {
 		for(unsigned int i=0;i<txt.size();i++) {
 			m_tx.at(i).store(txt.at(i),std::memory_order_release);
@@ -192,6 +206,7 @@ void Bluetooth::SetTX(std::vector<char> txt) {
 	} else {
 		std::cout << "error length too big : " << txt.size() << std::endl;
 	}
+	DEBUG_BLUETOOTH_PRINT("send end");
 }
 
 void Bluetooth::SetTX(std::string txt) {
