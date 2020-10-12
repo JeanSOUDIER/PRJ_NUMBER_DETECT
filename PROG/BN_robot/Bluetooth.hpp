@@ -10,6 +10,13 @@
 #include <deque>
 #include "Usb.hpp"
 
+#define DEBUG
+#ifdef DEBUG
+	#define DEBUG_BLUETOOTH_PRINT(x) std::cout<<x<<std::endl;
+#else
+	#define DEBUG_BLUETOOTH_PRINT(x)
+#endif
+
 class Bluetooth {
 	public:
 		Bluetooth(const int nb_usb, const int bdrate);
