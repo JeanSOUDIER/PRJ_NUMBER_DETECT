@@ -94,6 +94,8 @@ void Bluetooth::ReadThread() {
     		case 3:{
     			if(r.at(0) == m_ccR%256) {
     				m_buff_rx.push_back(m_msg);
+				DEBUG_BLUETOOTH_PRINT("endR :");
+				DEBUG_BLUETOOTH_PRINT(static_cast<int>(m_buff_rx));
     			}
     			m_stateR = 0;
     			break;
@@ -137,7 +139,7 @@ void Bluetooth::WriteThread() {
     		case 3:{
     			m_usb->SendBytes(static_cast<std::vector<char>>(m_ccS));
 			DEBUG_BLUETOOTH_PRINT(static_cast<int>(m_ccS));
-			DEBUG_BLUETOOTH_PRINT("end : ");
+			DEBUG_BLUETOOTH_PRINT("endS :");
 			DEBUG_BLUETOOTH_PRINT(static_cast<int>(m_buff_tx.size()));
     			m_stateR = 0;
     			break;
