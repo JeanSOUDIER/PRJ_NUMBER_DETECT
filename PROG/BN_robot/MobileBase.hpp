@@ -40,12 +40,15 @@ class MobileBase {
 		const double SPEED_NORM = 8.68;
 		const double SPEED_ANGLE = 450.82*SPEED_NORM/M_PI;
 
+		std::atomic<bool> m_start;
+
 		int m_port_nr;
         int m_bdrate;
         bool m_lidar_start;
 
         Usb *m_usb;
 		Lidar *m_RPLidar;
+        pthread_t *inc_x_thread;
 
 		std::vector<double> m_x;
 		std::vector<double> m_y;

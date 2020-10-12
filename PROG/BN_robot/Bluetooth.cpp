@@ -5,11 +5,11 @@ Bluetooth::Bluetooth(const int nb_usb, const int bdrate) {
 	m_port_nr = nb_usb;
 	m_bdrate = bdrate;
 
-	for(auto &item:m_rx){std::atomic_init(&item,0);}
-	for(auto &item:m_tx){std::atomic_init(&item,0);}
+	//for(auto &item:m_rx){std::atomic_init(&item,0);}
+	//for(auto &item:m_tx){std::atomic_init(&item,0);}
 	m_start.store(true, std::memory_order_release);
 	m_rec.store(false, std::memory_order_release);
-	m_sen.store(false, std::memory_order_release);
+	m_sen.store(true, std::memory_order_release);
 
 	StartThread();
 }
@@ -56,85 +56,104 @@ bool Bluetooth::IsAddrValid(std::string addr) {
 }*/
 
 void* Bluetooth::ThreadRun() {
-    
-    int stateR = 0, stateS = 0, len = 0, ccR, ccW, cpt = 0;
-    std::vector<unsigned char> r(1);
     while(m_start.load(std::memory_order_acquire)) {
-    	//read
-    	r = m_usb->ReadBytes(1);
-    	if(r.at(0)) {
-    		switch(stateR) {
-	    		case 0:{
-	    			if(r.at(0) == 255) {stateR = 1;}
-	    			break;
-	    		}
-	    		case 1:{
-	    			m_length = r.at(0);
-	    			ccR = m_length;
-	    			stateR = 2;
-	    			break;
-	    		}
-	    		case 2:{
-	    			m_msg.push_back(r.at(0));
-	    			ccR += r.at(0);
-	    			len++;
-	    			if(len == m_length) {stateR = 3;}
-	    			break;
-	    		}
-	    		case 3:{
-	    			if(r.at(0) == ccR%256) {
-	    				m_rx.emplace_back(m_msg);
-						m_rx.pop_back();
-	    			}
-	    			stateR = 0;
-	    			break;
-	    		}
-	    		default:{
-	    			stateR = 0;
-	    		}
-	    	}
-    	}
-
-    	//send
-    	if(m_tx.size()) {
-    		switch(stateS) {
-	    		case 0:{
-	    			m_usb->SendBytes(255);
-	    			stateS = 1;
-	    			break;
-	    		}
-	    		case 1:{
-	    			m_usb->SendBytes(m_tx.size());
-	    			ccW = m_tx.size();
-	    			cpt = 0;
-	    			stateS = 2;
-	    			break;
-	    		}
-	    		case 2:{
-	    			m_usb->SendBytes(m_tx.at(0).at(cpt).load());
-	    			ccW += m_tx.at(0).at(cpt).load();
-	    			cpt++;
-	    			if(cpt > m_tx.at(0).size()-1) {
-	    				stateS = 3;
-	    			}
-	    			
-	    			break;
-	    		}
-	    		case 3:{
-	    			m_usb->SendBytes(ccW);
-	    			m_tx.pop_front();
-	    			stateR = 0;
-	    			break;
-	    		}
-	    		default:{
-	    			stateR = 0;
-	    		}
-	    	}
-    	}
+    	ReadThread();
+    	WriteThread();
+    	UpdateThread();
     }
 
     pthread_exit(NULL);
     return 0;
+}
+
+void Bluetooth::ReadThread() {
+	std::vector<unsigned char> r(1);
+	r = m_usb->ReadBytes(1);
+	if(r.at(0) && m_start.load(std::memory_order_acquire)) {
+		switch(m_stateR) {
+    		case 0:{
+    			if(r.at(0) == 255) {m_stateR = 1;}
+    			break;
+    		}
+    		case 1:{
+    			m_length = r.at(0);
+    			m_ccR = m_length;
+    			m_len = 0;
+    			m_stateR = 2;
+    			break;
+    		}
+    		case 2:{
+    			m_msg.push_back(r.at(0));
+    			m_ccR += r.at(0);
+    			m_len++;
+    			if(m_len == m_length-1) {m_stateR = 3;}
+    			break;
+    		}
+    		case 3:{
+    			if(r.at(0) == m_ccR%256) {
+    				m_buff_rx.push_back(m_msg);
+    			}
+    			m_stateR = 0;
+    			break;
+    		}
+    		default:{
+    			m_stateR = 0;
+    		}
+    	}
+	}
+}
+
+void Bluetooth::WriteThread() {
+	if(m_buff_tx.size() && m_start.load(std::memory_order_acquire)) {
+		switch(m_stateS) {
+    		case 0:{
+    			m_usb->SendBytes(static_cast<std::vector<char>>(255));
+    			m_stateS = 1;
+    			break;
+    		}
+    		case 1:{
+    			m_usb->SendBytes(static_cast<std::vector<char>>(m_buff_tx.at(0).size()));
+    			m_ccS = m_buff_tx.at(0).size();
+    			m_cpt = 0;
+    			m_stateS = 2;
+    			break;
+    		}
+    		case 2:{
+    			m_usb->SendBytes(static_cast<std::vector<char>>(m_buff_tx.at(0).at(m_cpt)));
+    			m_ccS += m_buff_tx.at(0).at(m_cpt);
+    			m_cpt++;
+    			if(static_cast<unsigned int>(m_cpt) > m_buff_tx.at(0).size()-1) {
+    				m_buff_tx.erase(m_buff_tx.begin());
+    				m_stateS = 3;
+    			}
+    			break;
+    		}
+    		case 3:{
+    			m_usb->SendBytes(static_cast<std::vector<char>>(m_ccS));
+    			m_stateR = 0;
+    			break;
+    		}
+    		default:{
+    			m_stateR = 0;
+    		}
+    	}
+	}
+}
+
+void Bluetooth::UpdateThread() {
+	if(m_start.load(std::memory_order_acquire) && !m_sen.load(std::memory_order_acquire)) {
+		for(unsigned int i=0;i<m_tx.size();i++) {
+			m_buff_tx.at(i).push_back(m_tx.at(i).load(std::memory_order_acquire));
+		}
+		m_sen.store(true,std::memory_order_release);
+	}
+	if(m_start.load(std::memory_order_acquire) && m_buff_rx.size()) {
+		for(unsigned int i=0;i<m_buff_rx.at(0).size();i++) {
+			m_rx.at(i).store(m_buff_rx.at(0).at(i),std::memory_order_release);
+		}
+		m_buff_rx.erase(m_buff_rx.begin());
+		m_rec.store(true,std::memory_order_release);
+	}
 }
 
 void* Bluetooth::BluetoothHelper(void *context) {
@@ -150,19 +169,29 @@ void Bluetooth::StartThread() {
 }
 
 std::vector<unsigned char> Bluetooth::GetRX(void) {
-    std::vector<unsigned char> returnValue;
-    if(m_rx.size()) {
-    	returnValue = static_cast<std::vector<unsigned char>>(m_rx.at(0).load());
-    	m_rx.pop_front();
-    } else {
-    	returnValue = {-1};
-    }
+	while(!m_rec.load(std::memory_order_acquire)) {}
+	std::vector<unsigned char> returnValue(m_rx.size());
+	std::generate(returnValue.begin() , returnValue.end() , [this]{
+        static unsigned int index = 0;
+        const unsigned char currentItem = m_rx.at(index).load();
+        m_rx.at(index).store(0, std::memory_order_release);
+        index++;
+        return currentItem;
+	});
+	m_rec.store(false,std::memory_order_release);
     return returnValue;
 }
 
 void Bluetooth::SetTX(std::vector<char> txt) {
-	std::array<char> s = {static_cast<std::array<char>>(txt)};
-	m_tx.emplace_back(s);
+	while(!m_sen.load(std::memory_order_acquire)) {}
+	if(txt.size() < 256) {
+		for(unsigned int i=0;i<txt.size();i++) {
+			m_tx.at(i).store(txt.at(i),std::memory_order_release);
+		}
+		m_sen.store(false,std::memory_order_release);
+	} else {
+		std::cout << "error length too big : " << txt.size() << std::endl;
+	}
 }
 
 void Bluetooth::SetTX(std::string txt) {

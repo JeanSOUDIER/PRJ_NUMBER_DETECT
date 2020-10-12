@@ -56,8 +56,9 @@ bool Sequencer::Execute() {
 			std::cin >> reading.at(i);
 		}
 	}*/
+	int length;
+	std::vector<unsigned char> reading = {static_cast<std::vector<unsigned char>>(-1)};
 	if(m_BLE_start) {
-		std::vector<unsigned char> reading = {-1};
 		while(reading.at(0) == -1) {
 			reading = m_BLE->GetRX();
 		}
@@ -71,7 +72,7 @@ bool Sequencer::Execute() {
 		length++;
 		std::cout << static_cast<unsigned char>(length) << std::endl;
 		int inp;
-		for(unsigned int i=1;i<length;i++) {
+		for(int i=1;i<length;i++) {
 			std::cout << i << " : ";
 			reading.clear();
 			std::cin >> inp;

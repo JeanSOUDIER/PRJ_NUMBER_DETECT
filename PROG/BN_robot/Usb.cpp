@@ -23,14 +23,14 @@ Usb::~Usb() {
 }
 
 void Usb::SendBytes(const std::vector<char> &data) {
-    RS232_cputs(m_port_nr, &data[0]);
+    RS232::cputs(m_port_nr, &data[0]);
 	//std::copy(data.begin(), data.end(), std::ostream_iterator<int>(std::cout, " "));
 	//std::cout << std::endl;
 }
 
 std::vector<unsigned char> Usb::ReadBytes(const int n) {
     std::vector<unsigned char> raw_bytes(n);
-    RS232_PollComport(m_port_nr, &raw_bytes[0], n);
+    //RS232::PollComport(m_port_nr, &raw_bytes[0], n);
     return raw_bytes;
 }
 

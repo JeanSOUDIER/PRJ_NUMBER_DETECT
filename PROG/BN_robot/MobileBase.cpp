@@ -171,9 +171,6 @@ void MobileBase::SetSpeed(int L, int R) {
 }
 
 void* MobileBase::ThreadRun() {
-    
-    int stateR = 0, stateS = 0, len = 0, ccR, ccW, cpt = 0;
-    std::vector<unsigned char> r(1);
     while(m_start.load(std::memory_order_acquire)) {
     	//TODO asserv lidar + deplacement
 		GetLidarPoints();

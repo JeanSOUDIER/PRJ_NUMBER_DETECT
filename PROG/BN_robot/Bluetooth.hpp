@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <pthread.h>
 #include <atomic>
+#include <array>
 #include <deque>
 #include "Usb.hpp"
 
@@ -22,6 +23,9 @@ class Bluetooth {
         void StartThread();
 protected:
         void* ThreadRun();
+        void ReadThread();
+        void WriteThread();
+        void UpdateThread();
 		/*unsigned char Read();
 		void WriteWord(std::string txt);
 		void WriteWord(std::vector<char> txt);*/
@@ -29,14 +33,22 @@ protected:
 		//bool IsAddrValid(std::string addr);
 
         std::atomic<bool> m_start;
+        std::atomic<bool> m_rec;
+        std::atomic<bool> m_sen;
 
-		std::atomic<bool> m_rec;
-		std::atomic<bool> m_sen;
+        std::array<std::atomic<char>, 256> m_tx;
+        std::array<std::atomic<unsigned char>, 256> m_rx;
 
-        std::deque<std::array<std::atomic<char>>> m_tx(0,std::array<std::atomic<char>> (256,0));
-        std::deque<std::array<std::atomic<unsigned char>>> m_rx(0,std::array<std::atomic<unsigned char>> (256,0));
+        std::vector<std::vector<char>> m_buff_tx;
+        std::vector<std::vector<unsigned char>> m_buff_rx;
 
         int m_length;
+        int m_stateR;
+        int m_stateS;
+        int m_ccR;
+        int m_ccS;
+        int m_cpt;
+        int m_len;
         std::vector<unsigned char> m_msg;
 
 		int m_port_nr;

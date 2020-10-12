@@ -23,13 +23,13 @@ std::vector<double> Regression::RegressionLineaire(std::vector<double> xi, std::
 	double yii = Syi/yi.size();
 	
 	std::vector<double> Pmi(xi.size());
-	for(int i=0;i<xi.size();i++) {
+	for(unsigned int i=0;i<xi.size();i++) {
 		Pmi.at(i) = xi.at(i)*yi.at(i);
 	}
 	double SPmi = std::for_each(Pmi.begin(), Pmi.end(), Sum()).sum;
 
 	std::vector<double> E_xi(xi.size());
-	for(int i=0;i<xi.size();i++) {
+	for(unsigned int i=0;i<xi.size();i++) {
 		E_xi.at(i) = (xi.at(i)-xii)*(xi.at(i)-xii);
 	}
 
@@ -43,7 +43,7 @@ std::vector<double> Regression::RegressionLineaire(std::vector<double> xi, std::
 
 	//compute r
 	std::vector<double> E_yi(yi.size());
-	for(int i=0;i<yi.size();i++) {
+	for(unsigned int i=0;i<yi.size();i++) {
 		E_yi.at(i) = (yi.at(i)-yii)*(yi.at(i)-yii);
 	}
 

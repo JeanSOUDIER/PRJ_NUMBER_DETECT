@@ -13,7 +13,7 @@
 * MAPIR group: http://mapir.isa.uma.es/
 ******************************************************************************************** */
 
-#include "rf2o_laser_odometry/CLaserOdometry2D.h"
+#include "CLaserOdometry2D.h"
 using namespace mrpt;
 using namespace mrpt::math;
 using namespace mrpt::utils;
