@@ -29,6 +29,8 @@ Lidar::~Lidar() {
 }
 
 void Lidar::StartThread() {
+    m_cpt = 0;
+    m_lidar_endTr.store(false,std::memory_order_release);
     inc_x_thread = new pthread_t();
     const int rcL = pthread_create(inc_x_thread, NULL, &Lidar::LidarHelper, this);
     if (rcL) {
@@ -60,9 +62,7 @@ void Lidar::Poll(void) {
     bool got_scan = false;
     std::vector<char> raw_bytes(42);
     uint8_t good_sets = 0;
-    uint32_t m_motor_speed = 0;
     int index;
-    uint32_t motor_speed = 0;
 
     while (m_start.load() && !got_scan) {
         raw_bytes = m_usb->ReadBytes(1);
@@ -76,7 +76,7 @@ void Lidar::Poll(void) {
               index = (raw_bytes[1] - 0xA0) * 6;
               good_sets++;
 
-              motor_speed += (raw_bytes[3] << 8) + raw_bytes[2]; //accumulate count for avg. time increment
+              m_motor_speed += (raw_bytes[3] << 8) + raw_bytes[2]; //accumulate count for avg. time increment
               rpms=(raw_bytes[3]<<8|raw_bytes[2])/10;
 
               //read data in sets of 6
@@ -94,8 +94,20 @@ void Lidar::Poll(void) {
                 if(temp > 3500) {temp = 3500;}
                 m_range.at(359 - index - degree_count_num).store(temp,std::memory_order_release);
                 m_intensity.at(359 - index - degree_count_num).store(intensity,std::memory_order_release);
-                m_xPos.at(359 - index - degree_count_num).store(static_cast<double>(range)*std::cos(static_cast<double>(359 - index - degree_count_num)*M_PI/180),std::memory_order_release);
-                m_yPos.at(359 - index - degree_count_num).store(static_cast<double>(range)*std::sin(static_cast<double>(359 - index - degree_count_num)*M_PI/180),std::memory_order_release);
+                m_cpt++;
+                if(m_cpt > 60) {
+                    for(unsigned int i=0;i<m_range.size();i++) {
+                        if(m_range.load(std::memory_order_acquire) == 3500) {
+                            m_xPos.at(i).store(std::numeric_limits<double>::infinity());
+                            m_yPos.at(i).store(std::numeric_limits<double>::infinity());
+                        } else {
+                            m_xPos.at(i).store(static_cast<double>(m_range.load(std::memory_order_acquire))*std::cos(static_cast<double>(i)*M_PI/180),std::memory_order_release);
+                            m_yPos.at(i).store(static_cast<double>(m_range.load(std::memory_order_acquire))*std::sin(static_cast<double>(i)*M_PI/180),std::memory_order_release);
+                        }
+                    }
+                    m_lidar_endTr.store(true,std::memory_order_release);
+                    m_cpt = 0;
+                }
 
                 degree_count_num++;
               }      
@@ -108,7 +120,7 @@ void Lidar::Poll(void) {
 
 int Lidar::GetBdRate(void) {return m_usb->GetBdRate();}
 int Lidar::GetPortNb(void) {return m_usb->GetPortNb();}
-int Lidar::GetMotorSpeed(void) {return m_motor_speed;}
+uint32_t Lidar::GetMotorSpeed(void) {return m_motor_speed;}
 bool Lidar::GetSat() {return m_sat;}
 int Lidar::GetTimeIncrement(void) {return m_time_increment;}
 std::vector<int> Lidar::GetRange(void) {
@@ -136,7 +148,7 @@ std::vector<int> Lidar::GetIntensity(void) {
    return returnValue;
 }
 std::vector<double> Lidar::GetXPos(void) {
-
+	while(!m_lidar_endTr.loda(std::memory_order_acquire)) {}
     std::vector<double> returnValue(m_xPos.size());
     std::generate(returnValue.begin() , returnValue.end() , [this]{
         static unsigned int index = 0;
@@ -148,7 +160,6 @@ std::vector<double> Lidar::GetXPos(void) {
    return returnValue;
 }
 std::vector<double> Lidar::GetYPos(void) {
-
     std::vector<double> returnValue(m_yPos.size());
     std::generate(returnValue.begin() , returnValue.end() , [this]{
         static unsigned int index = 0;
@@ -156,6 +167,7 @@ std::vector<double> Lidar::GetYPos(void) {
         index++;
         return currentItem;
     });
+    m_lidar_endTr.store(false,std::memory_order_release);
 
    return returnValue;
 }

@@ -85,21 +85,15 @@ void MobileBase::GetLidarPoints() {
 	if(m_lidar_start) {
 		std::vector<double> xP = m_RPLidar->GetXPos();
 		std::vector<double> yP = m_RPLidar->GetYPos();
-		std::vector<int> range = m_RPLidar->GetRange();
 		m_x.clear();
 		m_y.clear();
 		for(unsigned int i=0;i<xP.size();i++) {
-			if(range[i] == 3500) {
-				m_x.push_back(std::numeric_limits<double>::infinity());
-				m_y.push_back(std::numeric_limits<double>::infinity());
-			} else {
-				m_x.push_back(xP.at(i));
-				m_y.push_back(yP.at(i));
-			}
+			m_x.push_back(xP.at(i));
+			m_y.push_back(yP.at(i));
 		}
 		m_RPLidar->Display(false);
 		std::cout << "out : " << m_RPLidar->SaveLidarPoints() << std::endl;
-		//GetPosBase();
+		GetPosBase();
 	}
 }
 

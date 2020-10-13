@@ -8,6 +8,7 @@
 #include <array>
 #include <pthread.h>
 #include <atomic>
+#include <limits>
 #include <string.h>
 #include "Usb.hpp"
 #include "algorithm"
@@ -30,7 +31,7 @@ class Lidar{
         int GetBdRate(void);
         int GetPortNb(void);
         bool GetStart(void);
-        int GetMotorSpeed(void);
+        uint32_t GetMotorSpeed(void);
         int GetTimeIncrement(void);
         bool GetSat();
         std::vector<int> GetRange(void);
@@ -53,6 +54,7 @@ private:
         const double TERMINAL_STEP = TERMINAL_LENGTH/3500;
 
         std::atomic<bool> m_start;
+        std::atomic<bool> m_lidar_endTr;
 
         int m_port_nr;
         int m_bdrate;
@@ -64,9 +66,10 @@ private:
 
         bool m_sat = true;
 
-        int m_motor_speed = 0;
+        uint32_t m_motor_speed = 0;
         int m_time_increment;
         uint16_t rpms;
+        int m_cpt = 0;
 
         Usb *m_usb;
         pthread_t *inc_x_thread;

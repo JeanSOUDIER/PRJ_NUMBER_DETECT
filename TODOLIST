@@ -1,6 +1,7 @@
 LOW :
  RPI
- - test bluetooth (read)
+ - bluetooth (read bug -Jean)
+ - ICP odom (test + rewrite -Jean)
 
 HIGH :
  RPI
