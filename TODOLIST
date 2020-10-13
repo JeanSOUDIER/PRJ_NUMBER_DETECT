@@ -1,6 +1,5 @@
 LOW :
  RPI
- - rs232 (unsigned char)
  - test bluetooth (read)
 
 HIGH :
