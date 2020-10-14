@@ -1,7 +1,10 @@
 LOW :
  RPI
  - bluetooth (read bug -Jean)
- - ICP odom (test + rewrite -Jean)
+ - ICP odom (test data + rewrite -Jean)
+ - mobile base (test -Jean)
+ - rs232 (merge -Jean)
+ - Sequencer (test -Jean)
 
 HIGH :
  RPI

@@ -83,13 +83,14 @@ void Bluetooth::ReadThread() {
     			m_ccR = m_length;
     			m_len = 0;
     			m_stateR = 2;
+    			m_msg.clear();
     			break;
     		}
     		case 2:{
     			m_msg.push_back(r.at(0));
     			m_ccR += r.at(0);
     			m_len++;
-    			if(m_len == m_length-1) {m_stateR = 3;}
+    			if(m_len > m_length-1) {m_stateR = 3;}
     			break;
     		}
     		case 3:{

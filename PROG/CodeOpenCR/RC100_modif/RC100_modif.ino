@@ -66,6 +66,7 @@ int const_vel = 200;
 RC100 Controller;
 int RcvData = 0;
 int mode = 0;
+int cc = 0;
 
 void setup() 
 {
@@ -92,7 +93,6 @@ void loop()
   if (Serial.available())
   {
     char c = Serial.read();
-    int velo;
     switch(mode) {
       case 0:
         if(c == 255) {
@@ -100,18 +100,30 @@ void loop()
         }
         break;
       case 1:
-        velo = c;
-        velo = 3*(velo-128);
-        vel[0] = velo;
+        vel[0] = c<<8;
+        cc = c;
         mode = 2;
         break;
       case 2:
-        velo = c;
-        velo = 3*(velo-128);
-        vel[1] = velo;
-        controlMotor( vel[0], vel[1]);
-        mode = 0;
+        vel[0] += c;
+        cc += c;
+        mode = 3;
         break;
+      case 3:
+        vel[1] = c<<8;
+        cc += c;
+        mode = 4;
+        break;
+      case 4:
+        vel[1] += c;
+        cc += c;
+        mode = 5;
+        break;
+      case 5:
+        if(c == cc%256) {
+          controlMotor( vel[0], vel[1]);
+        }
+        mode = 0;
       default:
         mode = 0;
         break;

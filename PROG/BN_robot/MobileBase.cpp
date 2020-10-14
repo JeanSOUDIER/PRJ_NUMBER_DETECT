@@ -22,6 +22,7 @@ MobileBase::MobileBase(const double posX, const double posY, const double angle,
 	m_posY = posY;
 	m_angle = angle;
 	m_RPLidar = RPLidar;
+	m_timeCont.store(0,std::memory_order_release);
 	StartPlacing();
 	//thread
 	if(m_lidar_start) {
@@ -156,22 +157,32 @@ void MobileBase::SetMotBalance(const double rho, const double theta) {
 void MobileBase::SetSpeed(int L, int R) {
 	L *= -1;
 	R *= -1;
-	if(L > 100) {L = 100;}
-	if(L < -100) {L = -100;}
-	if(R > 100) {R = 100;}
-	if(R < -100) {R = -100;}
-	unsigned char Lc = L+128;
-	unsigned char Rc = R+128;
-	std::vector<char> sending{char(255), static_cast<char>(Rc), static_cast<char>(Lc)};
+	if(L > 32000) {L = 32000;}
+	if(L < -32000) {L = -32000;}
+	if(R > 32000) {R = 32000;}
+	if(R < -32000) {R = -32000;}
+	L += 32000;
+	R += 32000;
+	unsigned char Lc = static_cast<unsigned char>(L/256);
+	unsigned char Ld = static_cast<unsigned char>(L);
+	unsigned char Rc = static_cast<unsigned char>(R/256);
+	unsigned char Rd = static_cast<unsigned char>(R);
+	std::vector<char> sending{char(255), static_cast<char>(Rd), static_cast<char>(Rc), static_cast<char>(Ld), static_cast<char>(Lc), static_cast<char>(Rd+Rc+Ld+Lc)};
 	m_usb->SendBytes(sending);
+}
+
+void MobileBase::SetTime(int time) {
+	m_timeCont.store(time,std::memory_order_release);
 }
 
 void* MobileBase::ThreadRun() {
     while(m_start.load(std::memory_order_acquire)) {
     	//TODO asserv lidar + deplacement
-		//GetLidarPoints();
-		//GetPosBase();
-		//GoPos(m_posX-m_posXgoal, m_posY-m_posXgoal, m_angle-m_angle_goal);
+    	/*if(m_timeCont.load(std::memory_order_acquire) > Time::now()) {
+    		GetLidarPoints();
+			GetPosBase();
+			GoPos(m_posX-m_posXgoal, m_posY-m_posXgoal, m_angle-m_angle_goal);
+    	}*/
     }
 
     pthread_exit(NULL);

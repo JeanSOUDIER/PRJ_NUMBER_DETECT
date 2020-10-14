@@ -27,6 +27,7 @@ class MobileBase {
 		void GoPos(const double x, const double y, const double a);
 		void SetMotBalance(const double rho, const double theta);
 		void SetSpeed(int L, int R);
+		void SetTime(int time);
 		void GetLidarPoints();
 
 		static void* MobileBaseHelper(void *context);
@@ -41,6 +42,7 @@ class MobileBase {
 		const double SPEED_ANGLE = 450.82*SPEED_NORM/M_PI;
 
 		std::atomic<bool> m_start;
+		std::atomic<int> m_timeCont;
 
 		int m_port_nr;
         int m_bdrate;
