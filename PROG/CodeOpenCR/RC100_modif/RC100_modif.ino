@@ -68,8 +68,7 @@ int RcvData = 0;
 int mode = 0;
 int cc = 0;
 
-void setup() 
-{
+void setup() {
   Serial.begin(115200);
 
   Controller.begin(1);
@@ -86,13 +85,16 @@ void setup()
 
   dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, RIGHT_DXL, ADDR_TORQUE_ENABLE, ON, &dxl_error);
   packetHandler->getTxRxResult(dxl_comm_result);
+
+  controlMotor(330,-256);
+  delay(1000);
+  controlMotor(0,0);
 }
 
-void loop() 
-{
-  if (Serial.available())
-  {
+void loop() {
+  if (Serial.available()) {
     char c = Serial.read();
+    int velo;
     switch(mode) {
       case 0:
         if(c == 255) {
@@ -100,30 +102,36 @@ void loop()
         }
         break;
       case 1:
-        vel[0] = c<<8;
+        velo = c;
+        vel[0] = velo<<8;
         cc = c;
         mode = 2;
         break;
       case 2:
-        vel[0] += c;
+        velo = c;
+        vel[0] += velo;
         cc += c;
         mode = 3;
         break;
       case 3:
-        vel[1] = c<<8;
+        velo = c;
+        vel[1] = velo<<8;
         cc += c;
         mode = 4;
         break;
       case 4:
-        vel[1] += c;
+        velo = c;
+        vel[1] += velo;
         cc += c;
         mode = 5;
         break;
       case 5:
-        if(c == cc%256) {
-          controlMotor( vel[0], vel[1]);
+        if(cc%256 == c) {
+          //TODO
         }
+        controlMotor(vel[0],vel[1]);
         mode = 0;
+        break;
       default:
         mode = 0;
         break;
@@ -131,8 +139,7 @@ void loop()
   }
 }
 
-void controlMotor( int64_t left_wheel_value, int64_t right_wheel_value)
-{
+void controlMotor( int64_t left_wheel_value, int64_t right_wheel_value) {
   //bool dxl_addparam_result;
   //int dxl_comm_result;
 

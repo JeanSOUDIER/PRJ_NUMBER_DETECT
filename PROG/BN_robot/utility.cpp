@@ -123,5 +123,46 @@ bool writeCSV(const std::string &path, const std::vector<std::vector<std::string
 bool writeCSV(const std::string &path , const std::vector<std::vector<double>> &data){return Utility::writeCSV(path , data , ";");}
 bool writeCSV(const std::string &path, const std::vector<std::vector<std::string>> &data){return Utility::writeCSV(path , data , ";");}
 
+std::vector<std::vector<std::string>> readCSV_STR(const std::string &path, const std::string &delimiter){
+
+    std::vector<std::vector<std::string>> result;
+
+    std::ifstream file(path);
+
+    if(file.is_open()){
+
+         std::string line;
+
+         while(std::getline(file , line)){
+             result.push_back(Utility::split(line, delimiter));
+         }
+
+    }
+
+    file.close();
+
+    return result;
+
+}
+
+std::vector<std::vector<double>> readCSV_DOUBLE(const std::string &path, const std::string &delimiter){
+
+    std::vector<std::vector<std::string>> str_data = readCSV_STR(path , delimiter);
+    std::vector<std::vector<double>> result;
+    result.reserve(str_data.size());
+
+
+    for(auto &vect:str_data){
+
+        std::vector<double> db_vect(vect.size());
+
+        std::transform(vect.begin(), vect.end() , std::back_inserter(db_vect), [](std::string str) {return std::stod(str);});
+
+        result.push_back(db_vect);
+    }
+
+    return result;
+
+}
 
 }

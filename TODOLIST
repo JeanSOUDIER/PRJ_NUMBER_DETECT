@@ -2,8 +2,7 @@ LOW :
  RPI
  - bluetooth (read bug -Jean)
  - ICP odom (test data + rewrite -Jean)
- - mobile base (test -Jean)
- - rs232 (merge -Jean)
+ - mobile base (rewrite + test max speed -Jean) /!\ MERGE MANUEL
  - Sequencer (test -Jean)
 
 HIGH :
@@ -23,8 +22,8 @@ PRJ AUTOM :
 
 PRJ RT :
 
-PRJ MOBI :
+PRJ E-MOBI :
  - estimation batterie
 
 MECA :
-
+- support jetson

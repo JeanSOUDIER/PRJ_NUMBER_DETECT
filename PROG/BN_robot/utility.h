@@ -14,7 +14,6 @@
 
 #define EU_FORMAT //If this is defined, replaces all "." by "," in doubles when converting them to strings. This is to compensate for Excel using strange conventions
 
-
 namespace Utility {
 
     std::vector<std::string> split(std::string str, const std::string &delimiter);
@@ -33,7 +32,8 @@ namespace Utility {
     bool writeCSV(const std::string &path , const std::vector<std::vector<double>> &data);
     bool writeCSV(const std::string &path, const std::vector<std::vector<std::string>> &data);
 
-
+    std::vector<std::vector<std::string>> readCSV_STR(const std::string &path, const std::string &delimiter);
+    std::vector<std::vector<double>> readCSV_DOUBLE(const std::string &path, const std::string &delimiter);
 
     template <typename T> int sign(T val) {
         return (T(0) < val) - (val < T(0));
@@ -41,9 +41,9 @@ namespace Utility {
 
     template <typename T> long long int indexOf(const std::vector<T> &vector , const T &data){
     return (std::find(vector.begin(), vector.end(), data) != vector.end())
-            ?
-            std::distance(vector.begin(), std::find(vector.begin(), vector.end(), data))
-            : -1;
+           ?
+           std::distance(vector.begin(), std::find(vector.begin(), vector.end(), data))
+           : -1;
     }
 
 

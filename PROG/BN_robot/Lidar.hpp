@@ -41,6 +41,7 @@ class Lidar{
 
         void Display(const bool isXY);
         void DisplayGraph();
+        void DisplayICP();
         bool SaveLidarPoints();
         static void* LidarHelper(void *context);
         void StartThread();

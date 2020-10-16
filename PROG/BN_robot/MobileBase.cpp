@@ -92,7 +92,8 @@ void MobileBase::GetLidarPoints() {
 			m_x.push_back(xP.at(i));
 			m_y.push_back(yP.at(i));
 		}
-		m_RPLidar->Display(false);
+		//m_RPLidar->Display(false);
+		m_RPLidar->DisplayICP();
 		std::cout << "out : " << m_RPLidar->SaveLidarPoints() << std::endl;
 		GetPosBase();
 	}
