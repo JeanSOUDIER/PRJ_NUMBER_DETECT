@@ -30,9 +30,9 @@ void gs::icp(std::vector<Point*> &dynamicPointCloud, std::vector<Point*> &static
 	// initialize the rotation matrix
 	clearRotation(rotationMatrix);
 
-	const int maxIterations = 400;
-	const int numRandomSamples = 400;
-	const float eps = 1e-2;
+	const int maxIterations = 100000;
+	const int numRandomSamples = 500;
+	const float eps = 0.1;
 	gs::Point p;
 	gs::Point x;
 
@@ -104,9 +104,10 @@ void gs::icp(std::vector<Point*> &dynamicPointCloud, std::vector<Point*> &static
 		{
 			rotate(dynamicPointCloud[i], rotationMatrix, &p);
 			translate(&p, translation, dynamicPointCloud[i]);
-			std::cout << "rot = " << rotationMatrix[0] << " " << rotationMatrix[1] << " " << rotationMatrix[2] << " " << rotationMatrix[3] << " " << rotationMatrix[4] << " " << rotationMatrix[5] << " " << rotationMatrix[6] << " "<< rotationMatrix[7] << " " << rotationMatrix[8] << std::endl;
-			std::cout << "tra = " << translation[0] << " " << translation[1] << " " << translation[2] << std::endl << std::endl;
 		}
+		std::cout << "i " << iter << " " << cost << std::endl;
+		//std::cout << "rot = " << rotationMatrix[0] << " " << rotationMatrix[1] << " " << rotationMatrix[2] << " " << rotationMatrix[3] << " " << rotationMatrix[4] << " " << rotationMatrix[5] << " " << rotationMatrix[6] << " "<< rotationMatrix[7] << " " << rotationMatrix[8] << std::endl;
+		//std::cout << "tra = " << translation[0] << " " << translation[1] << " " << translation[2] << std::endl << std::endl;
 	}
 
 	staticPointCloudCopy.clear();

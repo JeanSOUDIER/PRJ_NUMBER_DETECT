@@ -5,28 +5,41 @@
 
 using namespace gs;
 
+void createPoints(std::vector<Point*>& points)
+{
+	points.push_back(new Point(-1.0f, -1.0f, -1.0f));
+	points.push_back(new Point(1.0f, -1.0f, -1.0f));
+	points.push_back(new Point(-1.0f, 1.0f, -1.0f));
+	points.push_back(new Point(1.0f, 1.0f, -1.0f));
+	points.push_back(new Point(-1.0f, -1.0f, 1.0f));
+	points.push_back(new Point(1.0f, -1.0f, 1.0f));
+	points.push_back(new Point(-1.0f, 1.0f, 1.0f));
+	points.push_back(new Point(1.0f, 1.0f, 1.0f));
+}
+
 void createPoints0(std::vector<Point*>& points) {
 	std::vector<std::vector<double>> a = Utility::readCSV_DOUBLE("graphXY0.csv",";");
+	int j = 8;
 	for(unsigned int i=0;i<a.at(0).size();i++) {
-        if(!isinf(a.at(0).at(i))) {
+        if(!isinf(a.at(0).at(i)) && (a.at(0).at(i) || a.at(1).at(i))) {
             points.push_back(new Point(static_cast<float>(a.at(0).at(i)), static_cast<float>(a.at(1).at(i)), 0.0f));
             std::cout << static_cast<float>(a.at(0).at(i)) << " " << static_cast<float>(a.at(1).at(i)) << std::endl;
         } else {
-            points.push_back(new Point(0.0f, 0.0f, 0.0f));
-            std::cout << "0.0f 0.0f" << std::endl;
+            //points.push_back(new Point(0.0f, 0.0f, 0.0f));
+            //std::cout << "0.0f 0.0f" << std::endl;
         }
 	}
 }
 
 void createPoints1(std::vector<Point*>& points) {
-    std::vector<std::vector<double>> a = Utility::readCSV_DOUBLE("graphXY0.csv",";");
+    std::vector<std::vector<double>> a = Utility::readCSV_DOUBLE("graphXY1.csv",";");
 	for(unsigned int i=0;i<a.at(0).size();i++) {
-        if(!isinf(a.at(0).at(i))) {
+        if(!isinf(a.at(0).at(i)) && (a.at(0).at(i) || a.at(1).at(i))) {
             points.push_back(new Point(static_cast<float>(a.at(0).at(i)), static_cast<float>(a.at(1).at(i)), 0.0f));
             std::cout << static_cast<float>(a.at(0).at(i)) << " " << static_cast<float>(a.at(1).at(i)) << std::endl;
         } else {
-            points.push_back(new Point(0.0f, 0.0f, 0.0f));
-            std::cout << "0.0f 0.0f" << std::endl;
+            //points.push_back(new Point(0.0f, 0.0f, 0.0f));
+            //std::cout << "0.0f 0.0f" << std::endl;
         }
 	}
 }
@@ -49,15 +62,15 @@ int main() {
 	std::vector<Point*> dynamicPointCloud;
 	createPoints1(dynamicPointCloud);
 
-	float rotation[] = { 1.0f, 0.0f, 0.0f,	0.0f, 1.0f, 0.0f,	0.0f, 0.0f, 1.0f };
-	float translation[] = { 0.5f, 0.0f, 0.0f };
-	applyAffineTransform(dynamicPointCloud, rotation, translation);
+	//float rotation[] = { 1.0f, 0.0f, 0.0f,	0.0f, 1.0f, 0.0f,	0.0f, 0.0f, 1.0f };
+	//float translation[] = { 0.5f, 0.0f, 0.0f };
+	/*float rotation[] = { 1.0f, 0.0f, 0.0f,	0.0f, 1.0f, 0.0f,	0.0f, 0.0f, 1.0f };
+	float translation[] = { 1.0f, 0.0f, 0.0f };
+	applyAffineTransform(dynamicPointCloud, rotation, translation);*/
+
+	getchar();
 
 	icp(dynamicPointCloud, staticPointCloud);
-
-	for(unsigned int i=0;i<dynamicPointCloud.size();i++) {
-        std::cout << dynamicPointCloud[i]->pos[0] << " " << dynamicPointCloud[i]->pos[1] << " " << dynamicPointCloud[i]->pos[2] << std::endl;
-	}
 
 	float alignmentError = 0.0f;
 	for (int i = 0; i < dynamicPointCloud.size(); i++)
@@ -69,7 +82,7 @@ int main() {
 
 	alignmentError /= (float)dynamicPointCloud.size();
 
-	printf("Alignment Error: %0.5f \n", alignmentError);
+	std::cout << "Alignment Error: " << alignmentError << std::endl;
 
     return 0;
 }
