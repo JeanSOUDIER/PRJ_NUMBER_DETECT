@@ -32,7 +32,8 @@ namespace Utility {
     bool writeCSV(const std::string &path , const std::vector<std::vector<double>> &data);
     bool writeCSV(const std::string &path, const std::vector<std::vector<std::string>> &data);
 
-
+    std::vector<std::vector<std::string>> readCSV_STR(const std::string &path, const std::string &delimiter);
+    std::vector<std::vector<std::double>> readCSV_DOUBLE(const std::string &path, const std::string &delimiter);
 
     template <typename T> int sign(T val) {
         return (T(0) < val) - (val < T(0));
