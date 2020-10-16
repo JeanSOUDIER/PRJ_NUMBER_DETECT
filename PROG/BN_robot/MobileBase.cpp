@@ -73,6 +73,7 @@ void MobileBase::GoPos(const double x, const double y, const double a) {
     }
 	if(r != 0) {
 		SetSpeed(50*Utility::sign(r),50*Utility::sign(r));
+    	std::cout << r*SPEED_NORM << std::endl;
 		delay(r*SPEED_NORM);
 	}
 	SetSpeed(0, 0);
@@ -92,8 +93,7 @@ void MobileBase::GetLidarPoints() {
 			m_x.push_back(xP.at(i));
 			m_y.push_back(yP.at(i));
 		}
-		//m_RPLidar->Display(false);
-		m_RPLidar->DisplayICP();
+		m_RPLidar->Display(false);
 		std::cout << "out : " << m_RPLidar->SaveLidarPoints() << std::endl;
 		GetPosBase();
 	}
@@ -156,19 +156,18 @@ void MobileBase::SetMotBalance(const double rho, const double theta) {
 }
 
 void MobileBase::SetSpeed(int L, int R) {
-	L *= -1;
-	R *= -1;
-	if(L > 32000) {L = 32000;}
-	if(L < -32000) {L = -32000;}
-	if(R > 32000) {R = 32000;}
-	if(R < -32000) {R = -32000;}
-	L += 32000;
-	R += 32000;
-	unsigned char Lc = static_cast<unsigned char>(L/256);
-	unsigned char Ld = static_cast<unsigned char>(L);
-	unsigned char Rc = static_cast<unsigned char>(R/256);
-	unsigned char Rd = static_cast<unsigned char>(R);
-	std::vector<char> sending{char(255), static_cast<char>(Rd), static_cast<char>(Rc), static_cast<char>(Ld), static_cast<char>(Lc), static_cast<char>(Rd+Rc+Ld+Lc)};
+	if(L > 330) {L = 330;}
+	if(L < -330) {L = -330;}
+	if(R > 330) {R = 330;}
+	if(R < -330) {R = -330;}
+	char Lc = static_cast<char>(std::abs(L/256));
+	if(Utility::sign(L) == -1) {Lc += 2;}
+	char Ld = static_cast<char>(L%256);
+	char Rc = static_cast<char>(std::abs(R/256));
+	if(Utility::sign(R) == -1) {Rc += 2;}
+	char Rd = static_cast<char>(R%256);
+	int cc = (Rd+Rc+Ld+Lc)%256;
+	std::vector<char> sending{char(255), Rc, Rd, Lc, Ld, static_cast<char>(cc)};
 	m_usb->SendBytes(sending);
 }
 

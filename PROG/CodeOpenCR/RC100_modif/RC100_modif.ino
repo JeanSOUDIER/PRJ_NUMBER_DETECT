@@ -66,7 +66,6 @@ int const_vel = 200;
 RC100 Controller;
 int RcvData = 0;
 int mode = 0;
-int cc = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -85,10 +84,6 @@ void setup() {
 
   dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, RIGHT_DXL, ADDR_TORQUE_ENABLE, ON, &dxl_error);
   packetHandler->getTxRxResult(dxl_comm_result);
-
-  controlMotor(330,-256);
-  delay(1000);
-  controlMotor(0,0);
 }
 
 void loop() {
@@ -103,32 +98,12 @@ void loop() {
         break;
       case 1:
         velo = c;
-        vel[0] = velo<<8;
-        cc = c;
+        vel[0] = 3*(velo-128);
         mode = 2;
         break;
       case 2:
         velo = c;
-        vel[0] += velo;
-        cc += c;
-        mode = 3;
-        break;
-      case 3:
-        velo = c;
-        vel[1] = velo<<8;
-        cc += c;
-        mode = 4;
-        break;
-      case 4:
-        velo = c;
-        vel[1] += velo;
-        cc += c;
-        mode = 5;
-        break;
-      case 5:
-        if(cc%256 == c) {
-          //TODO
-        }
+        vel[1] = 3*(velo-128);
         controlMotor(vel[0],vel[1]);
         mode = 0;
         break;

@@ -97,12 +97,12 @@ void Lidar::Poll(void) {
                 m_cpt++;
                 if(m_cpt > 60) {
                     for(unsigned int i=0;i<m_range.size();i++) {
-                        if(m_range.load(std::memory_order_acquire) == 3500) {
+                        if(m_range.at(i).load(std::memory_order_acquire) == 3500) {
                             m_xPos.at(i).store(std::numeric_limits<double>::infinity());
                             m_yPos.at(i).store(std::numeric_limits<double>::infinity());
                         } else {
-                            m_xPos.at(i).store(static_cast<double>(m_range.load(std::memory_order_acquire))*std::cos(static_cast<double>(i)*M_PI/180),std::memory_order_release);
-                            m_yPos.at(i).store(static_cast<double>(m_range.load(std::memory_order_acquire))*std::sin(static_cast<double>(i)*M_PI/180),std::memory_order_release);
+                            m_xPos.at(i).store(static_cast<double>(m_range.at(i).load(std::memory_order_acquire))*std::cos(static_cast<double>(i)*M_PI/180),std::memory_order_release);
+                            m_yPos.at(i).store(static_cast<double>(m_range.at(i).load(std::memory_order_acquire))*std::sin(static_cast<double>(i)*M_PI/180),std::memory_order_release);
                         }
                     }
                     m_lidar_endTr.store(true,std::memory_order_release);
@@ -148,7 +148,7 @@ std::vector<int> Lidar::GetIntensity(void) {
    return returnValue;
 }
 std::vector<double> Lidar::GetXPos(void) {
-	while(!m_lidar_endTr.loda(std::memory_order_acquire)) {}
+	while(!m_lidar_endTr.load(std::memory_order_acquire)) {}
     std::vector<double> returnValue(m_xPos.size());
     std::generate(returnValue.begin() , returnValue.end() , [this]{
         static unsigned int index = 0;
@@ -282,9 +282,9 @@ bool Lidar::SaveLidarPoints() {
 }
 
 void Lidar::DisplayICP() {
-	for(unsigned int i=0;i<m_xPos.size();i++) {
-		if(!std::isinf(m_xPos.at(i))) {
-			std::cout << "points.push_back(new Point(" << static_cast<float>(m_xPos) << "f, " << static_cast<float>(m_xPos) << "f, 0.0f));" << std::endl;
-		}
-	}
+    for(unsigned int i=0;i<m_xPos.size();i++) {
+        if(!std::isinf(m_xPos.at(i))) {
+            std::cout << "points.push_back(new Point(" << static_cast<float>(m_xPos) << "f, " << static_cast<float>(m_xPos) << "f, 0.0f));" << std::endl;
+        }
+    }
 }

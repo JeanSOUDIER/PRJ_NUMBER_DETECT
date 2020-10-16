@@ -57,7 +57,7 @@ bool Sequencer::Execute() {
 		}
 	}*/
 	int length;
-	std::vector<unsigned char> reading = {static_cast<std::vector<unsigned char>>(-1)};
+	std::vector<char> reading = {static_cast<std::vector<char>>(-1)};
 	if(m_BLE_start) {
 		while(reading.at(0) == -1) {
 			reading = m_BLE->GetRX();
