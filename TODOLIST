@@ -2,14 +2,14 @@ LOW :
  RPI
  - bluetooth (read bug -Jean)
  - ICP odom (test data + rewrite -Jean)
- - mobile base (rewrite + test max speed -Jean) /!\ MERGE MANUEL
+ - mobile base (bug négatif -Jean)
  - Sequencer (test -Jean)
 
 HIGH :
  RPI
  - test dessin (améliorer)
  - lidar regression (revoir -Jean)
- - asserv pos
+ - asserv pos [toujours positive ?]
  Jetson
  - CNN (-Erwan)
  - Compilation CUDA sur Qt (-Erwan)

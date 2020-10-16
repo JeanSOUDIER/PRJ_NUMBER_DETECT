@@ -38,8 +38,8 @@ class MobileBase {
 		void GetPosBase();
 		std::vector<double> FindSegment(int start, int stop);
 
-		const double SPEED_NORM = 8.68;
-		const double SPEED_ANGLE = 450.82*SPEED_NORM/M_PI;
+		const double SPEED_NORM = 6.25;
+		const double SPEED_ANGLE = 1800*SPEED_NORM/M_PI;
 
 		std::atomic<bool> m_start;
 		std::atomic<int> m_timeCont;

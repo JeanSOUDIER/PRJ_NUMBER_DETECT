@@ -68,11 +68,11 @@ void MobileBase::GoPos(const double x, const double y, const double a) {
     gamma = std::fmod(gamma,2*M_PI);
     gamma -= M_PI;
     if(gamma != 0) {
-    	SetSpeed(50*Utility::sign(gamma),-50*Utility::sign(gamma));
+    	SetSpeed(-50*Utility::sign(gamma),50*Utility::sign(gamma));
 		delay(std::abs(gamma)*SPEED_ANGLE);
     }
 	if(r != 0) {
-		SetSpeed(50*Utility::sign(r),50*Utility::sign(r));
+		SetSpeed(200*Utility::sign(r),200*Utility::sign(r));
     	std::cout << r*SPEED_NORM << std::endl;
 		delay(r*SPEED_NORM);
 	}
@@ -156,18 +156,20 @@ void MobileBase::SetMotBalance(const double rho, const double theta) {
 }
 
 void MobileBase::SetSpeed(int L, int R) {
-	if(L > 330) {L = 330;}
-	if(L < -330) {L = -330;}
-	if(R > 330) {R = 330;}
-	if(R < -330) {R = -330;}
-	char Lc = static_cast<char>(std::abs(L/256));
-	if(Utility::sign(L) == -1) {Lc += 2;}
-	char Ld = static_cast<char>(L%256);
-	char Rc = static_cast<char>(std::abs(R/256));
-	if(Utility::sign(R) == -1) {Rc += 2;}
-	char Rd = static_cast<char>(R%256);
-	int cc = (Rd+Rc+Ld+Lc)%256;
-	std::vector<char> sending{char(255), Rc, Rd, Lc, Ld, static_cast<char>(cc)};
+	if(L > 330) {L = 330;std::cout << "speed sat 0" << std::endl;}
+	if(L < -330) {L = -330;std::cout << "speed sat 1" << std::endl;}
+	if(R > 330) {R = 330;std::cout << "speed sat 2" << std::endl;}
+	if(R < -330) {R = -330;std::cout << "speed sat 3" << std::endl;}
+	L += 330;
+	R += 330;
+	std::cout << L << " " << R << std::endl;
+	unsigned char Lc = static_cast<unsigned char>(L>>8);
+	unsigned char Ld = static_cast<unsigned char>(L%256);
+	unsigned char Rc = static_cast<unsigned char>(R>>8);
+	unsigned char Rd = static_cast<unsigned char>(R%256);
+	int cc = Lc+Ld+Rc+Rd;
+	unsigned char c = static_cast<unsigned char>(cc%256);
+	std::vector<char> sending{static_cast<unsigned char>(255), static_cast<unsigned char>(Rc), static_cast<unsigned char>(Rd), static_cast<unsigned char>(Lc), static_cast<unsigned char>(Ld), static_cast<unsigned char>(c)};
 	m_usb->SendBytes(sending);
 }
 
