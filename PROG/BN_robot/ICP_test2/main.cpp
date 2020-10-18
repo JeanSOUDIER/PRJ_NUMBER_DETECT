@@ -215,7 +215,7 @@ void test_icp(void){
         //my_random_shuffle(B);
 
         start = GetTickCount();
-        icp_result = icp(B, A, 20,  0.000001);
+        icp_result = icp(B, A, 200000,  0.01);
         end = GetTickCount();
         interval = float((end - start))/1000;
         // cout << "interval" << interval << endl;
