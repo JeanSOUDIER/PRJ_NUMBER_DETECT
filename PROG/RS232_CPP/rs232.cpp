@@ -719,8 +719,17 @@ void RS232::flushRXTX(const unsigned &port){
 
 #endif
 
+void RS232::cputs(const unsigned &port, const std::string &message, const bool &null_terminated){ //Sends a string to serial port
 
-void RS232::cputs(const unsigned &port, const std::string &message){ //Sends a string to serial port
+  std::vector<unsigned char> data_vector;
+  std::copy(message.begin() , message.end() , std::back_inserter(data_vector));
+  if(null_terminated){data_vector.push_back('\0');}
+  RS232::cputs(port , data_vector);
+
+}
+
+
+void RS232::cputs(const unsigned &port, const std::vector<unsigned char> &message){ //Sends a string to serial port
   
   for(unsigned char character:message){RS232::SendByte(port, character);}
   
