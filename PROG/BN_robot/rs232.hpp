@@ -116,8 +116,9 @@ int PollComport(const int &comport_number, unsigned char *buffer, const int &siz
 int SendByte(const unsigned &port, unsigned char byte);
 int SendBuf(const unsigned &port, std::vector<unsigned char> &buffer);
 
+void cputs(const unsigned &port, const std::string &message , const bool &null_terminated = false);
+void cputs(const unsigned &port, const std::vector<unsigned char> &message);
 
-void cputs(const unsigned &port, const std::string &message);
 
 int IsDCDEnabled(const unsigned &port);
 int IsRINGEnabled(const unsigned &port);
