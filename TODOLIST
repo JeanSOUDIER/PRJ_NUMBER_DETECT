@@ -2,14 +2,13 @@ LOW :
  RPI
  - bluetooth (read bug -Jean)
  - ICP odom (test data + rewrite -Jean)
- - mobile base (bug négatif -Jean)
  - Sequencer (test -Jean)
 
 HIGH :
  RPI
  - test dessin (améliorer)
  - lidar regression (revoir -Jean)
- - asserv pos [toujours positive ?]
+ - asserv pos
  Jetson
  - CNN (-Erwan)
  - Compilation CUDA sur Qt (-Erwan)
@@ -26,4 +25,3 @@ PRJ E-MOBI :
  - estimation batterie
 
 MECA :
-- support jetson

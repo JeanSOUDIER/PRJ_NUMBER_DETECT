@@ -10,7 +10,7 @@
 #include <deque>
 #include "Usb.hpp"
 
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 	#define DEBUG_BLUETOOTH_PRINT(x) std::cout<<x<<std::endl;
 #else
@@ -33,6 +33,7 @@ class Bluetooth {
                 void ReadThread();
                 void WriteThread();
                 void UpdateThread();
+                int GetRXsize();
 		/*unsigned char Read();
 		void WriteWord(std::string txt);
 		void WriteWord(std::vector<char> txt);*/

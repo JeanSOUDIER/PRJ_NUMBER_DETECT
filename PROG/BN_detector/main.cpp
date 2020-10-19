@@ -32,15 +32,19 @@ int main() {
 
     //MobileBase OpenCR(ttyACM0, 115200, nullptr);
     //OpenCR.GoPos(0,0,M_PI);
-	Cam CPI2;
-	CPI2.ImgShow();
+	//Cam CPI2;
+	//CPI2.ImgShow();
 
-    /*Bluetooth BLE(ttyTHS1, 9600);
-    while(1) {
-    	BLE.WriteEnd();
-    }
-    BLE.WriteEnd();
-	*/
+    Bluetooth BLE(ttyTHS1, 9600);
+    /*unsigned char temp = '\0';
+    while(temp != 'o') {
+	temp = BLE.Read();
+	//if(temp != 0 && temp != 4 && temp != 32 && temp != 118) {std::cout << temp << std::endl;}
+	if(temp > 'A' && temp < 'z') {std::cout << temp << std::endl;}
+	else if(temp) {std::cout << static_cast<int>(temp) << std::endl;}
+    }*/
+    BLE.SetTX("hola");
+    sleep(1);
 
     //MobileBase OpenCR(ttyACM0, 115200, new Lidar(ttyUSB_LDS, 230400));
     //delay(10000);

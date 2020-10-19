@@ -63,7 +63,7 @@
 
 #if defined(__linux__) || defined(__FreeBSD__)   /* Linux & FreeBSD */
 
-unsigned RS232::PORTNR = 40;
+unsigned RS232::PORTNR = 41;
 std::vector<std::string> RS232::comports = {
         "/dev/ttyS0","/dev/ttyS1","/dev/ttyS2","/dev/ttyS3","/dev/ttyS4","/dev/ttyS5",
         "/dev/ttyS6","/dev/ttyS7","/dev/ttyS8","/dev/ttyS9","/dev/ttyS10","/dev/ttyS11",
@@ -73,7 +73,7 @@ std::vector<std::string> RS232::comports = {
         "/dev/rfcomm0","/dev/rfcomm1","/dev/ircomm0","/dev/ircomm1",
         "/dev/cuau0","/dev/cuau1","/dev/cuau2","/dev/cuau3",
         "/dev/cuaU0","/dev/cuaU1","/dev/cuaU2","/dev/cuaU3",
-        "/dev/ttyUSB_ARBO", "/dev/ttyUSB_LDS"
+        "/dev/ttyUSB_ARBO", "/dev/ttyUSB_LDS", "/dev/ttyTHS1"
 };
 
 

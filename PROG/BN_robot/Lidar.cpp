@@ -284,7 +284,7 @@ bool Lidar::SaveLidarPoints() {
 void Lidar::DisplayICP() {
     for(unsigned int i=0;i<m_xPos.size();i++) {
         if(!std::isinf(m_xPos.at(i))) {
-            std::cout << "points.push_back(new Point(" << static_cast<float>(m_xPos) << "f, " << static_cast<float>(m_xPos) << "f, 0.0f));" << std::endl;
+            //std::cout << "points.push_back(new Point(" << static_cast<float>(m_xPos) << "f, " << static_cast<float>(m_xPos) << "f, 0.0f));" << std::endl;
         }
     }
 }

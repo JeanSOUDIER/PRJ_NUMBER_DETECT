@@ -95,6 +95,7 @@ void Bluetooth::ReadThread() {
     		}
     		case 3:{
     			if(r.at(0) == m_ccR%256) {
+    				m_msg.push_back('\0');
     				m_buff_rx.push_back(m_msg);
 					DEBUG_BLUETOOTH_PRINT("endR :");
 					DEBUG_BLUETOOTH_PRINT(static_cast<int>(m_buff_rx.size()));
@@ -199,7 +200,8 @@ std::vector<char> Bluetooth::GetRX(void) {
 	DEBUG_BLUETOOTH_PRINT("read main thread");
 	while(!m_rec.load(std::memory_order_acquire)) {}
 	DEBUG_BLUETOOTH_PRINT("read op");
-	std::vector<char> returnValue(m_rx.size());
+	int len = GetRXsize();
+	std::vector<char> returnValue(len);
 	std::generate(returnValue.begin() , returnValue.end() , [this]{
         static unsigned int index = 0;
         const char currentItem = m_rx.at(index).load();
@@ -230,4 +232,11 @@ void Bluetooth::SetTX(std::vector<char> txt) {
 void Bluetooth::SetTX(std::string txt) {
 	std::vector<char> a(txt.begin(), txt.end());
 	SetTX(a);
+}
+
+int Bluetooth::GetRXsize() {
+	for(unsigned int i=0;i<256;i++) {
+		if(m_rx.at(i).load() == '\0') {return i;}
+	}
+	return 256;
 }
