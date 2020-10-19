@@ -1,6 +1,5 @@
 LOW :
  RPI
- - bluetooth (read bug -Jean)
  - ICP odom (test data + rewrite -Jean)
  - Sequencer (test -Jean)
 
