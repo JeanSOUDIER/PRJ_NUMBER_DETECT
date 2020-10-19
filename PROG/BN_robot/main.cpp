@@ -28,8 +28,16 @@ int main() {
     //WidowXL.ToKeyboard(false);
 
 
-    MobileBase OpenCR(ttyACM0, 115200, nullptr);
-    OpenCR.GoPos(0,0,M_PI);
+    /*MobileBase OpenCR(ttyACM0, 115200, nullptr);
+    for(int i=-330;i<331;i+=10) {
+        std::cout << "i " << i << std::endl;
+        OpenCR.SetSpeed(i,i);
+        delay(500);
+        OpenCR.SetSpeed(0,0);
+        delay(500);
+    }*/
+    
+    //OpenCR.GoPos(0,0,M_PI);
 
     //Bluetooth BLE(rfcomm0, 9600);
     //BLE.WriteEnd();

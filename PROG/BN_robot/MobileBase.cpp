@@ -162,7 +162,6 @@ void MobileBase::SetSpeed(int L, int R) {
 	if(R < -330) {R = -330;std::cout << "speed sat 3" << std::endl;}
 	L += 330;
 	R += 330;
-	std::cout << L << " " << R << std::endl;
 	unsigned char Lc = static_cast<unsigned char>(L>>8);
 	unsigned char Ld = static_cast<unsigned char>(L%256);
 	unsigned char Rc = static_cast<unsigned char>(R>>8);

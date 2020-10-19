@@ -303,6 +303,7 @@ int RS232::PollComport(const int &comport_number, unsigned char *buffer, const i
 
 
 int RS232::SendByte(const unsigned &port, unsigned char byte){
+  std::cout << static_cast<int>(byte) << " ";
   int n = write(RS232::Cport[port], &byte, 1);
   if(n < 0){
     if(errno == EAGAIN){
@@ -725,13 +726,14 @@ void RS232::cputs(const unsigned &port, const std::string &message, const bool &
   std::copy(message.begin() , message.end() , std::back_inserter(data_vector));
   if(null_terminated){data_vector.push_back('\0');}
   RS232::cputs(port , data_vector);
-
+  std::cout << std::endl;
 }
 
 
 void RS232::cputs(const unsigned &port, const std::vector<unsigned char> &message){ //Sends a string to serial port
   
   for(unsigned char character:message){RS232::SendByte(port, character);}
+  std::cout << std::endl;
   
 }
 

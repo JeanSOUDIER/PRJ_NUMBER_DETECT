@@ -90,6 +90,7 @@ void setup() {
 void loop() {
   if (Serial.available()) {
     char c = Serial.read();
+    Serial.println((int)(c));
     int velo;
     switch(mode) {
       case 0:
@@ -122,11 +123,11 @@ void loop() {
         mode = 5;
         break;
       case 5:
-        //if(cc%256 == c) {
+        if(cc%256 == c) {
           vel[0] -= 330;
           vel[1] -= 330;
           controlMotor(-vel[0],-vel[1]);
-        //}
+        }
         mode = 0;
         break;
       default:

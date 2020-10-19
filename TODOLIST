@@ -4,7 +4,6 @@ LOW :
  - ICP odom (test data + rewrite -Jean)
  - mobile base (bug négatif -Jean)
  - Sequencer (test -Jean)
- - mail lidar
 
 HIGH :
  RPI
