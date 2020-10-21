@@ -2,7 +2,10 @@
 #define MATRIX_H
 
 
+
 #include <algorithm>
+
+#include <cmath>
 
 #include <functional>
 
@@ -55,6 +58,49 @@ class Matrix{
 
         /***************************************************/
 
+
+        bool isLine() const{
+
+            if(_data.empty()){return false;}
+
+            if(_data.at(0).empty()){return false;}
+
+
+            return (size().at(0) == 1);
+
+        }
+
+        bool isColumn() const{
+
+            if(_data.empty()){return false;}
+
+            if(_data.at(0).empty()){return false;}
+
+
+            return (size().at(1) == 1);
+        }
+
+        bool isSquare() const{return (size().at(0) == size().at(1));}
+
+        bool isInvertible() const{return (det() != 0);}
+
+        bool empty() const{return _data.empty();}
+
+        bool hasEmptyData() const{
+
+            if(empty()){return true;}
+
+            for(auto &line:_data){
+                if(line.empty()){return true;}
+            }
+
+            return false;
+
+        }
+
+
+        /***************************************************/
+
         T& at(const unsigned long long &line , const unsigned long long &column) {
 
             if(_data.empty()){throw std::out_of_range("Index out of range.");}
@@ -66,6 +112,24 @@ class Matrix{
         }
 
         T& at(const unsigned long long &index) {
+
+         if(index >= size().at(0)*size().at(1)){throw std::out_of_range("Index out of range.");}
+
+         return at(index/size().at(1) , index %size().at(0));
+
+        }
+
+        T at(const unsigned long long &line , const unsigned long long &column) const{
+
+            if(_data.empty()){throw std::out_of_range("Index out of range.");}
+
+            if(line >= _data.size() || column >= _data.at(0).size()){throw std::out_of_range("Index out of range.");}
+
+            return _data.at(line).at(column);
+
+        }
+
+        T at(const unsigned long long &index) const{
 
          if(index >= size().at(0)*size().at(1)){throw std::out_of_range("Index out of range.");}
 
@@ -127,27 +191,92 @@ class Matrix{
 
                 /***************************************************/
 
-        T det() const{
 
-            if(_data.empty()){throw std::runtime_error("Matrix is empty.");}
+        const T trace() const{
 
-            for(auto &line:_data){
-                if(line.empty()){throw std::runtime_error("A column is empty.");}
+            if(!isSquare()){throw std::invalid_argument("Matrix is not square.");}
+
+            T accumulator = T(0);
+
+
+            for(unsigned long long index = 0 ; index < size().at(0) ; index++){
+                accumulator += T(at(index , index));
             }
 
-            if(_data.size() != _data.at(0).size()){throw std::length_error("Matrix is not a square matrix.");}
+            return accumulator;
+
+        }
+
+        const T sum() const{
+
+            if(_data.empty()){throw std::invalid_argument("Matrix is empty.");}
+
+            for(auto &line:_data){
+                if(line.empty()){throw std::invalid_argument("A column is empty.");}
+            }
+
+
+            T accumulator = T(0);
+
+            for(unsigned long long index_line = 0 ; index_line < size().at(0) ; index_line++){
+                for(unsigned long long index_column = 0 ; index_column < size().at(1) ; index_column++){
+                    accumulator += at(index_line , index_column);
+                }
+            }
+
+            return accumulator;
+
+        }
+
+        const T mean() const{return average();}
+
+        const T average() const{
+            return sum() / (size().at(0)*size().at(1));
+        }
+
+        T det() const{
+
+            if(empty() || hasEmptyData()){throw std::invalid_argument("Matrix is empty or has empty columns.");}
+
+            if(!isSquare()){throw std::invalid_argument("Matrix is not square.");}
 
             if(_data.size() == 1 && _data.at(0).size() == 1){return _data.at(0).at(0);}
             if(_data.size() == 2 && _data.at(0).size() == 2){return _data.at(0).at(0) * _data.at(1).at(1) - _data.at(0).at(1)*_data.at(1).at(0);}
 
 
+            T determinant = T(0);
 
-            //TODO
+            for(unsigned long long row_index = 0 ; row_index < _data.at(0).size() ; row_index++){
 
+                std::vector<std::vector<T>> temp_data;
+
+                for(unsigned long long i = 1 ; i < _data.size() ; i++){
+
+                    std::vector<T> temp_row;
+
+                    for(unsigned long long j = 0 ; j < _data.at(i).size() ; j++){
+
+                        if(j != row_index){temp_row.push_back(at(i , j));}
+
+                    }
+
+                    if(!temp_row.empty()){temp_data.push_back(temp_row);}
+
+                }
+
+                determinant += at(0 , row_index) * std::pow(-1 , row_index) * Matrix(temp_data).det();
+
+
+            }
+
+            return determinant;
 
         }
 
-        Matrix cofactormatrix() {
+        Matrix comatrix() const {return cofactormatrix();}
+
+
+        Matrix cofactormatrix() const {
 
 
             //TODO
@@ -158,13 +287,44 @@ class Matrix{
 
 
 
-        Matrix transpose() {
+
+
+        Matrix transpose() const{
 
             Matrix result(_data);
 
-            for(unsigned long long index = 0 ; index < size().at(0) * size().at(1) ; index++){
-                result.replace(index , at(index % size().at(1) , index/size().at(0)));
+            if(result.isLine()){
+
+                std::vector<std::vector<T>> data (result.size().at(1));
+
+                for(unsigned long long index = 0 ; index < result.size().at(1) ; index++){
+                    data.at(index) = std::vector<T>({result.at(0 , index)});
+                }
+
+                result = data;
+
             }
+            else if(result.isColumn()){
+
+                std::vector<T> data (result.size().at(0));
+
+                for(unsigned long long index = 0 ; index < result.size().at(0) ; index++){
+                    data.at(index) = (result.at(index , 0));
+                }
+
+                result = std::vector<std::vector<T>>{data};
+
+            }
+
+            else{
+
+                for(unsigned long long index = 0 ; index < size().at(0) * size().at(1) ; index++){
+                    result.replace(index , at(index % size().at(0) , index/size().at(1)));
+                }
+
+            }
+
+
 
             return result;
 
