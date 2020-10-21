@@ -102,15 +102,22 @@ class Matrix{
 
         void print() const{
 
-            std::cout << "[";
+            std::cout << "[ ";
             for(auto &line:_data){
-                std::cout << "[";
+                std::cout << "[ ";
                 std::copy (line.begin(), line.end(), std::ostream_iterator<T>(std::cout, " "));
-                std::cout << "]" << std::endl;
+                std::cout << "] ";
             }
-            std::cout << "]";
+            std::cout << "]" << std::endl; //Buffer flushed to prevent user misusage
 
         }
+
+        void print_size() const{
+
+            std::cout << "[" << size().at(0) << " ; "<< size().at(1) << "]" << std::endl; //Buffer flushed to prevent user misusage
+
+        }
+
 
         unsigned long long begin_line(){return 0;}
         unsigned long long begin_column(){return 0;}
@@ -273,7 +280,7 @@ class Matrix{
 
         }
 
-        Matrix operator* (const double &arg) const{
+        Matrix operator* (const T &arg) const{
 
 
             Matrix result(_data);
@@ -292,7 +299,7 @@ class Matrix{
 
         }
 
-        Matrix operator* (const double &arg){
+        Matrix operator* (const T &arg){
 
             Matrix result(_data);
 
@@ -337,7 +344,7 @@ class Matrix{
 
         //TODO
         //Matrix& operator *=(const Matrix &arg){return (this*arg);}
-        //Matrix& operator *=(const double arg){return (this*arg);}
+        //Matrix& operator *=(const T arg){return (this*arg);}
 
         Matrix operator+ (const Matrix &arg) const{
 
@@ -376,12 +383,12 @@ class Matrix{
 
         //TODO
         //Matrix& operator +=(const Matrix &arg){}
-        //Matrix& operator +=(const double &arg){}
+        //Matrix& operator +=(const T &arg){}
 
         Matrix operator- (const Matrix &arg) const {return Matrix(_data) + arg*(-1.);}
         Matrix operator- (const Matrix &arg) {return Matrix(_data) + arg*(-1.);}
-        Matrix operator- (const double &arg) const {return Matrix(_data) + arg*(-1.);}
-        Matrix operator- (const double &arg) {return Matrix(_data) + arg*(-1.);}
+        Matrix operator- (const T &arg) const {return Matrix(_data) + arg*(-1.);}
+        Matrix operator- (const T &arg) {return Matrix(_data) + arg*(-1.);}
 
         //TODO
         //Matrix& operator -= (const Matrix &arg){}
