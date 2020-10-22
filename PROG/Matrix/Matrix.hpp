@@ -33,15 +33,23 @@ class Matrix{
             _data.reserve(lines);
             for(unsigned long long index = 0 ; index < lines ; index++){
                 _data.push_back(std::vector<T>(columns));
-
             }
-
 
         }
 
         Matrix(const unsigned long long &size) : Matrix(size , size){}
 
-        Matrix(const std::vector<std::vector<T>> &data){_data = data;}
+        Matrix(const std::vector<std::vector<T>> &data){
+
+            const unsigned long long column_length = data.at(0).size();
+
+            for(auto &line:data){
+                if(line.size() != column_length){throw std::invalid_argument("Cannot construct a matrix with irregular column size.");}
+            }
+
+            _data = data;
+        }
+
         ~Matrix(){}
 
 
@@ -101,17 +109,17 @@ class Matrix{
 
         /***************************************************/
 
-        T& at(const unsigned long long &line , const unsigned long long &column) {
+        T& at(const unsigned long long &line , const unsigned long long &column){
 
-            if(_data.empty()){throw std::out_of_range("Index out of range.");}
+            if(empty()){throw std::out_of_range("Index out of range.");}
 
-            if(line >= _data.size() || column >= _data.at(0).size()){throw std::out_of_range("Index out of range.");}
+            if(line >= size().at(0) || column >= size().at(1)){throw std::out_of_range("Index out of range.");}
 
             return _data.at(line).at(column);
 
         }
 
-        T& at(const unsigned long long &index) {
+        T& at(const unsigned long long &index){
 
          if(index >= size().at(0)*size().at(1)){throw std::out_of_range("Index out of range.");}
 
@@ -121,9 +129,9 @@ class Matrix{
 
         T at(const unsigned long long &line , const unsigned long long &column) const{
 
-            if(_data.empty()){throw std::out_of_range("Index out of range.");}
+            if(empty()){throw std::out_of_range("Index out of range.");}
 
-            if(line >= _data.size() || column >= _data.at(0).size()){throw std::out_of_range("Index out of range.");}
+            if(line >= size().at(0) || column >= size().at(1)){throw std::out_of_range("Index out of range.");}
 
             return _data.at(line).at(column);
 
@@ -142,7 +150,13 @@ class Matrix{
 
         void replace(const unsigned long long &line , const unsigned &column , const T &value){_data.at(line).at(column) = value;}
         void replace(const unsigned long long &index, const T &value){at(index) = value;}
-        void replace(const unsigned long long &line , const std::vector<T> &value){_data.at(line) = value;}
+        void replace(const unsigned long long &line , const std::vector<T> &value){
+
+            if(value.size() != size().at(1)){throw std::invalid_argument("Cannot replace a column by another one with different size.");}
+
+            _data.at(line) = value;
+
+        }
         void replace(const unsigned long long &line_begin, const unsigned long long &line_end ,
                      const unsigned long long &column_begin, const unsigned long long &column_end,
                      const T &value){
@@ -209,12 +223,7 @@ class Matrix{
 
         const T sum() const{
 
-            if(_data.empty()){throw std::invalid_argument("Matrix is empty.");}
-
-            for(auto &line:_data){
-                if(line.empty()){throw std::invalid_argument("A column is empty.");}
-            }
-
+            if(hasEmptyData()){throw std::invalid_argument("Matrix is empty or has empty columns.");}
 
             T accumulator = T(0);
 
@@ -236,25 +245,25 @@ class Matrix{
 
         T det() const{
 
-            if(empty() || hasEmptyData()){throw std::invalid_argument("Matrix is empty or has empty columns.");}
+            if(hasEmptyData()){throw std::invalid_argument("Matrix is empty or has empty columns.");}
 
             if(!isSquare()){throw std::invalid_argument("Matrix is not square.");}
 
-            if(_data.size() == 1 && _data.at(0).size() == 1){return _data.at(0).at(0);}
-            if(_data.size() == 2 && _data.at(0).size() == 2){return _data.at(0).at(0) * _data.at(1).at(1) - _data.at(0).at(1)*_data.at(1).at(0);}
+            if(size().at(0) == 1 && size().at(1) == 1){return _data.at(0).at(0);}
+            if(size().at(0) == 2 && size().at(1) == 2){return _data.at(0).at(0) * _data.at(1).at(1) - _data.at(0).at(1)*_data.at(1).at(0);}
 
 
             T determinant = T(0);
 
-            for(unsigned long long row_index = 0 ; row_index < _data.at(0).size() ; row_index++){
+            for(unsigned long long row_index = 0 ; row_index < size().at(1) ; row_index++){
 
                 std::vector<std::vector<T>> temp_data;
 
-                for(unsigned long long i = 1 ; i < _data.size() ; i++){
+                for(unsigned long long i = 1 ; i < size().at(0) ; i++){
 
                     std::vector<T> temp_row;
 
-                    for(unsigned long long j = 0 ; j < _data.at(i).size() ; j++){
+                    for(unsigned long long j = 0 ; j < size().at(1)  ; j++){
 
                         if(j != row_index){temp_row.push_back(at(i , j));}
 
@@ -417,16 +426,26 @@ class Matrix{
 
 
         void operator=(const Matrix &arg){_data = arg._data;}
-        void operator=(const std::vector<std::vector<T>> &arg){_data = arg;}
+        void operator=(const std::vector<std::vector<T>> &arg){
+
+            const unsigned long long column_length = arg.at(0).size();
+
+            for(auto &line:arg){
+                if(line.size() != column_length){throw std::invalid_argument("Cannot construct a matrix with irregular column size.");}
+            }
+
+            _data = arg;
+
+        }
 
 
         Matrix operator* (const Matrix &arg) const{
 
-            Matrix result(_data.size() , arg.at(0).size());
+            Matrix result(_data.size() , arg._data.at(0).size());
 
             for(unsigned long long index_line = 0 ; index_line < _data.size() ; index_line++){
 
-                for(unsigned long long index_column = 0 ; index_column < arg.at(0).size() ; index_column++){
+                for(unsigned long long index_column = 0 ; index_column < arg._data.at(0).size() ; index_column++){
                     T value = T(0);
                     for(unsigned long long index_sum = 0 ; index_sum < _data.at(0).size() ; index_sum++){
                         value += T(_data.at(index_line).at(index_sum)) * T(arg._data.at(index_sum).at(index_column));
@@ -442,7 +461,6 @@ class Matrix{
 
         Matrix operator* (const T &arg) const{
 
-
             Matrix result(_data);
 
             if(arg == 1){return result;}
@@ -456,50 +474,8 @@ class Matrix{
 
             return result;
 
-
         }
 
-        Matrix operator* (const T &arg){
-
-            Matrix result(_data);
-
-            if(arg == 1){return result;}
-
-            for(auto &line:result._data){
-
-            std::transform(line.begin(), line.end(), line.begin(),
-                           std::bind(std::multiplies<T>(), std::placeholders::_1, arg));
-
-            }
-
-            return result;
-
-
-        }
-
-        Matrix operator* (const Matrix &arg){
-
-            //std::cout << "this.size() : [" << size().at(0) << " ; " << size().at(1) << "]\n";
-            //std::cout << "arg.size() : [" << arg.size().at(0) << " ; " << arg.size().at(1) << "]\n";
-
-            Matrix result(_data.size() , arg.size().at(0));
-            //std::cout << "result.size() : [" << result.size().at(0) << " ; " << result.size().at(1) << "]\n";
-
-
-            for(unsigned long long index_line = 0 ; index_line < _data.size() ; index_line++){
-
-                for(unsigned long long index_column = 0 ; index_column < arg.size().at(0) ; index_column++){
-                    T value = T(0);
-                    for(unsigned long long index_sum = 0 ; index_sum < _data.at(0).size() ; index_sum++){
-                        value += T(_data.at(index_line).at(index_sum)) * T(arg._data.at(index_sum).at(index_column));
-                    }
-                    result.replace(index_line , index_column , value);
-                }
-
-            }
-
-            return result;
-        }
 
 
         //TODO
@@ -523,32 +499,12 @@ class Matrix{
 
         }
 
-
-        Matrix operator+ (const Matrix &arg){
-
-            Matrix result(_data);
-
-            for(unsigned long long index = 0 ; index < result._data.size() ; index++){
-
-                std::transform (result._data.at(index).begin(),
-                                result._data.at(index).end(),
-                                arg._data.at(index).begin(),
-                                result._data.at(index).begin(), std::plus<T>());
-
-            }
-
-            return result;
-
-        }
-
         //TODO
         //Matrix& operator +=(const Matrix &arg){}
         //Matrix& operator +=(const T &arg){}
 
         Matrix operator- (const Matrix &arg) const {return Matrix(_data) + arg*(-1.);}
-        Matrix operator- (const Matrix &arg) {return Matrix(_data) + arg*(-1.);}
         Matrix operator- (const T &arg) const {return Matrix(_data) + arg*(-1.);}
-        Matrix operator- (const T &arg) {return Matrix(_data) + arg*(-1.);}
 
         //TODO
         //Matrix& operator -= (const Matrix &arg){}
@@ -558,19 +514,7 @@ class Matrix{
 
             const T determinant = det();
             if(determinant == 0){
-                std::cout << "Matrix is not inversible.\n";
-                return Matrix<T>(0,0);
-            }
-
-            return (1/det())*Matrix(_data).cofactormatrix().transpose();
-
-        }
-
-        Matrix operator! (){                   //Inverse of matrix
-
-            const T determinant = det();
-            if(determinant == 0){
-                std::cout << "Matrix is not inversible.\n";
+                std::cerr << "Matrix is not inversible. Returned an empty matrix.\n";
                 return Matrix<T>(0,0);
             }
 
@@ -590,21 +534,10 @@ class Matrix{
             return output;
         }
 
-        Matrix operator^ (const unsigned &arg){ //Power operator
 
-            Matrix output(_data);
-            if(arg <= 1){return output;}
-
-            for(unsigned long long power = 1 ; power < arg ; power++){output = output * Matrix(_data);}
-
-            return output;
-        }
 
         bool operator== (const Matrix &arg) const{return _data == arg._data;}
-        bool operator== (const Matrix &arg) {return _data == arg._data;}
-
         bool operator!= (const Matrix &arg) const{return !(this == arg);}
-        bool operator!= (const Matrix &arg){return !(this == arg);}
 
 
     protected:
