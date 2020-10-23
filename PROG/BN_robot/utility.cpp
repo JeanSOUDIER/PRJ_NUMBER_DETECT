@@ -154,7 +154,7 @@ std::vector<std::vector<double>> readCSV_DOUBLE(const std::string &path, const s
 
     for(auto &vect:str_data){
 
-        std::vector<double> db_vect(vect.size());
+        std::vector<double> db_vect;//(vect.size());
 
         std::transform(vect.begin(), vect.end() , std::back_inserter(db_vect), [](std::string str) {return std::stod(str);});
 

@@ -23,6 +23,11 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="../ICP.cpp" />
+		<Unit filename="../ICP.hpp" />
+		<Unit filename="../Matrix.hpp" />
+		<Unit filename="../utility.cpp" />
+		<Unit filename="../utility.h" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />

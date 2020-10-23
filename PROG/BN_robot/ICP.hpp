@@ -4,7 +4,13 @@
 #include <iostream>
 #include <random>
 #include <string>
+#include <cmath>
+#include <string>
 #include "utility.h"
+#include "Matrix.hpp"
+#include "delaunator.hpp"
+
+#define M_PI 3.141592653538979
 
 class ICP {
 	public:
@@ -16,15 +22,15 @@ class ICP {
 			std::vector<double> GetPos(const std::vector<std::vector<double>> DynData, const std::vector<std::vector<double>> StaData);
             bool SaveImg(ste::Matrix<double> Map, std::string name);
     protected:
-            std::vector<double> PasMat(const double x, const double y, const double a);
-            std::vector<double> PasMat(const std::vector<double> pos);
+            ste::Matrix<double> PasMat(const double x, const double y, const double a);
+            ste::Matrix<double> PasMat(const std::vector<double> pos);
             ste::Matrix<double> FullMap(std::vector<std::vector<double>> Points);
 	private:
-            std::vector<double> m_max(3);
+            std::vector<double> m_max;
             double m_error;
             unsigned int m_maxIter;
-            const int m_mapLen = 1000;
-		
+            int m_mapLen;
+
 };
 
 #endif //ICP_H

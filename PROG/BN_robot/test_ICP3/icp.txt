@@ -130,9 +130,9 @@ N=size(data,2);
 
 if m<4
     if mTranspose
-        %DT=delaunayTriangulation(model);
+        DT=delaunayTriangulation(model);
     else
-        %DT=delaunayTriangulation(model');
+        DT=delaunayTriangulation(model');
     end
 else
     DT=[];

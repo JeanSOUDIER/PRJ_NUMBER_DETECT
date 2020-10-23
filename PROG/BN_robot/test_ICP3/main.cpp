@@ -1,18 +1,17 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <string>
 #include "../Matrix.hpp"
 #include "../ICP.hpp"
 #include "../utility.h"
 
 int main() {
 	std::vector<std::vector<double>> a = Utility::readCSV_DOUBLE("graphXY0.csv",";");
-	ste::Matrix<double> Sta(a);
-	std::vector<std::vector<double>> b = Utility::readCSV_DOUBLE("graphXY1.csv",";");
-	ste::Matrix<double> Dyn(b);
-	ICP myICP(0.001, 100, 1000, 50, 50, 2*M_PI);
-	std::vector<double> r = myICP.GetPos(Dyn, Sta);
-	std::copy(r.begin(), r.end(), std::ostream_iterator<int>(std::cout, " "));
-	std::cout << std::endl;
+	std::vector<std::vector<double>> b = Utility::readCSV_DOUBLE("graphXY0.csv",";");
+	std::cout << "main" << std::endl;
+	ICP myICP(0.1, 20, 1000, 120, 0, 0);
+	std::vector<double> r = myICP.GetPos(a, b);
+	std::cout << r.at(0) << " " << r.at(1) << " " << r.at(2) << std::endl;
     return 0;
 }

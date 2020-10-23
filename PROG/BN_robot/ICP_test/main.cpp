@@ -23,7 +23,7 @@ void createPoints0(std::vector<Point*>& points) {
 	for(unsigned int i=0;i<a.at(0).size();i++) {
         if(!isinf(a.at(0).at(i)) && (a.at(0).at(i) || a.at(1).at(i))) {
             points.push_back(new Point(static_cast<float>(a.at(0).at(i)), static_cast<float>(a.at(1).at(i)), 0.0f));
-            std::cout << static_cast<float>(a.at(0).at(i)) << " " << static_cast<float>(a.at(1).at(i)) << std::endl;
+            //std::cout << static_cast<float>(a.at(0).at(i)) << " " << static_cast<float>(a.at(1).at(i)) << std::endl;
         } else {
             //points.push_back(new Point(0.0f, 0.0f, 0.0f));
             //std::cout << "0.0f 0.0f" << std::endl;
@@ -36,7 +36,7 @@ void createPoints1(std::vector<Point*>& points) {
 	for(unsigned int i=0;i<a.at(0).size();i++) {
         if(!isinf(a.at(0).at(i)) && (a.at(0).at(i) || a.at(1).at(i))) {
             points.push_back(new Point(static_cast<float>(a.at(0).at(i)), static_cast<float>(a.at(1).at(i)), 0.0f));
-            std::cout << static_cast<float>(a.at(0).at(i)) << " " << static_cast<float>(a.at(1).at(i)) << std::endl;
+            //std::cout << static_cast<float>(a.at(0).at(i)) << " " << static_cast<float>(a.at(1).at(i)) << std::endl;
         } else {
             //points.push_back(new Point(0.0f, 0.0f, 0.0f));
             //std::cout << "0.0f 0.0f" << std::endl;
@@ -59,16 +59,21 @@ void applyAffineTransform(std::vector<Point*>& points, float* rotationMatrix, fl
 int main() {
 	std::vector<Point*> staticPointCloud;
 	createPoints0(staticPointCloud);
-	std::vector<Point*> dynamicPointCloud;
-	createPoints1(dynamicPointCloud);
+
+
+	std::vector<Point*> dynamicPointClou;
+	createPoints1(dynamicPointClou);
+
+	for(int i=0;i<10;i++) {
+	std::vector<Point*> dynamicPointCloud = dynamicPointClou;
 
 	//float rotation[] = { 1.0f, 0.0f, 0.0f,	0.0f, 1.0f, 0.0f,	0.0f, 0.0f, 1.0f };
 	//float translation[] = { 0.5f, 0.0f, 0.0f };
 	/*float rotation[] = { 1.0f, 0.0f, 0.0f,	0.0f, 1.0f, 0.0f,	0.0f, 0.0f, 1.0f };
-	float translation[] = { 1.0f, 0.0f, 0.0f };
+	float translation[] = { -2.0f, 0.0f, 0.0f };
 	applyAffineTransform(dynamicPointCloud, rotation, translation);*/
 
-	getchar();
+	//getchar();
 
 	icp(dynamicPointCloud, staticPointCloud);
 
@@ -83,6 +88,6 @@ int main() {
 	alignmentError /= (float)dynamicPointCloud.size();
 
 	std::cout << "Alignment Error: " << alignmentError << std::endl;
-
+	}
     return 0;
 }
