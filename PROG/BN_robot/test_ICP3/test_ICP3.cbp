@@ -26,8 +26,17 @@
 		<Unit filename="../ICP.cpp" />
 		<Unit filename="../ICP.hpp" />
 		<Unit filename="../Matrix.hpp" />
+		<Unit filename="../delaunator.hpp" />
+		<Unit filename="../delaunay.cpp" />
+		<Unit filename="../delaunay.h" />
+		<Unit filename="../edge.cpp" />
+		<Unit filename="../edge.h" />
+		<Unit filename="../triangle.cpp" />
+		<Unit filename="../triangle.h" />
 		<Unit filename="../utility.cpp" />
 		<Unit filename="../utility.h" />
+		<Unit filename="../vector2.cpp" />
+		<Unit filename="../vector2.h" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />
