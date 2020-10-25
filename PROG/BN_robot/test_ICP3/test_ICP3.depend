@@ -1,22 +1,19 @@
 # depslib dependency file v1.0
-1603550187 source:d:\école\ge5\prj_number_detect\prog\bn_robot\icp.cpp
+1603645212 source:d:\école\ge5\prj_number_detect\prog\bn_robot\icp.cpp
 	"ICP.hpp"
 
-1603550663 d:\école\ge5\prj_number_detect\prog\bn_robot\icp.hpp
+1603636288 d:\école\ge5\prj_number_detect\prog\bn_robot\icp.hpp
 	<iostream>
 	<random>
 	<string>
 	<cmath>
+	<math.h>
 	<string>
 	<limits>
 	"utility.h"
 	"Matrix.hpp"
-	"vector2.h"
-	"triangle.h"
-	"delaunay.h"
-	"delaunator.hpp"
 
-1603131599 d:\école\ge5\prj_number_detect\prog\bn_robot\utility.h
+1603127999 d:\école\ge5\prj_number_detect\prog\bn_robot\utility.h
 	"stdint.h"
 	<algorithm>
 	<fstream>
@@ -25,7 +22,7 @@
 	<vector>
 	<string>
 
-1603438819 d:\école\ge5\prj_number_detect\prog\bn_robot\matrix.hpp
+1603552564 d:\école\ge5\prj_number_detect\prog\bn_robot\matrix.hpp
 	<algorithm>
 	<cmath>
 	<functional>
@@ -34,10 +31,10 @@
 	<stdexcept>
 	<vector>
 
-1603441986 source:d:\école\ge5\prj_number_detect\prog\bn_robot\utility.cpp
+1603438386 source:d:\école\ge5\prj_number_detect\prog\bn_robot\utility.cpp
 	"utility.h"
 
-1603546902 source:d:\école\ge5\prj_number_detect\prog\bn_robot\test_icp3\main.cpp
+1603640263 source:d:\école\ge5\prj_number_detect\prog\bn_robot\test_icp3\main.cpp
 	<iostream>
 	<vector>
 	<cmath>
@@ -46,7 +43,7 @@
 	"../ICP.hpp"
 	"../utility.h"
 
-1603546861 d:\école\ge5\prj_number_detect\prog\bn_robot\delaunator.hpp
+1603543261 d:\école\ge5\prj_number_detect\prog\bn_robot\delaunator.hpp
 	<algorithm>
 	<cmath>
 	<exception>
@@ -56,41 +53,41 @@
 	<utility>
 	<vector>
 
-1601584253 d:\école\ge5\prj_number_detect\prog\bn_robot\vector2.h
+1601580653 d:\école\ge5\prj_number_detect\prog\bn_robot\vector2.h
 	"numeric.h"
 	<iostream>
 	<cmath>
 	<type_traits>
 
-1601584253 d:\école\ge5\prj_number_detect\prog\bn_robot\numeric.h
+1601580653 d:\école\ge5\prj_number_detect\prog\bn_robot\numeric.h
 	<math.h>
 	<limits>
 	<type_traits>
 
-1601584253 d:\école\ge5\prj_number_detect\prog\bn_robot\triangle.h
+1601580653 d:\école\ge5\prj_number_detect\prog\bn_robot\triangle.h
 	"numeric.h"
 	"vector2.h"
 	"edge.h"
 
-1601584253 d:\école\ge5\prj_number_detect\prog\bn_robot\edge.h
+1601580653 d:\école\ge5\prj_number_detect\prog\bn_robot\edge.h
 	"vector2.h"
 
-1601584253 d:\école\ge5\prj_number_detect\prog\bn_robot\delaunay.h
+1601580653 d:\école\ge5\prj_number_detect\prog\bn_robot\delaunay.h
 	"vector2.h"
 	"edge.h"
 	"triangle.h"
 	<vector>
 	<algorithm>
 
-1601584253 source:d:\école\ge5\prj_number_detect\prog\bn_robot\delaunay.cpp
+1601580653 source:d:\école\ge5\prj_number_detect\prog\bn_robot\delaunay.cpp
 	"delaunay.h"
 
-1601584253 source:d:\école\ge5\prj_number_detect\prog\bn_robot\triangle.cpp
+1601580653 source:d:\école\ge5\prj_number_detect\prog\bn_robot\triangle.cpp
 	"triangle.h"
 
-1601584253 source:d:\école\ge5\prj_number_detect\prog\bn_robot\vector2.cpp
+1601580653 source:d:\école\ge5\prj_number_detect\prog\bn_robot\vector2.cpp
 	"vector2.h"
 
-1601584253 source:d:\école\ge5\prj_number_detect\prog\bn_robot\edge.cpp
+1601580653 source:d:\école\ge5\prj_number_detect\prog\bn_robot\edge.cpp
 	"edge.h"
 

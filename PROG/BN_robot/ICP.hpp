@@ -5,14 +5,11 @@
 #include <random>
 #include <string>
 #include <cmath>
+#include <math.h>
 #include <string>
 #include <limits>
 #include "utility.h"
 #include "Matrix.hpp"
-#include "vector2.h"
-#include "triangle.h"
-#include "delaunay.h"
-#include "delaunator.hpp"
 
 #define M_PI 3.141592653538979
 
@@ -26,9 +23,11 @@ class ICP {
         std::vector<double> GetPos(const std::vector<std::vector<double>> DynData, const std::vector<std::vector<double>> StaData);
         bool SaveImg(ste::Matrix<double> Map, std::string name);
     protected:
-            std::vector<ste::Matrix<double>> ICP::svd(ste::Matrix<double> Mat);
-            double ICP::median(vector<double> vec);
-            //std::vector<std::vector<double>> nearestNeighbor(std::vector<std::vector<double>> tri, std::vector<double> data);
+            std::vector<ste::Matrix<double>> svd(ste::Matrix<double> Mat);
+            double median(std::vector<double> vec);
+            std::vector<std::vector<double>> nearestNeighbor(std::vector<std::vector<double>> model, std::vector<std::vector<double>> data);
+            double pdt(std::vector<double> a, std::vector<double> b);
+            double distEucl(double a1, double a2, double b1, double b2);
 	private:
             std::vector<double> m_max;
             double m_error;
