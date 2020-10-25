@@ -47,6 +47,13 @@ std::vector<double> ICP::GetPos(const std::vector<std::vector<double>> DynData, 
         }
         cpt2++;
     }
+    /*for(unsigned int i=0;i<len1;i++) {
+        std::cout << data.at(0).at(i) << " " << data.at(1).at(i) << ";" << std::endl;
+    }
+    std::cout << std::endl;
+    for(unsigned int i=0;i<len1;i++) {
+        std::cout << model.at(0).at(i) << " " << model.at(1).at(i) << ";" << std::endl;
+    }*/
 	std::vector<double> wghs(data.at(0).size());
 	//std::fill(wghs.begin(), wghs.end(), 1);
 	ste::Matrix<double> TR = ste::Matrix<double>({{0, 1},{1, 0}});
@@ -56,7 +63,7 @@ std::vector<double> ICP::GetPos(const std::vector<std::vector<double>> DynData, 
 	long double res=9e99;
 	long double oldres;
 	// ---- ICP ---- //
-	for(unsigned int iter=0;iter<m_maxIter;iter++) {
+	for(unsigned int iter=0;iter<m_maxIter;iter++) { //m_maxIter
 		// ---- Find points ---- //
 		std::cout << iter << " " << std::fabs(oldres-res) << std::endl;
 		oldres = res;
@@ -73,12 +80,14 @@ std::vector<double> ICP::GetPos(const std::vector<std::vector<double>> DynData, 
 			if(!maxResid) {Rob = 1;}
 		}
 		res = 0;
+		unsigned int ResPt = 0;
 		for(unsigned int i=0;i<resid.size();i++) {
             if(resid.at(i) < 1.5*Rob) {
                 res += resid.at(i)*resid.at(i);
+                ResPt++;
             }
 		}
-		res /= resid.size();
+		res /= ResPt;
 		// ---- Cauchy ---- //
 		Rob *= 4.3040;
 		double suWghs = 0;
@@ -92,7 +101,7 @@ std::vector<double> ICP::GetPos(const std::vector<std::vector<double>> DynData, 
 		med.at(1) = pdt(data.at(1),wghs)/suWghs;
 		std::vector<double> mem = {0, 0};
 		for(unsigned int i=0;i<wghs.size();i++) {
-			mem.at(0) += model.at(0).at(vi.at(i))*wghs.at(i); //PB
+			mem.at(0) += model.at(0).at(vi.at(i))*wghs.at(i);
 			mem.at(1) += model.at(1).at(vi.at(i))*wghs.at(i);
 		}
 		mem.at(0) /= suWghs;
@@ -103,7 +112,7 @@ std::vector<double> ICP::GetPos(const std::vector<std::vector<double>> DynData, 
             Ctemp.at(0).push_back(data.at(0).at(i)*wghs.at(i));
             Ctemp.at(1).push_back(data.at(1).at(i)*wghs.at(i));
 		}
-		for(unsigned int i=0;i<model.size();i++) {
+		for(unsigned int i=0;i<Ctemp.at(0).size();i++) {
 			C.at(0,0) += Ctemp.at(0).at(i)*model.at(0).at(vi.at(i));
 			C.at(0,1) += Ctemp.at(0).at(i)*model.at(1).at(vi.at(i));
 			C.at(1,0) += Ctemp.at(1).at(i)*model.at(0).at(vi.at(i));
@@ -115,24 +124,30 @@ std::vector<double> ICP::GetPos(const std::vector<std::vector<double>> DynData, 
 		C.at(1,1) -= suWghs*med.at(1)*mem.at(1);
 		std::vector<ste::Matrix<double>> UV = svd(C);
         ste::Matrix<double> Ri = {UV.at(0)*UV.at(1).transpose()};
+        Ri = Ri.transpose();
         if (Ri.det() < 0) {
         	UV.at(1).at(0,1) = -UV.at(1).at(0,1);
         	UV.at(1).at(1,1) = -UV.at(1).at(1,1);
             Ri = UV.at(0)*UV.at(1).transpose();
         }
-        std::vector<double> Ti = {mem.at(0)-Ri.at(0,0)*med.at(0)+Ri.at(0,1)*med.at(1),
-                                  mem.at(1)-Ri.at(1,0)*med.at(0)+Ri.at(1,1)*med.at(1)};
+        std::vector<double> Ti(2);
+        Ti.at(0) = mem.at(0)-(Ri.at(0,0)*med.at(0)+Ri.at(0,1)*med.at(1));
+        Ti.at(1) = mem.at(1)-(Ri.at(1,0)*med.at(0)+Ri.at(1,1)*med.at(1));
         std::vector<std::vector<double>> dataN1(2);
-        for(unsigned int i=0;i<data.at(0).size();i++) {
-        	dataN1.at(0).push_back(data.at(0).at(i)*Ri.at(0,0)+data.at(1).at(i)*Ri.at(1,0));
-        	dataN1.at(1).push_back(data.at(0).at(i)*Ri.at(0,1)+data.at(1).at(i)*Ri.at(1,1));
-        }
-        data.at(0) = dataN1.at(0);
-        data.at(1) = dataN1.at(1);
+        ste::Matrix<double> Dat(data);
+        Dat = Ri*Dat;
+        data = Dat.toVector();
+
         for(unsigned int i=0;i<data.at(0).size();i++) {
         	data.at(0).at(i) = data.at(0).at(i)+Ti.at(0);
         	data.at(1).at(i) = data.at(1).at(i)+Ti.at(1);
         }
+		if(iter == 0) {
+            for(unsigned int j=0;j<data.at(0).size();j++) {
+                //std::cout << data.at(0).at(j) << " " << data.at(1).at(j) << std::endl;
+            }
+            //std::cout << Ri.at(0,0) << " " << Ri.at(0,1) << " " << Ri.at(1,0) << " " << Ri.at(1,1) << std::endl;
+		}
         // ---- Up TF ---- //
     	TR = Ri*TR;
    		TT = Ri*TT;
@@ -144,18 +159,20 @@ std::vector<double> ICP::GetPos(const std::vector<std::vector<double>> DynData, 
         	}
     	}
 	}
-	std::vector<double> result = {TT.at(0,0), TT.at(1,0), std::acos(TR.at(0,0))};
+	std::vector<double> result = {TT.at(0,0), TT.at(1,0), std::acos(TR.at(0,1))};
 	return result;
 }
 
 std::vector<ste::Matrix<double>> ICP::svd(ste::Matrix<double> Mat) {
+    // https://lucidar.me/fr/mathematics/singular-value-decomposition-of-a-2x2-matrix/
 	double a = Mat.at(0,0), b = Mat.at(0,1), c = Mat.at(1,0), d = Mat.at(1,1);
 	double tet = std::atan2(2*a*b+2*c*d,a*a+b*b-c*c-d*d)/2;
-	ste::Matrix<double> U({{std::cos(tet), -std::sin(tet)}, {std::sin(tet), std::cos(tet)}});
+	//PB
+	ste::Matrix<double> U({{-std::cos(tet), -std::sin(tet)}, {-std::sin(tet), std::cos(tet)}});
 	double phi = std::atan2(2*a*b+2*c*d,a*a-b*b+c*c-d*d)/2;
 	double s11 = (a*std::cos(tet)+c*std::sin(tet))*std::cos(phi) + (b*std::cos(tet)+d*std::sin(tet))*std::sin(phi);
 	double s22 = (a*std::sin(tet)-c*std::cos(tet))*std::sin(phi) + (-b*std::sin(tet)+d*std::cos(tet))*std::cos(phi);
-	ste::Matrix<double> V({{s11/std::abs(s11)*std::cos(phi), -s22/std::abs(s22)*std::sin(phi)}, {s11/std::abs(s11)*std::sin(phi), s22/std::abs(s22)*std::cos(phi)}});
+	ste::Matrix<double> V({{-s11/std::abs(s11)*std::cos(phi), -s22/std::abs(s22)*std::sin(phi)}, {-s11/std::abs(s11)*std::sin(phi), s22/std::abs(s22)*std::cos(phi)}});
 	std::vector<ste::Matrix<double>> res = {U,V};
 	return res;
 }
@@ -172,14 +189,14 @@ double ICP::median(std::vector<double> vec) {
 }
 
 std::vector<std::vector<double>> ICP::nearestNeighbor(std::vector<std::vector<double>> model, std::vector<std::vector<double>> data) {
-	std::vector<double> id(data.at(0).size());
-	std::vector<double> dist(data.at(0).size());
+	std::vector<double> id(model.at(0).size());
+	std::vector<double> dist(model.at(0).size());
 	double d;
-	for(unsigned int i=0;i<data.at(0).size();i++) {
-		dist.at(i) = distEucl(model.at(0).at(0), model.at(1).at(0), data.at(0).at(i), data.at(1).at(i));
+	for(unsigned int i=0;i<model.at(0).size();i++) {
+		dist.at(i) = distEucl(data.at(0).at(0), data.at(1).at(0), model.at(0).at(i), model.at(1).at(i));
 		id.at(i) = 0;
-		for(unsigned int j=1;j<model.at(0).size();j++) {
-            d = distEucl(model.at(0).at(j), model.at(1).at(j), data.at(0).at(i), data.at(1).at(i));
+		for(unsigned int j=1;j<data.at(0).size();j++) {
+            d = distEucl(data.at(0).at(j), data.at(1).at(j), model.at(0).at(i), model.at(1).at(i));
 			if(d < dist.at(i)) {
 				dist.at(i) = d;
 				id.at(i) = j;
@@ -197,8 +214,7 @@ double ICP::distEucl(double a1, double a2, double b1, double b2) {
 
 double ICP::pdt(std::vector<double> a, std::vector<double> b) {
     double res = 0;
-    unsigned int len = std::min(a.size(),b.size());
-    for(unsigned int i=0;i<len;i++) {
+    for(unsigned int i=0;i<a.size();i++) {
         res += a.at(i)*b.at(i);
     }
     return res;
