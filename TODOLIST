@@ -1,12 +1,12 @@
 LOW :
  RPI
- - ICP odom (test data + rewrite -Jean)
+ - test ICP odom (-Jean)
+ - Test callage start (-Jean)
  - Sequencer (test -Jean)
 
 HIGH :
  RPI
  - test dessin (améliorer)
- - lidar regression (revoir -Jean)
  - asserv pos
  Jetson
  - CNN (-Erwan)
