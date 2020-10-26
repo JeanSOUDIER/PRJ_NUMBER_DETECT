@@ -47,6 +47,10 @@
     • add_line          | Convience function to add a line at the end of the matrix.
     • add_column        | Convience function to add a column at the end of the matrix.
 
+    • push_back         | Alias for add.
+    • push_back_line    | Alias for add_line.
+    • push_back_column  | Alias for add_column.
+
     • remove            | Removes either a line or a column at the position specified.
     • remove_line       | Convience function to remove a line at a specified position.
     • remove_column     | Convience function to remove a column at a specified position.
@@ -396,6 +400,19 @@ class Matrix{
         ///add_column                                                                                | Adds a column containing data at the end of the matrix.
         void add_column(const std::vector<T> &data){add(data , Orientation::COLUMN);}
 
+
+                  /***************************************************/
+
+        ///push_back                                                                                  | Alias for add.
+        void push_back(const std::vector<T> &data , const Orientation &orientation){add(data , orientation);}
+
+        ///push_back_line                                                                             | Alias for add_line.
+        void push_back_line(const std::vector<T> &data){add_line(data);}
+
+        ///push_back_column                                                                           | Alias for add_colum.
+        void push_back_column(const std::vector<T> &data){add_column(data);}
+
+
                   /***************************************************/
 
         ///remove(const std::vector<T> &data , const Orientation &orientation)                       | Removes either a column or a line at the specified index containing data according to orientation.
@@ -474,10 +491,8 @@ class Matrix{
         void insert_column(const unsigned long long &index , const std::vector<T> &data){insert(index, Orientation::COLUMN , data);}
 
         /***************************************************/
-
+        ///swap                                                                                      | Swaps two lines or two columns at the positions specified.
         void swap(const unsigned long long &element_1 , const unsigned long long element_2 ,const Orientation &orientation){
-
-
 
             switch(orientation){
 
@@ -516,15 +531,18 @@ class Matrix{
 
         }
 
+        ///swap_lines                                                                                | Convience function to swap two lines at a specified positions.
         void swap_lines(const unsigned long long &element_1 , const unsigned long long element_2){swap(element_1, element_2 ,Orientation::LINE);}
+
+        ///swap_columns                                                                              | Convience function to swap two columns at a specified positions.
         void swap_columns(const unsigned long long &element_1 , const unsigned long long element_2){swap(element_1, element_2 ,Orientation::COLUMN);}
 
         /***************************************************/
 
-        ///toVector                                                                                   | Converts the matrix to std::vector<std::vector<T>>.
+        ///toVector                                                                                  | Converts the matrix to std::vector<std::vector<T>>.
         std::vector<std::vector<T>> toVector() const{return _data;}
 
-        ///print                                                                                      | Prints the contents of the matrix in stdout.
+        ///print                                                                                     | Prints the contents of the matrix in stdout.
         void print() const{
 
             std::cout << "[ ";
@@ -537,14 +555,14 @@ class Matrix{
 
         }
 
-        ///print_size                                                                                 | Prints the size of the matrix in stdout.
+        ///print_size                                                                                | Prints the size of the matrix in stdout.
         void print_size() const{
 
             std::cout << "[" << size().at(0) << " ; "<< size().at(1) << "]" << std::endl; //Buffer flushed to prevent user misusage
 
         }
 
-        ///begin_line | begin_column | begin_line | end_column                                        | Convinience functions that returns the beginning or the end of a line / a column. Provided to obtain syntax as close as std::algorithm functions as possible.
+        ///begin_line | begin_column | begin_line | end_column                                       | Convinience functions that returns the beginning or the end of a line / a column. Provided to obtain syntax as close as std::algorithm functions as possible.
         unsigned long long begin_line() const{return 0;}
         unsigned long long begin_column() const{return 0;}
 
@@ -553,7 +571,7 @@ class Matrix{
 
                 /***************************************************/
 
-        ///trace                                                                                       | Returns the trace of the matrix, computed as T (meaning that rounding error and overflow may occur). Throws an exception (std::invalid_argument) if the matrix is not square.
+        ///trace                                                                                      | Returns the trace of the matrix, computed as T (meaning that rounding error and overflow may occur). Throws an exception (std::invalid_argument) if the matrix is not square.
         T trace() const{
 
             if(!isSquare()){throw std::invalid_argument("Matrix is not square.");}
@@ -569,7 +587,7 @@ class Matrix{
 
         }
 
-        ///sum                                                                                         | Returns the sum of all elements of the matrix, as T (meaning that overflow may occur).
+        ///sum                                                                                        | Returns the sum of all elements of the matrix, as T (meaning that overflow may occur).
         T sum() const{
 
             if(hasEmptyData()){throw std::invalid_argument("Matrix is empty or has empty columns.");}
@@ -586,15 +604,15 @@ class Matrix{
 
         }
 
-        ///mean                                                                                        | Returns the mean value of all elements of the matrix, as T (meaning that rounding error and overflow may occur). It is computed as sum()/(size.at(0)*size.at(1))
+        ///mean                                                                                       | Returns the mean value of all elements of the matrix, as T (meaning that rounding error and overflow may occur). It is computed as sum()/(size.at(0)*size.at(1))
         T mean() const{return average();}
 
-        ///average                                                                                     | Convinience function that returns mean().
+        ///average                                                                                    | Convinience function that returns mean().
         T average() const{
             return sum() / (size().at(0)*size().at(1));
         }
 
-        ///det                                                                                         | Returns the determinant of the matrix. Throws an exception (std::invalid_argument) is the matrix is not square.
+        ///det                                                                                        | Returns the determinant of the matrix. Throws an exception (std::invalid_argument) is the matrix is not square.
         T det() const{
 
             if(hasEmptyData()){throw std::invalid_argument("Matrix is empty or has empty columns.");}
@@ -634,11 +652,11 @@ class Matrix{
 
         }
 
-        ///comatrix                                                                                    | Returns the cofactor matrix. Convinience function that returns cofactormatrix().
+        ///comatrix                                                                                   | Returns the cofactor matrix. Convinience function that returns cofactormatrix().
         Matrix comatrix() const {return cofactormatrix();}
 
          //TODO
-        ///cofactormatrix                                                                              | Returns the cofactor matrix. (WIP) ********************************************
+        ///cofactormatrix                                                                             | Returns the cofactor matrix. (WIP) ********************************************
         Matrix cofactormatrix() const {
 
             return Matrix(1,1);
@@ -796,10 +814,10 @@ class Matrix{
                 /***************************************************/
 
         ///operator=                                                                                 | Assignement operator.
-        void operator=(const Matrix &arg){_data = arg._data;}
+        virtual void operator=(const Matrix &arg){_data = arg._data;}
 
         ///operator=                                                                                 | Assignement operator. Changes the data to the one from arg if possible, throws std::invalid_argument otherwise.
-        void operator=(const std::vector<std::vector<T>> &arg){
+        virtual void operator=(const std::vector<std::vector<T>> &arg){
 
             const unsigned long long column_length = arg.at(0).size();
 
@@ -812,7 +830,7 @@ class Matrix{
         }
 
         ///operator*                                                                                 | Multiplies two matrices using the usual matrix product definition.
-        Matrix operator* (const Matrix &arg) const{
+        virtual Matrix operator* (const Matrix &arg) const{
 
             Matrix result(_data.size() , arg._data.at(0).size());
 
@@ -833,7 +851,7 @@ class Matrix{
         }
 
         ///operator*                                                                                 | Multiplies all elements of the matrix by arg.
-        Matrix operator* (const T &arg) const{
+        virtual Matrix operator* (const T &arg) const{
 
             Matrix result(_data);
 
@@ -857,7 +875,7 @@ class Matrix{
         //Matrix& operator *=(const T arg){return (this*arg);}
 
         ///operator+                                                                                 | Adds T two matrices.
-        Matrix operator+ (const Matrix &arg) const{
+        virtual Matrix operator+ (const Matrix &arg) const{
 
             Matrix result(_data);
 
@@ -892,7 +910,7 @@ class Matrix{
         //Matrix& operator +=(const T &arg){}
 
         ///operator-                                                                                 | Substracts two matrices.
-        Matrix operator- (const Matrix &arg) const {return Matrix(_data) + arg*(-1.);}
+        virtual Matrix operator- (const Matrix &arg) const {return Matrix(_data) + arg*(-1.);}
         ///operator-                                                                                 | Substracts arg to all elements of the matrix. May be overrided for other purposes.
         virtual Matrix operator- (const T &arg) const {return Matrix(_data) + arg*(-1.);}
 
@@ -914,7 +932,7 @@ class Matrix{
         }
 
         ///operator^                                                                                 | Returns the matrix to the specified power (usual matrix product is used).
-        Matrix operator^ (const unsigned &arg) const{ //Power operator
+        virtual Matrix operator^ (const unsigned &arg) const{ //Power operator
 
             Matrix output(_data);
             if(arg <= 1){return output;}
@@ -926,8 +944,10 @@ class Matrix{
         }
 
 
-
+        ///operator==                                                                               | Equality operator. Returns true only if all elements are identical and at the same position.
         bool operator== (const Matrix &arg) const{return _data == arg._data;}
+
+        ///operator!=                                                                               | Returns the opposite of the result given by operator==.
         bool operator!= (const Matrix &arg) const{return !(this == arg);}
 
 
