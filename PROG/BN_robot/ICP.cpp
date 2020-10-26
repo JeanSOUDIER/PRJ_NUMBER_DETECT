@@ -1,18 +1,11 @@
 #include "ICP.hpp"
 
 ICP::ICP()
-	: ICP(1e-8,1000,3500,50,50,2*M_PI) {}
+	: ICP(1e-5,100) {}
 
-ICP::ICP(const double error, const unsigned int MaxIter, const int mapLen)
-	: ICP(error,MaxIter,mapLen,50,50,2*M_PI) {}
-
-ICP::ICP(const double error, const unsigned int MaxIter, const int mapLen, const double MaxX, const double MaxY, const double MaxA) {
-	m_max.push_back(MaxX);
-	m_max.push_back(MaxY);
-	m_max.push_back(MaxA);
+ICP::ICP(const double error, const unsigned int MaxIter) {
 	m_error = error;
 	m_maxIter = MaxIter;
-	m_mapLen = mapLen;
 }
 
 ICP::~ICP() {}
@@ -55,7 +48,6 @@ std::vector<double> ICP::GetPos(const std::vector<std::vector<double>> DynData, 
         std::cout << model.at(0).at(i) << " " << model.at(1).at(i) << ";" << std::endl;
     }*/
 	std::vector<double> wghs(data.at(0).size());
-	//std::fill(wghs.begin(), wghs.end(), 1);
 	ste::Matrix<double> TR = ste::Matrix<double>({{0, 1},{1, 0}});
 	ste::Matrix<double> TT(2,1);
 	TT.at(0,0) = 0;
@@ -63,7 +55,7 @@ std::vector<double> ICP::GetPos(const std::vector<std::vector<double>> DynData, 
 	long double res=9e99;
 	long double oldres;
 	// ---- ICP ---- //
-	for(unsigned int iter=0;iter<m_maxIter;iter++) { //m_maxIter
+	for(unsigned int iter=0;iter<m_maxIter;iter++) {
 		// ---- Find points ---- //
 		std::cout << iter << " " << std::fabs(oldres-res) << std::endl;
 		oldres = res;
@@ -142,12 +134,6 @@ std::vector<double> ICP::GetPos(const std::vector<std::vector<double>> DynData, 
         	data.at(0).at(i) = data.at(0).at(i)+Ti.at(0);
         	data.at(1).at(i) = data.at(1).at(i)+Ti.at(1);
         }
-		if(iter == 0) {
-            for(unsigned int j=0;j<data.at(0).size();j++) {
-                //std::cout << data.at(0).at(j) << " " << data.at(1).at(j) << std::endl;
-            }
-            //std::cout << Ri.at(0,0) << " " << Ri.at(0,1) << " " << Ri.at(1,0) << " " << Ri.at(1,1) << std::endl;
-		}
         // ---- Up TF ---- //
     	TR = Ri*TR;
    		TT = Ri*TT;

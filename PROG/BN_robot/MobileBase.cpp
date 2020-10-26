@@ -39,20 +39,21 @@ MobileBase::~MobileBase() {
 		delete m_RPLidar;
 	}
 	m_start.store(false,std::memory_order_release);
+	delete inc_x_thread;
 	delete m_usb;
 }
 
 void MobileBase::StartPlacing() {
-	GetLidarPoints();
-	syd::cout << "m_x = " << m_x.at(0) << std::endl;
-	GoPos(m_x.at(0)-300,0,M_PI);
+	GetLidarPoints(false);
+	syd::cout << "m_x = " << m_pos.at(0).at(0) << std::endl;
+	GoPos(m_pos.at(0).at(0)-300,0,M_PI);
 }
 
-void MobileBase::Go(const double x, const double y, const double a) {
+/*void MobileBase::Go(const double x, const double y, const double a) {
 	m_posXgoal = x;
 	m_posYgoal = y;
 	m_angle_goal = a;
-}
+}*/
 
 void MobileBase::GoPos(const double x, const double y, const double a) {
 	const double r = sqrt(x*x+y*y);
@@ -79,27 +80,34 @@ void MobileBase::GoPos(const double x, const double y, const double a) {
 	SetSpeed(0, 0);
 }
 
-double MobileBase::getDistBoard() {
+/*double MobileBase::getDistBoard() {
 	return m_dist_board;
-}
+}*/
 
-void MobileBase::GetLidarPoints() {
+void MobileBase::GetLidarPoints(bool nb) {
 	if(m_lidar_start) {
+		if(nb) {
+			m_posN1.at(0).clear();
+			m_posN1.at(1).clear();
+			for(unsigned int i=0;i<xP.size();i++) {
+				m_posN1.at(0).push_back(m_pos.at(0).at(i));
+				m_posN1.at(1).push_back(m_pos.at(1).at(i));
+			}
+		}
 		std::vector<double> xP = m_RPLidar->GetXPos();
 		std::vector<double> yP = m_RPLidar->GetYPos();
-		m_x.clear();
-		m_y.clear();
+		m_pos.at(0).clear();
+		m_pos.at(1).clear();
 		for(unsigned int i=0;i<xP.size();i++) {
-			m_x.push_back(xP.at(i));
-			m_y.push_back(yP.at(i));
+			m_pos.at(0).push_back(xP.at(i));
+			m_pos.at(1).push_back(yP.at(i));
 		}
 		//m_RPLidar->Display(false);
 		//std::cout << "out : " << m_RPLidar->SaveLidarPoints() << std::endl;
-		//GetPosBase();
 	}
 }
 
-void MobileBase::GetPosBase() {
+/*void MobileBase::GetPosBase() {
 	std::vector<double> res = FindSegment(12,27);
 	std::cout << res[0] << " " << res[1] << " " << res[2] << std::endl;
 	/*res = FindSegment(910,179);
@@ -111,7 +119,7 @@ void MobileBase::GetPosBase() {
 	//points cardinaux
 	//find a*x+b => a,b x4 + dist board
 	//set m_posX, m_posY, m_angle, m_dist_board
-}
+/*}
 
 std::vector<double> MobileBase::FindSegment(int start, int stop) {
 	std::vector<double> subvectorX;
@@ -148,12 +156,12 @@ std::vector<double> MobileBase::FindSegment(int start, int stop) {
 	Regression reg;
 	std::vector<double> res = reg.RegressionLineaire(subvectorX,subvectorY);
 	return res;
-}
+}*/
 
-void MobileBase::SetMotBalance(const double rho, const double theta) {
+/*void MobileBase::SetMotBalance(const double rho, const double theta) {
 	const int facteur = 4;
 	SetSpeed(rho+facteur*theta, rho-facteur*theta);
-}
+}*/
 
 void MobileBase::SetSpeed(int L, int R) {
 	if(L > 330) {L = 330;std::cout << "speed sat 0" << std::endl;}
@@ -173,19 +181,19 @@ void MobileBase::SetSpeed(int L, int R) {
 }
 
 void MobileBase::SetTime(int time) {
-	m_timeCont.store(time,std::memory_order_release);
+	m_timeCont.store(time+Time::now(),std::memory_order_release);
 }
 
 void* MobileBase::ThreadRun() {
     while(m_start.load(std::memory_order_acquire)) {
     	//TODO asserv lidar + deplacement
-    	/*if(m_timeCont.load(std::memory_order_acquire) > Time::now()) {
-    		GetLidarPoints();
-			GetPosBase();
-			GoPos(m_posX-m_posXgoal, m_posY-m_posXgoal, m_angle-m_angle_goal);
-    	}*/
+    	if(m_timeCont.load(std::memory_order_acquire) > Time::now()) {
+    		GetLidarPoints(true);
+    		ICP myICP();
+    		std::vector<double> res = myICP.GetPos(m_pos, m_posN1);
+    		std::cout << "x=" << res.at(0) << " y=" << res.at(1) << " a=" << res.at(2) << std::endl;
+    	}
     }
-
     pthread_exit(NULL);
     return 0;
 }

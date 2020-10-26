@@ -1,8 +1,9 @@
 LOW :
  RPI
  - test ICP odom (-Jean)
- - Test callage start (-Jean)
- - Sequencer (test -Jean)
+ - test callage start (-Jean)
+ - test sequencer (-Jean)
+ - test cam Img (-Jean)
 
 HIGH :
  RPI
@@ -12,14 +13,12 @@ HIGH :
  - CNN (-Erwan)
  - Compilation CUDA sur Qt (-Erwan)
  - Interface graphique rendu CNN [en cours] (-Erwan)
- - pre traitement
+ - pre traitement (-Jean)
  - réponse ?
 
 PRJ AUTOM :
- - faire le simulink
 
 PRJ RT :
-
 
 PRJ E-MOBI :
  - estimation batterie

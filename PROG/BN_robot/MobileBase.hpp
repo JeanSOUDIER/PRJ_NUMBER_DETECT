@@ -8,10 +8,12 @@
 #include <limits>
 #include <pthread.h>
 #include <atomic>
+#include <ctime>
 #include "Lidar.hpp"
 #include "Usb.hpp"
 #include "Regression.hpp"
 #include "utility.h"
+#include "ICP.hpp"
 
 class MobileBase {
 	public:
@@ -22,21 +24,21 @@ class MobileBase {
 		~MobileBase();
 
 		void StartPlacing();
-		void Go(const double x, const double y, const double a);
-		double getDistBoard();
+		//void Go(const double x, const double y, const double a);
+		//double getDistBoard();
 		void GoPos(const double x, const double y, const double a);
-		void SetMotBalance(const double rho, const double theta);
+		//void SetMotBalance(const double rho, const double theta);
 		void SetSpeed(int L, int R);
 		void SetTime(int time);
-		void GetLidarPoints();
 
 		static void* MobileBaseHelper(void *context);
         void StartThread();
 	protected:
         void* ThreadRun();
+		void GetLidarPoints(bool nb);
 	private:
-		void GetPosBase();
-		std::vector<double> FindSegment(int start, int stop);
+		//void GetPosBase();
+		//std::vector<double> FindSegment(int start, int stop);
 
 		const double SPEED_NORM = 6.25;
 		const double SPEED_ANGLE = 1800*SPEED_NORM/M_PI;
@@ -52,8 +54,8 @@ class MobileBase {
 		Lidar *m_RPLidar;
         pthread_t *inc_x_thread;
 
-		std::vector<double> m_x;
-		std::vector<double> m_y;
+		std::vector<double> m_pos(2);
+		std::vector<double> m_posN1(2);
 
 		double m_posX = 0;
 		double m_posY = 0;

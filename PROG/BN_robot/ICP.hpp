@@ -11,13 +11,10 @@
 #include "utility.h"
 #include "Matrix.hpp"
 
-#define M_PI 3.141592653538979
-
 class ICP {
 	public:
         ICP();
-        ICP(const double error, const unsigned int MaxIter, const int mapLen);
-		ICP(const double error, const unsigned int MaxIter, const int mapLen, const double MaxX, const double MaxY, const double MaxA);
+		ICP(const double error, const unsigned int MaxIter);
 		~ICP();
 
         std::vector<double> GetPos(const std::vector<std::vector<double>> DynData, const std::vector<std::vector<double>> StaData);
@@ -29,10 +26,8 @@ class ICP {
             double pdt(std::vector<double> a, std::vector<double> b);
             double distEucl(double a1, double a2, double b1, double b2);
 	private:
-            std::vector<double> m_max;
             double m_error;
             unsigned int m_maxIter;
-            int m_mapLen;
 
 };
 
