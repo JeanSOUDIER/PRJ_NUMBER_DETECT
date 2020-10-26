@@ -189,7 +189,7 @@ void* MobileBase::ThreadRun() {
     	//TODO asserv lidar + deplacement
     	if(m_timeCont.load(std::memory_order_acquire) > Time::now()) {
     		GetLidarPoints(true);
-    		ICP myICP();
+    		ICP myICP;
     		std::vector<double> res = myICP.GetPos(m_pos, m_posN1);
     		std::cout << "x=" << res.at(0) << " y=" << res.at(1) << " a=" << res.at(2) << std::endl;
     	}

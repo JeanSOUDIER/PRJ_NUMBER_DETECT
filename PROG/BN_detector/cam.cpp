@@ -40,6 +40,17 @@ cv::Mat Cam::TakePhoto() {
 	return img;
 }
 
+ste::Matrix<double> TakePhoto() {
+	cv::Mat img = TakePhoto();
+	ste::Matrix<double> res(img.cols(),img.rows());
+	for(unsigned int i=0;i<img.cols();i++) {
+		for(unsigned int i=0;i<img.rows();i++) {
+			res.at(i,j) = Mat.at(i,j);
+		}
+	}
+	return res;
+}
+
 void Cam::TakePhoto(std::string path) {
 	cv::Mat img = TakePhoto();
 	path += ".jpg";

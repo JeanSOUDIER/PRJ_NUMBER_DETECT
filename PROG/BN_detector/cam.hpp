@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <opencv2/opencv.hpp>
+#include "Matrix.hpp"
 
 constexpr int CV_IMWRITE_JPEG_QUALITY = 1;
 
@@ -15,6 +16,7 @@ class Cam {
 		~Cam();
 
 		cv::Mat TakePhoto();
+		ste::Matrix<double> TakePhoto();
 		void TakePhoto(std::string path);
 
 		void ImgShow(cv::Mat img);

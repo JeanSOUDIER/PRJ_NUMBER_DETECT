@@ -6,6 +6,8 @@
 //#include "Lidar.hpp"
 //#include "Sequencer.hpp"
 #include "cam.hpp"
+#include "tf.hpp"
+#include "Matrix.hpp"
 
 int main() {
     std::cout <<"----SETUP----" << std::endl;
@@ -32,10 +34,15 @@ int main() {
 
     //MobileBase OpenCR(ttyACM0, 115200, nullptr);
     //OpenCR.GoPos(0,0,M_PI);
-	//Cam CPI2;
+	Cam CPI2;
+    ste::Matrix<double> img = CPI2.TakePhoto();
+    TF myTF;
+    myTF.PrintPPM(img, "Erosion");
+    img = myTF.ToTF(img, myTF.GetPassMAt(myTF.GetEdges(myTF.ToErosion(myTF.ToThreshold(myTF.ToNormalize(img),0.5)))));
+
 	//CPI2.ImgShow();
 
-    Bluetooth BLE(ttyTHS1, 9600);
+    //Bluetooth BLE(ttyTHS1, 9600);
     /*unsigned char temp = '\0';
     while(temp != 'o') {
 	temp = BLE.Read();
@@ -43,7 +50,7 @@ int main() {
 	if(temp > 'A' && temp < 'z') {std::cout << temp << std::endl;}
 	else if(temp) {std::cout << static_cast<int>(temp) << std::endl;}
     }*/
-    BLE.SetTX("hola");
+    //BLE.SetTX("hola");
     sleep(1);
 
     //MobileBase OpenCR(ttyACM0, 115200, new Lidar(ttyUSB_LDS, 230400));
