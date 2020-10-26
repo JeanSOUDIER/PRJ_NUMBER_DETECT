@@ -34,11 +34,11 @@ int main() {
 
     //MobileBase OpenCR(ttyACM0, 115200, nullptr);
     //OpenCR.GoPos(0,0,M_PI);
-	Cam CPI2;
-    ste::Matrix<double> img = CPI2.TakePhoto();
+	//Cam CPI2;
+    //ste::Matrix<double> img = CPI2.TakePhoto();
     TF myTF;
-    myTF.PrintPPM(img, "Erosion");
-    img = myTF.ToTF(img, myTF.GetPassMAt(myTF.GetEdges(myTF.ToErosion(myTF.ToThreshold(myTF.ToNormalize(img),0.5)))));
+    ste::Matrix<double> img = myTF.ToProcessed(myTF.ReadPPM("test"), 0.5);
+    myTF.PrintPPM(img, "cam");
 
 	//CPI2.ImgShow();
 

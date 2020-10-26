@@ -4,8 +4,32 @@ TF::TF() {}
 
 TF::~TF() {}
 
+ste::Matrix<double> TF::ToProcessed(std::vector<ste::Matrix<char>> img, double level) {
+	std::cout << "process RGB" << std::endl;
+	return ToProcessed(ToGrayLevel(img), level);
+}
+
+ste::Matrix<double> TF::ToProcessed(ste::Matrix<double> img, double level) {
+	std::cout << "process" << std::endl;
+	return ToTF(img, GetPassMAt(GetEdges(ToErosion(ToInvertion(ToThreshold(ToNormalize(img),level))))));
+}
+
+ste::Matrix<double> TF::ToGrayLevel(std::vector<ste::Matrix<char>> img) {
+	std::cout << "gray" << std::endl;
+	std::vector<unsigned long long> len = img.at(0).size();
+	ste::Matrix<double> res(len.at(0),len.at(1));
+	for(unsigned int i=0;i<len.at(0);i++) {
+		for(unsigned int j=0;j<len.at(1);j++) {
+			res.at(i,j) = 0.2989*img.at(0).at(i,j)+0.5870*img.at(1).at(i,j)+0.1140*img.at(2).at(i,j);
+		}
+	}
+	PrintPPM(res, "Gray");
+	return res;
+}
+
 ste::Matrix<double> TF::ToNormalize(ste::Matrix<double> img) {
-	std::vector<unsigned int> len = {img.size()};
+	std::cout << "norm" << std::endl;
+	std::vector<unsigned long long> len = {img.size()};
 	double maxi = 0;
 	for(unsigned int i=0;i<len.at(0);i++) {
 		for(unsigned int j=0;j<len.at(1);j++) {
@@ -17,21 +41,23 @@ ste::Matrix<double> TF::ToNormalize(ste::Matrix<double> img) {
 	std::cout << "m=" << maxi << std::endl;
 	for(unsigned int i=0;i<len.at(0);i++) {
 		for(unsigned int j=0;j<len.at(1);j++) {
-			img.at(i,j) = img.at(i,j)/maxi;
+			img.at(i,j) = 256*img.at(i,j)/maxi;
 		}
 	}
+	//PrintPPM(img, "Normalized");
 	return img;
 }
 
-ste::Matrix<bool> TF::ToThreshold(ste::Matrix<double> img, double level) {
-	std::vector<unsigned int> len = {img.size()};
-	ste::Matrix<bool> res(len.at(0),len.at(1));
+ste::Matrix<unsigned char> TF::ToThreshold(ste::Matrix<double> img, double level) {
+	std::cout << "level" << std::endl;
+	std::vector<unsigned long long> len = {img.size()};
+	ste::Matrix<unsigned char> res(len.at(0),len.at(1));
 	for(unsigned int i=0;i<len.at(0);i++) {
 		for(unsigned int j=0;j<len.at(1);j++) {
-			if(level < img.at(i,j)) {
-				res.at(i,j) = false;
+			if(256*level < img.at(i,j)) {
+				res.at(i,j) = 255;
 			} else {
-				res.at(i,j) = true;
+				res.at(i,j) = 0;
 			}
 		}
 	}
@@ -39,14 +65,31 @@ ste::Matrix<bool> TF::ToThreshold(ste::Matrix<double> img, double level) {
 	return res;
 }
 
-ste::Matrix<bool> TF::ToErosion(ste::Matrix<bool> img) {
-	std::vector<unsigned int> len = {img.size()};
-	ste::Matrix<bool> res(len.at(0),len.at(1));
-	res.fill(len.at(0), len.at(1), false);
+ste::Matrix<unsigned char> TF::ToInvertion(ste::Matrix<unsigned char> img) {
+    std::vector<unsigned long long> len = {img.size()};
+	ste::Matrix<unsigned char> res(len.at(0),len.at(1));
 	for(unsigned int i=1;i<len.at(0)-1;i++) {
 		for(unsigned int j=1;j<len.at(1)-1;j++) {
-			if(img.at(i-1,j) && img.at(i,j-1) && img.at(i,j) && img.at(i,j+1) && img.at(i+1,j)) {
-				img.at(i,j) = true;
+			if(img.at(i,j) == 255) {
+                res.at(i,j) = 0;
+			} else {
+                res.at(i,j) = 255;
+			}
+		}
+	}
+	PrintPPM(res, "Invert");
+	return res;
+}
+
+ste::Matrix<unsigned char> TF::ToErosion(ste::Matrix<unsigned char> img) {
+	std::cout << "erosion" << std::endl;
+	std::vector<unsigned long long> len = {img.size()};
+	ste::Matrix<unsigned char> res(len.at(0),len.at(1));
+	res.fill(len.at(0), len.at(1), 0);
+	for(unsigned int i=1;i<len.at(0)-1;i++) {
+		for(unsigned int j=1;j<len.at(1)-1;j++) {
+			if(img.at(i-1,j) == 255 && img.at(i,j-1) == 255 && img.at(i,j) == 255 && img.at(i,j+1) == 255 && img.at(i+1,j) == 255) {
+				res.at(i,j) = 255;
 			}
 		}
 	}
@@ -54,11 +97,12 @@ ste::Matrix<bool> TF::ToErosion(ste::Matrix<bool> img) {
 	return res;
 }
 
-ste::Matrix<bool> TF::ToErosion(ste::Matrix<bool> img, ste::Matrix<bool> Patern) {
-	std::vector<unsigned int> len = {img.size()};
-	std::vector<unsigned int> lenP = {Patern.size()};
-	ste::Matrix<bool> res(len.at(0),len.at(1));
-	res.fill(len.at(0), len.at(1), false);
+ste::Matrix<unsigned char> TF::ToErosion(ste::Matrix<unsigned char> img, ste::Matrix<unsigned char> Patern) {
+	std::cout << "erosion G" << std::endl;
+	std::vector<unsigned long long> len = {img.size()};
+	std::vector<unsigned long long> lenP = {Patern.size()};
+	ste::Matrix<unsigned char> res(len.at(0),len.at(1));
+	res.fill(len.at(0), len.at(1), 0);
 	if(lenP.at(0) > len.at(0) || lenP.at(1) > len.at(1)) {
 		std::cout << "error patern too big" << std::endl;
 	} else if(lenP.at(0) != lenP.at(1)) {
@@ -78,7 +122,7 @@ ste::Matrix<bool> TF::ToErosion(ste::Matrix<bool> img, ste::Matrix<bool> Patern)
 						}
 					}
 				}
-				if(temp) {res.at(i,j) = true;}
+				if(temp) {res.at(i,j) = 255;}
 			}
 		}
 	}
@@ -86,62 +130,63 @@ ste::Matrix<bool> TF::ToErosion(ste::Matrix<bool> img, ste::Matrix<bool> Patern)
 	return res;
 }
 
-std::vector<std::vector<unsigned int>> TF::GetEdges(ste::Matrix<bool> img) {
-	std::vector<unsigned int> len = {img.size()};
-	std::vector<std::vector<unsigned int> res(2);
-	bool temp;
-	for(unsigned int i=0;i<len.at(0);i++) {
-		temp = false;
-		for(unsigned int j=0;j<len.at(1);j++) {
-			temp &= img.at(i,j);
-		}
-		if(temp) {
-			res.at(0).push_back(i);
-			res.at(1).push_back(j);
-			std::cout << i << " " << j << std::endl;
-			break;
-		}
-	}
-	for(unsigned int i=len.at(0);i>=0;i--) {
-		temp = false;
-		for(unsigned int j=0;j<len.at(1);j++) {
-			temp &= img.at(i,j);
-		}
-		if(temp) {
-			res.at(0).push_back(i);
-			res.at(1).push_back(j);
-			std::cout << i << " " << j << std::endl;
-			break;
+std::vector<std::vector<unsigned int>> TF::GetEdges(ste::Matrix<unsigned char> img) {
+	std::cout << "edge" << std::endl;
+	std::vector<unsigned long long> len = {img.size()};
+	std::vector<std::vector<unsigned int>> res(2);
+	std::cout << "e1" << std::endl;
+	for(int i=0;i<len.at(0);i++) {
+		for(int j=0;j<len.at(1);j++) {
+			if(img.at(i,j)) {
+                res.at(0).push_back(i);
+                res.at(1).push_back(j);
+                std::cout << i << " " << j << std::endl;
+                i = len.at(0);
+                j = len.at(1);
+			}
 		}
 	}
-	for(unsigned int i=0;i<len.at(1);i++) {
-		temp = false;
-		for(unsigned int j=0;j<len.at(0);j++) {
-			temp &= img.at(j,i);
-		}
-		if(temp) {
-			res.at(0).push_back(i);
-			res.at(1).push_back(j);
-			std::cout << i << " " << j << std::endl;
-			break;
+	std::cout << "e2" << std::endl;
+	for(int i=0;i<len.at(0);i++) {
+		for(int j=len.at(1)-1;j>=0;j--) {
+			if(img.at(i,j)) {
+                res.at(0).push_back(i);
+                res.at(1).push_back(j);
+                std::cout << i << " " << j << std::endl;
+                i = len.at(0);
+                j = -1;
+			}
 		}
 	}
-	for(unsigned int i=len.at(1);i>=0;i--) {
-		temp = false;
-		for(unsigned int j=0;j<len.at(0);j++) {
-			temp &= img.at(j,i);
+	std::cout << "e3" << std::endl;
+	for(int i=0;i<len.at(1);i++) {
+		for(int j=0;j<len.at(0);j++) {
+			if(img.at(j,i)) {
+                res.at(0).push_back(i);
+                res.at(1).push_back(j);
+                std::cout << i << " " << j << std::endl;
+                i = len.at(0);
+                j = len.at(1);
+			}
 		}
-		if(temp) {
-			res.at(0).push_back(i);
-			res.at(1).push_back(j);
-			std::cout << i << " " << j << std::endl;
-			break;
+	}
+	std::cout << "e4" << std::endl;
+	for(int i=len.at(1)-1;i>=0;i--) {
+		for(int j=0;j<len.at(0);j++) {
+			if(img.at(j,i)) {
+                res.at(0).push_back(i);
+                res.at(1).push_back(j);
+                std::cout << i << " " << j << std::endl;
+                i = -1;
+                j = len.at(1);
+			}
 		}
 	}
 	return res;
 }
 
 std::vector<double> TF::GetPassMAt(std::vector<std::vector<unsigned int>> edges) {
+	std::cout << "mat" << std::endl;
 	double x0 = edges.at(0).at(0);
 	double x1 = edges.at(0).at(1);
 	double x2 = edges.at(0).at(2);
@@ -150,7 +195,7 @@ std::vector<double> TF::GetPassMAt(std::vector<std::vector<unsigned int>> edges)
 	double y1 = edges.at(1).at(1);
 	double y2 = edges.at(1).at(2);
 	double y3 = edges.at(1).at(3);
-	
+
 	double a1 = (y0-y2)/(x0-x2);
 	double a2 = (y1-y3)/(x1-x3);
 	std::cout << a1 << " " << a2 << std::endl;
@@ -180,7 +225,8 @@ std::vector<double> TF::GetPassMAt(std::vector<std::vector<unsigned int>> edges)
 }
 
 ste::Matrix<double> TF::ToTF(ste::Matrix<double> img, std::vector<double> VectTF) {
-	std::vector<unsigned int> len = {img.size()};
+	std::cout << "tf" << std::endl;
+	std::vector<unsigned long long> len = {img.size()};
 	double x = VectTF.at(0);
 	double y = VectTF.at(1);
 	double a = VectTF.at(2);
@@ -197,13 +243,13 @@ ste::Matrix<double> TF::ToTF(ste::Matrix<double> img, std::vector<double> VectTF
 	M.at(2,0) = 0;
 	M.at(2,1) = 0;
 	M.at(2,2) = 1;
-	Xscale = h/len.at(0);
-	Yscale = l/len.at(1);
+	double Xscale = h/len.at(0);
+	double Yscale = l/len.at(1);
 	//Mat TF rigid
 	ste::Matrix<double> res(len.at(0),len.at(1));
 	for(unsigned int i=0;i<len.at(0);i++) {
 		for(unsigned int j=0;j<len.at(1);j++) {
-			ste::Matrix<double> coord = {{i, j, 1}};
+			ste::Matrix<double> coord({{i, j, 1}});
 			coord = M*coord.transpose();
 			double x3 = coord.at(0,0)*Xscale;
 			double y3 = coord.at(1,0)*Yscale;
@@ -220,29 +266,90 @@ ste::Matrix<double> TF::ToTF(ste::Matrix<double> img, std::vector<double> VectTF
 	return res;
 }
 
-void PrintPPM(ste::Matrix<double> img, std::string path) {
-	img = ToNormalize(img);
+void TF::PrintPPM(std::vector<ste::Matrix<char>> img, std::string path) {
+	std::cout << "print " << path << std::endl;
 	path += ".ppm";
-	ofstream ofs(path, ios_base::out | ios_base::binary);
-	std::vector<unsigned int> len = {img.size()};
-	ofs << "P6" << endl << len.at(0) << ' ' << len.at(1) << endl << "255" << endl;
+	std::ofstream ofs(path, std::ios_base::out | std::ios_base::binary);
+	std::vector<unsigned long long> len = {img.at(0).size()};
+	ofs << "P6" << std::endl << len.at(0) << ' ' << len.at(1) << std::endl << "255" << std::endl;
     for(unsigned int i=0;i<len.at(0);i++) {
 		for(unsigned int j=0;j<len.at(1);j++) {
-        	ofs << static_cast<char>(img.at(i,j)*256) << static_cast<char>(img.at(i,j)*256) << static_cast<char>(img.at(i,j)*256);
+        	ofs << img.at(0).at(i,j) << img.at(1).at(i,j) << img.at(2).at(i,j);
         }
 	}
     ofs.close();
 }
 
-void PrintPPM(ste::Matrix<bool> img, std::string path) {
+void TF::PrintPPM(ste::Matrix<double> img, std::string path) {
+	std::cout << "print " << path << std::endl;
+	img = ToNormalize(img);
 	path += ".ppm";
-	ofstream ofs(path, ios_base::out | ios_base::binary);
-	std::vector<unsigned int> len = {img.size()};
-	ofs << "P6" << endl << len.at(0) << ' ' << len.at(1) << endl << "255" << endl;
+	std::ofstream ofs(path, std::ios_base::out | std::ios_base::binary);
+	std::vector<unsigned long long> len = {img.size()};
+	ofs << "P6" << std::endl << len.at(0) << ' ' << len.at(1) << std::endl << "255" << std::endl;
     for(unsigned int i=0;i<len.at(0);i++) {
 		for(unsigned int j=0;j<len.at(1);j++) {
-        	ofs << static_cast<char>(img.at(i,j) ? 0 : 256) << static_cast<char>(img.at(i,j) ? 0 : 256) << static_cast<char>(img.at(i,j) ? 0 : 256);
+        	ofs << static_cast<char>(img.at(i,j)) << static_cast<char>(img.at(i,j)) << static_cast<char>(img.at(i,j));
         }
 	}
     ofs.close();
+}
+
+void TF::PrintPPM(ste::Matrix<unsigned char> img, std::string path) {
+	std::cout << "print " << path << std::endl;
+	path += ".ppm";
+	std::ofstream ofs(path, std::ios_base::out | std::ios_base::binary);
+	std::vector<unsigned long long> len = {img.size()};
+	ofs << "P6" << std::endl << len.at(0) << ' ' << len.at(1) << std::endl << "255" << std::endl;
+    for(unsigned int i=0;i<len.at(0);i++) {
+		for(unsigned int j=0;j<len.at(1);j++) {
+        	ofs << static_cast<char>(img.at(i,j)) << static_cast<char>(img.at(i,j)) << static_cast<char>(img.at(i,j));
+        }
+	}
+    ofs.close();
+}
+
+std::vector<ste::Matrix<char>> TF::ReadPPM(std::string path) {
+	std::cout << "read" << std::endl;
+	path += ".ppm";
+	std::ifstream ifs(path, std::ios_base::in | std::ios_base::binary);
+	if(ifs) {
+        ifs.seekg (0, ifs.end);
+        int length = ifs.tellg();
+        ifs.seekg (0, ifs.beg);
+        /*char c;
+        ifs.get(c); //P
+        ifs.get(c); //6
+        unsigned long long l1 = 0;
+        while(1) {
+            ifs.get(c);
+            if(c == ' ') {break;}
+            l1 = l1<<8+c;
+        }
+        unsigned long long l2 = 0;
+        while(1) {
+            ifs.get(c);
+            if(c == 255) {break;}
+            l1 = l1<<8+c;
+        }*/
+        unsigned long long l1 = sqrt(length/3), l2 = l1;
+        std::cout << l1 << " " << l2 << std::endl;
+        ste::Matrix<char> R(l1,l2);
+        ste::Matrix<char> G(l1,l2);
+        ste::Matrix<char> B(l1,l2);
+        std::cout << "3" << std::endl;
+        for(unsigned int i=0;i<l1;i++) {
+            for(unsigned int j=0;j<l2;j++) {
+                ifs.get(R.at(i,j));
+                ifs.get(G.at(i,j));
+                ifs.get(B.at(i,j));
+            }
+        }
+        ifs.close();
+        std::vector<ste::Matrix<char>> res = {R, G, B};
+        PrintPPM(res, "RGB");
+        return res;
+	} else {
+	    std::cout << "no file" << std::endl;
+	}
 }

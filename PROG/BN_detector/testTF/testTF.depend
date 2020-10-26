@@ -1,0 +1,27 @@
+# depslib dependency file v1.0
+1603721493 source:d:\école\ge5\prj_number_detect\prog\bn_detector\tf.cpp
+	"tf.hpp"
+
+1603722896 d:\école\ge5\prj_number_detect\prog\bn_detector\tf.hpp
+	<iostream>
+	<vector>
+	<cmath>
+	<fstream>
+	<cstdio>
+	<cstring>
+	"Matrix.hpp"
+
+1603552564 d:\école\ge5\prj_number_detect\prog\bn_detector\matrix.hpp
+	<algorithm>
+	<cmath>
+	<functional>
+	<iostream>
+	<iterator>
+	<stdexcept>
+	<vector>
+
+1603721644 source:d:\école\ge5\prj_number_detect\prog\bn_detector\testtf\main.cpp
+	<iostream>
+	"../tf.hpp"
+	"../Matrix.hpp"
+
