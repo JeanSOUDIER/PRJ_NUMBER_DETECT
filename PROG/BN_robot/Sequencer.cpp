@@ -80,7 +80,7 @@ bool Sequencer::Execute() {
 		}
 	}
 	//m_TurtleBot->GoPos(0,0,0);
-	m_TurtleBot->SetTime(0);
+	m_TurtleBot->SetSpeedCons(0);
 	m_WidowXL->PosWriting(true, 2000);
 	for(unsigned int i=0;i<reading.size();i++) {
 		std::vector<Movement> Move = seqHandler.find(reading[i]).getMovements();
@@ -102,7 +102,7 @@ bool Sequencer::Execute() {
         	m_WidowXL->MoveArm(false);
         	delay(20);
 			//m_TurtleBot->GoPos(DIST_BASE,0,0); //*(i+1)
-			m_TurtleBot->SetTime(100);
+			m_TurtleBot->SetSpeedCons(100);
 		} else {
 			m_WidowXL->MoveArm(true);
 		}

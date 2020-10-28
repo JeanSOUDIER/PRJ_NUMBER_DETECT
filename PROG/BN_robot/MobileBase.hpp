@@ -8,7 +8,6 @@
 #include <limits>
 #include <pthread.h>
 #include <atomic>
-#include <ctime>
 #include "Lidar.hpp"
 #include "Usb.hpp"
 #include "Regression.hpp"
@@ -29,7 +28,8 @@ class MobileBase {
 		void GoPos(const double x, const double y, const double a);
 		//void SetMotBalance(const double rho, const double theta);
 		void SetSpeed(int L, int R);
-		void SetTime(int time);
+		void SetSpeedCons(double speed);
+		double GetSpeedCons()
 
 		static void* MobileBaseHelper(void *context);
         void StartThread();
@@ -64,6 +64,8 @@ class MobileBase {
 		double m_posYgoal = 0;
 		double m_angle_goal = 0;
 		double m_dist_board = 0;
+
+		double m_speedNorm = 0;
 };
 
 #endif //MOBILEBASE_H

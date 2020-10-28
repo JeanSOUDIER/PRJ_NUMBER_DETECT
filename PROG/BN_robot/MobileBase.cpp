@@ -22,7 +22,7 @@ MobileBase::MobileBase(const double posX, const double posY, const double angle,
 	m_posY = posY;
 	m_angle = angle;
 	m_RPLidar = RPLidar;
-	m_timeCont.store(0,std::memory_order_release);
+	m_speedNorm = 0;
 	StartPlacing();
 	//thread
 	if(m_lidar_start) {
@@ -180,19 +180,21 @@ void MobileBase::SetSpeed(int L, int R) {
 	m_usb->SendBytes(sending);
 }
 
-void MobileBase::SetTime(int time) {
-	m_timeCont.store(time+Time::now(),std::memory_order_release);
+void MobileBase::SetSpeedCons(double speed) {
+	m_speedNorm = speed;
+}
+
+double MobileBase::GetSpeedCons() {
+	return m_speedNorm;
 }
 
 void* MobileBase::ThreadRun() {
+	ICP myICP;
     while(m_start.load(std::memory_order_acquire)) {
     	//TODO asserv lidar + deplacement
-    	if(m_timeCont.load(std::memory_order_acquire) > Time::now()) {
-    		GetLidarPoints(true);
-    		ICP myICP;
-    		std::vector<double> res = myICP.GetPos(m_pos, m_posN1);
-    		std::cout << "x=" << res.at(0) << " y=" << res.at(1) << " a=" << res.at(2) << std::endl;
-    	}
+		GetLidarPoints(true);
+		std::vector<double> res = myICP.GetPos(m_pos, m_posN1);
+		std::cout << "x=" << res.at(0) << " y=" << res.at(1) << " a=" << res.at(2) << std::endl;
     }
     pthread_exit(NULL);
     return 0;

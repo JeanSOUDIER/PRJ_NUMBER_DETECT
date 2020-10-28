@@ -1,0 +1,5 @@
+Travail 
+= Force . Distance 
+= Sum(Fg + Faero + Facc + Fwheel) . D 
+= (-m.g + -0.5.rho.S.Cx.V^2 + m.g.(C0+C1.V^2) + m*acc) . D
+= (-m*g + -0.5.1.225.S.)
