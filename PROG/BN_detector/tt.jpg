@@ -1,7 +1,0 @@
-%YAML:1.0
----
-Picture: !!opencv-matrix
-   rows: 0
-   cols: 0
-   dt: u
-   data: []

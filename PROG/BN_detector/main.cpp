@@ -34,11 +34,14 @@ int main() {
 
     //MobileBase OpenCR(ttyACM0, 115200, nullptr);
     //OpenCR.GoPos(0,0,M_PI);
-	//Cam CPI2;
-    //ste::Matrix<double> img = CPI2.TakePhoto();
-    TF myTF;
-    ste::Matrix<double> img = myTF.ToProcessed(myTF.ReadPPM("test"), 0.5);
-    myTF.PrintPPM(img, "cam");
+	Cam CPI2;
+	ste::Matrix<double> imgC = CPI2.TakePhotoM();
+	imgC.transpose();
+    	TF myTF;
+	myTF.PrintPPM(imgC, "in");
+    	//ste::Matrix<double> img = myTF.ToProcessed(myTF.ReadPPM("test"), 0.5);
+	ste::Matrix<double> img = myTF.ToProcessed(imgC, 0.5);
+    	myTF.PrintPPM(img, "cam");
 
 	//CPI2.ImgShow();
 

@@ -9,12 +9,16 @@ Lidar::Lidar(const bool start, const int nb_usb, const int bdrate) {
     for(auto &item:m_intensity){std::atomic_init(&item,0);}
     for(auto &item:m_xPos){std::atomic_init(&item,0.0);}
     for(auto &item:m_yPos){std::atomic_init(&item,0.0);}
+    for(auto &item:m_xPosSend){std::atomic_init(&item,0.0);}
+    for(auto &item:m_yPosSend){std::atomic_init(&item,0.0);}
 
     m_usb = new Usb(nb_usb, bdrate);
     m_start.store(start, std::memory_order_release);
+    m_lidar_endTr.store(false, std::memory_order_release);
     m_port_nr = nb_usb;
     m_bdrate = bdrate;
     m_sat = true;
+    m_first_frame.store(false, std::memory_order_release);
     StartLidar();
     std::cout << "Lidar start" << std::endl;
 }
@@ -105,8 +109,15 @@ void Lidar::Poll(void) {
                             m_yPos.at(i).store(static_cast<double>(m_range.at(i).load(std::memory_order_acquire))*std::sin(static_cast<double>(i)*M_PI/180),std::memory_order_release);
                         }
                     }
-                    m_lidar_endTr.store(true,std::memory_order_release);
                     m_cpt = 0;
+                    m_first_frame.store(true, std::memory_order_release);
+                }
+                if(!m_lidar_endTr.load(std::memory_order_acquire) && m_first_frame.load(std::memory_order_acquire)) {
+                    for(unsigned int i=0;i<m_xPos.size();i++) {
+                        m_xPosSend.at(i).store(m_xPos.at(i).load(std::memory_order_acquire),std::memory_order_release);
+                        m_yPosSend.at(i).store(m_yPos.at(i).load(std::memory_order_acquire),std::memory_order_release);
+                    }
+                    m_lidar_endTr.store(true,std::memory_order_release);
                 }
 
                 degree_count_num++;
@@ -148,25 +159,31 @@ std::vector<int> Lidar::GetIntensity(void) {
    return returnValue;
 }
 std::vector<double> Lidar::GetXPos(void) {
-	while(!m_lidar_endTr.load(std::memory_order_acquire)) {}
-    std::vector<double> returnValue(m_xPos.size());
-    std::generate(returnValue.begin() , returnValue.end() , [this]{
+	while(!(m_lidar_endTr.load(std::memory_order_acquire) && m_first_frame.load(std::memory_order_acquire))) {}
+    std::vector<double> returnValue(m_xPosSend.size());
+    /*std::generate(returnValue.begin() , returnValue.end() , [this]{
         static unsigned int index = 0;
-        const double currentItem = m_xPos.at(index).load();
+        const double currentItem = m_xPosSend.at(index).load(std::memory_order_acquire);
         index++;
         return currentItem;
-    });
+    });*/
+    for(unsigned int i=0;i<m_xPosSend.size();i++) {
+        returnValue.at(i) = m_xPosSend.at(i).load(std::memory_order_acquire);
+    }
 
    return returnValue;
 }
 std::vector<double> Lidar::GetYPos(void) {
-    std::vector<double> returnValue(m_yPos.size());
-    std::generate(returnValue.begin() , returnValue.end() , [this]{
+    std::vector<double> returnValue(m_yPosSend.size());
+    /*std::generate(returnValue.begin() , returnValue.end() , [this]{
         static unsigned int index = 0;
-        const double currentItem = m_yPos.at(index).load();
+        const double currentItem = m_yPosSend.at(index).load(std::memory_order_acquire);
         index++;
         return currentItem;
-    });
+    });*/
+    for(unsigned int i=0;i<m_yPosSend.size();i++) {
+        returnValue.at(i) = m_yPosSend.at(i).load(std::memory_order_acquire);
+    }
     m_lidar_endTr.store(false,std::memory_order_release);
 
    return returnValue;
@@ -178,7 +195,7 @@ void* Lidar::LidarHelper(void *context) {
 }
 
 void* Lidar::ThreadRun() {
-    while(m_start.load(std::memory_order_acquire)) {Poll();}
+    while(m_start.load(std::memory_order_acquire)) {Poll();}//std::cout<<"poll"<<std::endl;}
 
     pthread_exit(NULL);
     return 0;

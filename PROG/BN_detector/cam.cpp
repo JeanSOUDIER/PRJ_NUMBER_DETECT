@@ -18,8 +18,8 @@ Cam::Cam(int width, int height, int frameRate, int flip) {
 
 	m_cap = new cv::VideoCapture(m_pipeline, cv::CAP_GSTREAMER);
 	if(!m_cap->isOpened()) {
-	std::cout<<"Failed to open camera."<<std::endl;
-	m_start = false;
+		std::cout<<"Failed to open camera."<<std::endl;
+		m_start = false;
 	} else {
 		m_start = true;
 	}
@@ -40,12 +40,14 @@ cv::Mat Cam::TakePhoto() {
 	return img;
 }
 
-ste::Matrix<double> TakePhoto() {
+ste::Matrix<double> Cam::TakePhotoM() {
 	cv::Mat img = TakePhoto();
-	ste::Matrix<double> res(img.cols(),img.rows());
-	for(unsigned int i=0;i<img.cols();i++) {
-		for(unsigned int i=0;i<img.rows();i++) {
-			res.at(i,j) = Mat.at(i,j);
+	img = TakePhoto();
+	//ImgShow(img);
+	ste::Matrix<double> res(img.cols,img.rows);
+	for(unsigned int i=0;i<img.cols;i++) {
+		for(unsigned int j=0;j<img.rows;j++) {
+			res.at(i,j) = img.at<int>(j,i);
 		}
 	}
 	return res;

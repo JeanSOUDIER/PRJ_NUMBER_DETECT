@@ -23,11 +23,13 @@ MobileBase::MobileBase(const double posX, const double posY, const double angle,
 	m_angle = angle;
 	m_RPLidar = RPLidar;
 	m_speedNorm = 0;
-	StartPlacing();
 	//thread
 	if(m_lidar_start) {
 		m_RPLidar->StartThread();
 	}
+	delay(1000);
+	StartPlacing();
+	delay(1000);
 	m_start.store(true,std::memory_order_release);
 	StartThread();
     std::cout << "MobileBase start" << std::endl;
@@ -44,9 +46,14 @@ MobileBase::~MobileBase() {
 }
 
 void MobileBase::StartPlacing() {
-	GetLidarPoints(false);
-	syd::cout << "m_x = " << m_pos.at(0).at(0) << std::endl;
-	GoPos(m_pos.at(0).at(0)-300,0,M_PI);
+	char c = '\0';
+	do{
+		GetLidarPoints(false);
+		std::cout << m_posXlid.at(91) << std::endl;
+		std::cin >> c;
+	}while(c != '1');
+	GoPos(0,-75*m_posXlid.at(91)-300,0);
+	GoPos(0,1,0);
 }
 
 /*void MobileBase::Go(const double x, const double y, const double a) {
@@ -87,20 +94,20 @@ void MobileBase::GoPos(const double x, const double y, const double a) {
 void MobileBase::GetLidarPoints(bool nb) {
 	if(m_lidar_start) {
 		if(nb) {
-			m_posN1.at(0).clear();
-			m_posN1.at(1).clear();
-			for(unsigned int i=0;i<xP.size();i++) {
-				m_posN1.at(0).push_back(m_pos.at(0).at(i));
-				m_posN1.at(1).push_back(m_pos.at(1).at(i));
+			m_posXN1lid.clear();
+			m_posYN1lid.clear();
+			for(unsigned int i=0;i<m_posXlid.size();i++) {
+				m_posXN1lid.push_back(m_posXlid.at(i));
+				m_posYN1lid.push_back(m_posYlid.at(i));
 			}
 		}
 		std::vector<double> xP = m_RPLidar->GetXPos();
 		std::vector<double> yP = m_RPLidar->GetYPos();
-		m_pos.at(0).clear();
-		m_pos.at(1).clear();
+		m_posXlid.clear();
+		m_posYlid.clear();
 		for(unsigned int i=0;i<xP.size();i++) {
-			m_pos.at(0).push_back(xP.at(i));
-			m_pos.at(1).push_back(yP.at(i));
+			m_posXlid.push_back(xP.at(i));
+			m_posYlid.push_back(yP.at(i));
 		}
 		//m_RPLidar->Display(false);
 		//std::cout << "out : " << m_RPLidar->SaveLidarPoints() << std::endl;
@@ -188,13 +195,29 @@ double MobileBase::GetSpeedCons() {
 	return m_speedNorm;
 }
 
+void MobileBase::PrintPos() {
+	std::cout << "x=" << m_posX << " y=" << m_posY << " a=" << m_angle << std::endl;
+}
+
 void* MobileBase::ThreadRun() {
 	ICP myICP;
+	GetLidarPoints(false);
+	GetLidarPoints(true);
+	m_startTime = std::clock();
     while(m_start.load(std::memory_order_acquire)) {
     	//TODO asserv lidar + deplacement
 		GetLidarPoints(true);
-		std::vector<double> res = myICP.GetPos(m_pos, m_posN1);
-		std::cout << "x=" << res.at(0) << " y=" << res.at(1) << " a=" << res.at(2) << std::endl;
+		std::vector<std::vector<double>> posi = {m_posXlid, m_posYlid};
+		std::vector<std::vector<double>> posiN1 = {m_posXN1lid, m_posYN1lid};
+		std::vector<double> res = myICP.GetPos(posi, posiN1);
+		m_endTime = std::clock();
+		double delta = (m_endTime-m_startTime)/(CLOCKS_PER_SEC/1000);
+		delta /= 1000;
+		//std::cout << "x=" << res.at(0) << " y=" << res.at(1) << " a=" << res.at(2) << " d=" << delta << std::endl;
+		m_posX += res.at(0)*delta;
+		m_posY += res.at(1)*delta;
+		m_angle += res.at(2)*delta;
+		m_startTime = std::clock();
     }
     pthread_exit(NULL);
     return 0;

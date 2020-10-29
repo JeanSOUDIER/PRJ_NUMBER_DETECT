@@ -8,6 +8,7 @@
 #include <limits>
 #include <pthread.h>
 #include <atomic>
+#include <ctime>
 #include "Lidar.hpp"
 #include "Usb.hpp"
 #include "Regression.hpp"
@@ -29,7 +30,8 @@ class MobileBase {
 		//void SetMotBalance(const double rho, const double theta);
 		void SetSpeed(int L, int R);
 		void SetSpeedCons(double speed);
-		double GetSpeedCons()
+		double GetSpeedCons();
+		void PrintPos();
 
 		static void* MobileBaseHelper(void *context);
         void StartThread();
@@ -54,8 +56,10 @@ class MobileBase {
 		Lidar *m_RPLidar;
         pthread_t *inc_x_thread;
 
-		std::vector<double> m_pos(2);
-		std::vector<double> m_posN1(2);
+		std::vector<double> m_posXlid;
+		std::vector<double> m_posYlid;
+		std::vector<double> m_posXN1lid;
+		std::vector<double> m_posYN1lid;
 
 		double m_posX = 0;
 		double m_posY = 0;
@@ -66,6 +70,9 @@ class MobileBase {
 		double m_dist_board = 0;
 
 		double m_speedNorm = 0;
+
+		std::clock_t m_startTime;
+		std::clock_t m_endTime;
 };
 
 #endif //MOBILEBASE_H

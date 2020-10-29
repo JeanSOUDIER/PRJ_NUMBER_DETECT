@@ -11,7 +11,7 @@ Bluetooth.o : Bluetooth.cpp
 	g++ -O3 -Wall -pthread -std=c++17 -c Bluetooth.cpp -o Bluetooth.o
 
 cam.o : cam.cpp
-	g++ -std=c++11 -Wall -I/usr/lib/opencv -c cam.cpp -L/usr/lib -lopencv_core -lopencv_highgui -lopencv_videoio -o cam.o
+	g++ -std=c++14 -Wall -I/usr/lib/opencv -c cam.cpp -L/usr/lib -lopencv_core -lopencv_highgui -lopencv_videoio -o cam.o
 
 tf.o : tf.cpp
 	g++ -O3 -o tf.o -c tf.cpp -Wall

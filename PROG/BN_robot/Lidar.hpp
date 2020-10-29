@@ -56,6 +56,7 @@ private:
 
         std::atomic<bool> m_start;
         std::atomic<bool> m_lidar_endTr;
+        std::atomic<bool> m_first_frame;
 
         int m_port_nr;
         int m_bdrate;
@@ -64,6 +65,8 @@ private:
         std::array<std::atomic<int> , 360> m_intensity;
         std::array<std::atomic<double> , 360> m_xPos;
         std::array<std::atomic<double> , 360> m_yPos;
+        std::array<std::atomic<double> , 360> m_xPosSend;
+        std::array<std::atomic<double> , 360> m_yPosSend;
 
         bool m_sat = true;
 

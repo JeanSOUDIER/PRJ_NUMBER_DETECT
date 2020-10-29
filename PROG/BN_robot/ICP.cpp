@@ -1,7 +1,7 @@
 #include "ICP.hpp"
 
 ICP::ICP()
-	: ICP(1e-5,100) {}
+	: ICP(1e-10,100) {}
 
 ICP::ICP(const double error, const unsigned int MaxIter) {
 	m_error = error;
@@ -57,7 +57,7 @@ std::vector<double> ICP::GetPos(const std::vector<std::vector<double>> DynData, 
 	// ---- ICP ---- //
 	for(unsigned int iter=0;iter<m_maxIter;iter++) {
 		// ---- Find points ---- //
-		std::cout << iter << " " << std::fabs(oldres-res) << std::endl;
+		//std::cout << iter << " " << std::fabs(oldres-res) << std::endl;
 		oldres = res;
 		std::vector<std::vector<double>> temp = nearestNeighbor(data,model);
 		// ---- Find TF ---- //

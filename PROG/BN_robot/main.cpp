@@ -41,7 +41,7 @@ int main() {
 
     //Bluetooth BLE(rfcomm0, 9600);
     //BLE.WriteEnd();
-    Bluetooth BLE(ttyS0, 9600);
+    /*Bluetooth BLE(ttyS0, 9600);
     std::vector<char> temp = {'\0'};
     while(temp.at(0) != 'h') {
         temp = BLE.GetRX();
@@ -53,12 +53,17 @@ int main() {
         }
     }
     //BLE.SetTX("hello");
-    delay(1000);
+    delay(1000);*/
 
-    //MobileBase OpenCR(ttyACM0, 115200, new Lidar(ttyUSB_LDS, 230400));
-    //delay(1000);
+    MobileBase OpenCR(ttyACM0, 115200, new Lidar(ttyUSB_LDS, 230400));
+    delay(1000);
     //OpenCR.GetLidarPoints();
-    //OpenCR.GoPos(100,0,0);
+    std::cout << "tic" << std::endl;
+    OpenCR.PrintPos();
+    OpenCR.GoPos(1000,0,0);
+    std::cout << "toc" << std::endl;
+    OpenCR.PrintPos();
+    delay(1000);
 
     
     //Lidar RPLidar(true, ttyUSB_LDS, 230400);

@@ -11,6 +11,7 @@ ste::Matrix<double> TF::ToProcessed(std::vector<ste::Matrix<char>> img, double l
 
 ste::Matrix<double> TF::ToProcessed(ste::Matrix<double> img, double level) {
 	std::cout << "process" << std::endl;
+	PrintPPM(img, "In");
 	return ToTF(img, GetPassMAt(GetEdges(ToErosion(ToInvertion(ToThreshold(ToNormalize(img),level))))));
 }
 
@@ -167,6 +168,7 @@ std::vector<std::vector<unsigned int>> TF::GetEdges(ste::Matrix<unsigned char> i
                 std::cout << i << " " << j << std::endl;
                 i = len.at(0);
                 j = len.at(1);
+		break;
 			}
 		}
 	}
@@ -179,6 +181,7 @@ std::vector<std::vector<unsigned int>> TF::GetEdges(ste::Matrix<unsigned char> i
                 std::cout << i << " " << j << std::endl;
                 i = -1;
                 j = len.at(1);
+		break;
 			}
 		}
 	}
@@ -199,7 +202,7 @@ std::vector<double> TF::GetPassMAt(std::vector<std::vector<unsigned int>> edges)
 	double a1 = (y0-y2)/(x0-x2);
 	double a2 = (y1-y3)/(x1-x3);
 	std::cout << a1 << " " << a2 << std::endl;
-	double a = (a1+a2)/2;
+	double a = a2;// = (a1+a2)/2;
 	std::cout << a << std::endl;
 	double dist1 = std::sqrt((x0-x3)*(x0-x3)+(y0-y3)*(y0*y3));
 	double dist2 = std::sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1*y2));

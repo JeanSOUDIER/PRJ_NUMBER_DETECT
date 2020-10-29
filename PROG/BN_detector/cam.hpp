@@ -16,7 +16,7 @@ class Cam {
 		~Cam();
 
 		cv::Mat TakePhoto();
-		ste::Matrix<double> TakePhoto();
+		ste::Matrix<double> TakePhotoM();
 		void TakePhoto(std::string path);
 
 		void ImgShow(cv::Mat img);
