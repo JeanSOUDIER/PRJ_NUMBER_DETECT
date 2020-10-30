@@ -76,8 +76,9 @@
     • mean              | Returns the mean value of all elements of the matrix, as T (meaning that rounding error and overflow may occur). It is computed as sum()/(size.at(0)*size.at(1)).
     • average           | Convinience function that returns mean().
     • det               | Returns the determinant of the matrix. Throws an exception (std::invalid_argument) is the matrix is not square.
+    • cofactor          | Returns the cofactor of the specified line and column or linear index. Throws an exception if one of them is outside the matrix.
     • comatrix          | Returns the cofactor matrix. Convinience function that returns cofactormatrix().
-    • cofactormatrix    | Returns the cofactor matrix. (WIP) ********************************************
+    • cofactormatrix    | Returns the cofactor matrix.
     • transpose         | Returns the transpose of the matrix.
 
     • fill              | Resizes the matrix as specified in argument and fills it with the value chosen.
@@ -131,7 +132,7 @@ class Matrix{
 
         /***************************************************/
 
-        ///Constructor                                                                               | inits the matrix with empty vectors.
+        ///Constructor                                                                               | Inits the matrix with empty vectors.
         Matrix(const unsigned long long &lines , const unsigned long long&columns){
 
             _data.reserve(lines);
@@ -234,7 +235,7 @@ class Matrix{
 
          if(index >= size().at(0)*size().at(1)){throw std::out_of_range("Index out of range.");}
 
-         return at(index/size().at(1) , index %size().at(0));
+         return at(index / size().at(1) , index % size().at(1));
 
         }
 
@@ -254,7 +255,8 @@ class Matrix{
 
          if(index >= size().at(0)*size().at(1)){throw std::out_of_range("Index out of range.");}
 
-         return at(index/size().at(1) , index %size().at(0));
+         return at(index / size().at(1) , index % size().at(1));
+
 
         }
 
@@ -268,7 +270,7 @@ class Matrix{
         }
 
         ///lineAt                                                                                    | Returns the value of the line at the specified index.
-        std::vector<T> lineAt(const unsigned long long & index) const{
+        std::vector<T> lineAt(const unsigned long long &index) const{
 
             if(empty()){throw std::out_of_range("Index out of range.");}
             if(index >= size().at(0)){throw std::out_of_range("Index out of range.");}
@@ -652,17 +654,52 @@ class Matrix{
 
         }
 
-        ///comatrix                                                                                   | Returns the cofactor matrix. Convinience function that returns cofactormatrix().
-        Matrix comatrix() const {return cofactormatrix();}
+        ///cofactor                                                                                   | Returns the cofactor of the specified line and column.
+        T cofactor(unsigned long long line , unsigned long long column) const{
 
-         //TODO
-        ///cofactormatrix                                                                             | Returns the cofactor matrix. (WIP) ********************************************
-        Matrix cofactormatrix() const {
+            if(line >= size().at(0)){throw std::invalid_argument("Line is outside the matrix.");}
+            if(column >= size().at(1)){throw std::invalid_argument("Column is outside the matrix.");}
 
-            return Matrix(1,1);
+            Matrix temp(_data);
+            temp.remove_line(line);
+            temp.remove_column(column);
+
+            return std::pow(T(-1) , line+column) * temp.det();
 
 
         }
+
+
+        ///cofactor                                                                                   | Returns the cofactor of the specified linear index.
+        T cofactor(unsigned long long index) const{return cofactor(index / size().at(1) , index % size().at(1));}
+
+
+        ///comatrix                                                                                   | Returns the cofactor matrix. Convinience function that returns cofactormatrix().
+        Matrix comatrix() const {return cofactormatrix();}
+
+
+        ///cofactormatrix                                                                             | Returns the cofactor matrix. (WIP) ********************************************
+        Matrix cofactormatrix() const {
+
+            Matrix result(_data);
+
+            for(unsigned long long index = 0 ; index < size().at(0)*size().at(1) ; index++){
+
+                Matrix temp(_data);
+
+                T value = temp.cofactor(index);
+                result.replace(index , value);
+                //std::cout << "index : " << index << " value: " << value << std::endl;
+
+            }
+
+
+            return result;
+
+
+        }
+
+
 
 
 
@@ -832,13 +869,13 @@ class Matrix{
         ///operator*                                                                                 | Multiplies two matrices using the usual matrix product definition.
         virtual Matrix operator* (const Matrix &arg) const{
 
-            Matrix result(_data.size() , arg._data.at(0).size());
+            Matrix result(size().at(0) , arg.size().at(1));
 
-            for(unsigned long long index_line = 0 ; index_line < _data.size() ; index_line++){
+            for(unsigned long long index_line = 0 ; index_line < size().at(0) ; index_line++){
 
                 for(unsigned long long index_column = 0 ; index_column < arg._data.at(0).size() ; index_column++){
                     T value = T(0);
-                    for(unsigned long long index_sum = 0 ; index_sum < _data.at(0).size() ; index_sum++){
+                    for(unsigned long long index_sum = 0 ; index_sum < size().at(1); index_sum++){
                         value += T(_data.at(index_line).at(index_sum)) * T(arg._data.at(index_sum).at(index_column));
                     }
                     result.replace(index_line , index_column , value);
@@ -910,9 +947,9 @@ class Matrix{
         //Matrix& operator +=(const T &arg){}
 
         ///operator-                                                                                 | Substracts two matrices.
-        virtual Matrix operator- (const Matrix &arg) const {return Matrix(_data) + arg*(-1.);}
+        virtual Matrix operator- (const Matrix &arg) const {return Matrix(_data) + arg*T(-1.);}
         ///operator-                                                                                 | Substracts arg to all elements of the matrix. May be overrided for other purposes.
-        virtual Matrix operator- (const T &arg) const {return Matrix(_data) + arg*(-1.);}
+        virtual Matrix operator- (const T &arg) const {return Matrix(_data) + arg*T(-1.);}
 
         //TODO
         //Matrix& operator -= (const Matrix &arg){}
@@ -927,7 +964,7 @@ class Matrix{
                 return Matrix<T>(0,0);
             }
 
-            return (1/det())*Matrix(_data).cofactormatrix().transpose();
+            return Matrix(_data).cofactormatrix().transpose()*(1/det());
 
         }
 
