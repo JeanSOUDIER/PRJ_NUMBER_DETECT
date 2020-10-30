@@ -49,11 +49,11 @@ void MobileBase::StartPlacing() {
 	char c = '\0';
 	do{
 		GetLidarPoints(false);
-		std::cout << m_posXlid.at(91) << std::endl;
+		std::cout << m_posYlid.at(90) << std::endl;
 		std::cin >> c;
 	}while(c != '1');
-	GoPos(0,-75*m_posXlid.at(91)-300,0);
-	GoPos(0,1,0);
+	GoPos(0,m_posYlid.at(90)-300,0);
+	GoPos(0,-1*Utility::sign(m_posYlid.at(90)-300),0);
 }
 
 /*void MobileBase::Go(const double x, const double y, const double a) {
