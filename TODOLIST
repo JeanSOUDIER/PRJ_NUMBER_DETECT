@@ -1,14 +1,12 @@
 LOW :
  RPI
- - test ICP odom (-Jean)
- - test callage start (-Jean)
  - test sequencer (-Jean)
  - test cam Img (-Jean)
 
 HIGH :
  RPI
- - test dessin (améliorer)
- - asserv pos
+ - test dessin (améliorer -Jean)
+ - asserv pos (-Erwan)
  Jetson
  - CNN (-Erwan)
  - Compilation CUDA sur Qt (-Erwan)
@@ -20,7 +18,7 @@ PRJ AUTOM :
 PRJ RT :
 
 PRJ E-MOBI :
- - estimation batterie
+ - estimation batterie (-Jean)
 
 MECA :
 - lum cam ?

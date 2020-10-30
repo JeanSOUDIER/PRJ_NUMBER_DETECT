@@ -114,61 +114,10 @@ void MobileBase::GetLidarPoints(bool nb) {
 	}
 }
 
-/*void MobileBase::GetPosBase() {
-	std::vector<double> res = FindSegment(12,27);
-	std::cout << res[0] << " " << res[1] << " " << res[2] << std::endl;
-	/*res = FindSegment(910,179);
-	std::cout << res[0] << " " << res[1] << " " << res[2] << std::endl;
-	res = FindSegment(179,269);
-	std::cout << res[0] << " " << res[1] << " " << res[2] << std::endl;
-	res = FindSegment(269,359);
-	std::cout << res[0] << " " << res[1] << " " << res[2] << std::endl;*/
-	//points cardinaux
-	//find a*x+b => a,b x4 + dist board
-	//set m_posX, m_posY, m_angle, m_dist_board
-/*}
-
-std::vector<double> MobileBase::FindSegment(int start, int stop) {
-	std::vector<double> subvectorX;
-	std::vector<double> subvectorY;
-	if(start < stop) {
-		for(int i=start;i<stop;i++) {
-			subvectorX.push_back(m_x.at(i));
-			subvectorY.push_back(m_y.at(i));
-		}
-	} else {
-		for(unsigned int i=start;i<m_x.size();i++) {
-			subvectorX.push_back(m_x.at(i));
-			subvectorY.push_back(m_y.at(i));
-		}
-		for(int i=0;i<stop;i++) {
-			subvectorX.push_back(m_x.at(i));
-			subvectorY.push_back(m_y.at(i));
-		}
-	}
-	for(unsigned int i=0;i<subvectorX.size();i++) {
-		if(std::isinf(subvectorX.at(i))) {
-			subvectorX.erase(subvectorX.begin()+i);
-			subvectorY.erase(subvectorY.begin()+i);
-		}
-	}
-	std::vector<std::vector<double>> v = {std::vector<double>() , std::vector<double>()};
-
-    for(unsigned int i=0;i<subvectorX.size();i++) {
-      v.at(0).push_back(subvectorX.at(i));
-      v.at(1).push_back(subvectorY.at(i));
-    }
-
-    Utility::writeCSV("graphXYreduit",v,";");
-	Regression reg;
-	std::vector<double> res = reg.RegressionLineaire(subvectorX,subvectorY);
-	return res;
-}*/
-
-/*void MobileBase::SetMotBalance(const double rho, const double theta) {
+void MobileBase::SetMotBalance(const double rho, const double theta) {
 	const int facteur = 4;
 	SetSpeed(rho+facteur*theta, rho-facteur*theta);
-}*/
+}
 
 void MobileBase::SetSpeed(int L, int R) {
 	if(L > 330) {L = 330;std::cout << "speed sat 0" << std::endl;}
@@ -197,6 +146,11 @@ double MobileBase::GetSpeedCons() {
 
 void MobileBase::PrintPos() {
 	std::cout << "x=" << m_posX << " y=" << m_posY << " a=" << m_angle << std::endl;
+}
+
+std::vector<double> MobileBase::GetPosAct() {
+	std::vector<double> res = {m_posX, m_posY, m_angle};
+	return res;
 }
 
 void* MobileBase::ThreadRun() {

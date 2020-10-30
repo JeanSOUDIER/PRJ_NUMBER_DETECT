@@ -131,6 +131,7 @@ ste::Matrix<unsigned char> TF::ToErosion(ste::Matrix<unsigned char> img, ste::Ma
 	return res;
 }
 
+// https://stackoverflow.com/questions/44522012/rectangle-detection-tracking-using-opencv
 std::vector<std::vector<unsigned int>> TF::GetEdges(ste::Matrix<unsigned char> img) {
 	std::cout << "edge" << std::endl;
 	std::vector<unsigned long long> len = {img.size()};
@@ -227,6 +228,7 @@ std::vector<double> TF::GetPassMAt(std::vector<std::vector<unsigned int>> edges)
 	return res;
 }
 
+// https://docs.opencv.org/master/dd/d52/tutorial_js_geometric_transformations.html
 ste::Matrix<double> TF::ToTF(ste::Matrix<double> img, std::vector<double> VectTF) {
 	std::cout << "tf" << std::endl;
 	std::vector<unsigned long long> len = {img.size()};
