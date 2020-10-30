@@ -148,7 +148,7 @@ void MobileBase::PrintPos() {
 	std::cout << "x=" << m_posX << " y=" << m_posY << " a=" << m_angle << std::endl;
 }
 
-std::vector<double> MobileBase::GetPosAct() {
+std::vector<double> MobileBase::GetCurrentPos() {
 	std::vector<double> res = {m_posX, m_posY, m_angle};
 	return res;
 }

@@ -32,7 +32,7 @@ class MobileBase {
 		void SetSpeedCons(double speed);
 		double GetSpeedCons();
 		void PrintPos();
-		std::vector<double> GetPosAct();
+		std::vector<double> GetCurrentPos();
 
 		static void* MobileBaseHelper(void *context);
         void StartThread();
