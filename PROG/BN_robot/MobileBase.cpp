@@ -148,9 +148,11 @@ void MobileBase::PrintPos() {
 	std::cout << "x=" << m_posX << " y=" << m_posY << " a=" << m_angle << std::endl;
 }
 
-std::vector<double> MobileBase::GetCurrentPos() {
-	return std::vector<double> ({m_posX, m_posY, m_angle});
+std::valarray<double> MobileBase::GetCurrentPos() {
+	return std::valarray<double> ({m_posX, m_posY, m_angle});
 }
+
+std::valarray<double> MobileBase:currentPos_helper(void* context){return static_cast<MobileBase*>(context)->GetCurrentPos();}
 
 void* MobileBase::ThreadRun() {
 	ICP myICP;
