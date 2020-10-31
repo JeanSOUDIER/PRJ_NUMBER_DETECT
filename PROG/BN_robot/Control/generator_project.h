@@ -5,6 +5,8 @@
 
 #include "generator.h"
 
+#include "Robot/MobileBase.hpp"
+
 namespace Control {
 
 class System_project;
@@ -16,7 +18,7 @@ class Generator_Project : public Generator{
 
 public:
 
-    Generator_Project(System_project* sys , std::valarray<scalar> initial_conditions = {0 , 0}, const scalar &line_length = 10 , const scalar &arc_diameter = 5);
+    Generator_Project(System_project* sys , MobileBase *robot ,std::valarray<scalar> initial_conditions = {0 , 0}, const scalar &line_length = 10 , const scalar &arc_diameter = 5);
     ~Generator_Project() override;
 
     void compute() override;
@@ -33,6 +35,7 @@ private:
 
     scalar _line_length;
     scalar _arc_diameter;
+    MobileBase *_robot;
 
 
 }; //class Generator_Project

@@ -4,11 +4,12 @@
 namespace Control {
 /**************************************************************************/
 
-Generator_Project::Generator_Project(System_project *sys, std::valarray<scalar> initial_conditions, const scalar &line_length, const scalar &arc_diameter)
+Generator_Project::Generator_Project(System_project *sys , MobileBase *robot, std::valarray<scalar> initial_conditions, const scalar &line_length, const scalar &arc_diameter)
     :Generator(sys , initial_conditions){
 
     _line_length = line_length;
     _arc_diameter = arc_diameter;
+    _robot = robot;
 
 }
 
@@ -25,9 +26,7 @@ void Generator_Project::compute(){
                                     !is_on_part_2_flag &&
                                     !is_on_part_3_flag);
 
-    //TODO
-    constexpr scalar v = 1;
-
+    const scalar v = _robot->GetSpeedCons();
 
     x() = is_on_part_1_flag * (0)+
           is_on_part_2_flag * (x() + Ts()*v)+
