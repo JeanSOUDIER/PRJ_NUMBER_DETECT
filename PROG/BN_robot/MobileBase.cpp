@@ -115,7 +115,7 @@ void MobileBase::GetLidarPoints(bool nb) {
 }
 
 void MobileBase::SetMotBalance(const double rho, const double theta) {
-	const int facteur = 4;
+	constexpr int facteur = 4;
 	SetSpeed(rho+facteur*theta, rho-facteur*theta);
 }
 
@@ -149,8 +149,7 @@ void MobileBase::PrintPos() {
 }
 
 std::vector<double> MobileBase::GetCurrentPos() {
-	std::vector<double> res = {m_posX, m_posY, m_angle};
-	return res;
+	return std::vector<double> ({m_posX, m_posY, m_angle});
 }
 
 void* MobileBase::ThreadRun() {
