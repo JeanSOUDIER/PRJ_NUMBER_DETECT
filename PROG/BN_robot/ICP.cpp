@@ -10,7 +10,7 @@ ICP::ICP(const double error, const unsigned int MaxIter) {
 
 ICP::~ICP() {}
 
-std::vector<double> ICP::GetPos(const std::vector<std::vector<double>> DynData, const std::vector<std::vector<double>> StaData) {
+std::vector<double> ICP::GetPos(const std::vector<std::vector<double>> &DynData, const std::vector<std::vector<double>> &StaData) {
 	// ---- Init ---- //
 	std::vector<std::vector<double>> model = {std::vector<double>() , std::vector<double>()};
 	std::vector<std::vector<double>> data = {std::vector<double>() , std::vector<double>()};
@@ -149,16 +149,19 @@ std::vector<double> ICP::GetPos(const std::vector<std::vector<double>> DynData, 
 	return result;
 }
 
-std::vector<ste::Matrix<double>> ICP::svd(ste::Matrix<double> Mat) {
+std::vector<ste::Matrix<double>> ICP::svd(const ste::Matrix<double> &Mat) {
     // https://lucidar.me/fr/mathematics/singular-value-decomposition-of-a-2x2-matrix/
-	double a = Mat.at(0,0), b = Mat.at(0,1), c = Mat.at(1,0), d = Mat.at(1,1);
-	double tet = std::atan2(2*a*b+2*c*d,a*a+b*b-c*c-d*d)/2;
+	const double a = Mat.at(0,0);
+    const double b = Mat.at(0,1);
+    const double c = Mat.at(1,0);
+    const double d = Mat.at(1,1);
+	const double tet = std::atan2(2*a*b+2*c*d,a*a+b*b-c*c-d*d)/2;
 	//PB
-	ste::Matrix<double> U({{-std::cos(tet), -std::sin(tet)}, {-std::sin(tet), std::cos(tet)}});
-	double phi = std::atan2(2*a*b+2*c*d,a*a-b*b+c*c-d*d)/2;
-	double s11 = (a*std::cos(tet)+c*std::sin(tet))*std::cos(phi) + (b*std::cos(tet)+d*std::sin(tet))*std::sin(phi);
-	double s22 = (a*std::sin(tet)-c*std::cos(tet))*std::sin(phi) + (-b*std::sin(tet)+d*std::cos(tet))*std::cos(phi);
-	ste::Matrix<double> V({{-s11/std::abs(s11)*std::cos(phi), -s22/std::abs(s22)*std::sin(phi)}, {-s11/std::abs(s11)*std::sin(phi), s22/std::abs(s22)*std::cos(phi)}});
+	const ste::Matrix<double> U({{-std::cos(tet), -std::sin(tet)}, {-std::sin(tet), std::cos(tet)}});
+	const double phi = std::atan2(2*a*b+2*c*d,a*a-b*b+c*c-d*d)/2;
+	const double s11 = (a*std::cos(tet)+c*std::sin(tet))*std::cos(phi) + (b*std::cos(tet)+d*std::sin(tet))*std::sin(phi);
+	const double s22 = (a*std::sin(tet)-c*std::cos(tet))*std::sin(phi) + (-b*std::sin(tet)+d*std::cos(tet))*std::cos(phi);
+	const ste::Matrix<double> V({{-s11/std::abs(s11)*std::cos(phi), -s22/std::abs(s22)*std::sin(phi)}, {-s11/std::abs(s11)*std::sin(phi), s22/std::abs(s22)*std::cos(phi)}});
 	std::vector<ste::Matrix<double>> res = {U,V};
 	return res;
 }
@@ -174,7 +177,7 @@ double ICP::median(std::vector<double> vec) {
         return size % 2 == 0 ? (vec[mid] + vec[mid-1]) / 2 : vec[mid];
 }
 
-std::vector<std::vector<double>> ICP::nearestNeighbor(std::vector<std::vector<double>> model, std::vector<std::vector<double>> data) {
+std::vector<std::vector<double>> ICP::nearestNeighbor(const std::vector<std::vector<double>> &model, const std::vector<std::vector<double>> &data) {
 	std::vector<double> id(model.at(0).size());
 	std::vector<double> dist(model.at(0).size());
 	double d;
@@ -193,12 +196,11 @@ std::vector<std::vector<double>> ICP::nearestNeighbor(std::vector<std::vector<do
 	return res;
 }
 
-double ICP::distEucl(double a1, double a2, double b1, double b2) {
-    double res = sqrt((a1-b1)*(a1-b1)+(a2-b2)*(a2-b2));
-	return res;
+double ICP::distEucl(const double &a1, const double &a2, double const &b1, const double &b2) {
+    return std::sqrt((a1-b1)*(a1-b1)+(a2-b2)*(a2-b2));
 }
 
-double ICP::pdt(std::vector<double> a, std::vector<double> b) {
+double ICP::pdt(const std::vector<double> &a, const std::vector<double> &b) {
     double res = 0;
     for(unsigned int i=0;i<a.size();i++) {
         res += a.at(i)*b.at(i);
@@ -206,6 +208,6 @@ double ICP::pdt(std::vector<double> a, std::vector<double> b) {
     return res;
 }
 
-bool ICP::SaveImg(ste::Matrix<double> Map, std::string name) {
+bool ICP::SaveImg(const ste::Matrix<double> &Map, const std::string &name) {
 	return Utility::writeCSV(name,Map.toVector(),";");
 }
