@@ -4,7 +4,7 @@ namespace Control {
 /**************************************************************************/
 System_project::System_project(const uint64_t Ts_ms, MobileBase *robot) : System(Ts_ms){
 
-    generator = new Generator_Project(this , {0 , 0} , 10 , 5);
+    generator = new Generator_Project(this , robot , {0 , 0} , 10 , 5);
     feedback_sensor = new Sensor<MobileBase*>(this , &robot , &MobileBase::currentPos_helper , {0 , 0 , 0});
 
     d_x_in = new Differentiator(this , generator , 0 , Ts() , 0 , 1 , true);
@@ -12,9 +12,9 @@ System_project::System_project(const uint64_t Ts_ms, MobileBase *robot) : System
 
     theta_in = new FunctionBlock(this , {d_x_in , d_y_in} , {0 , 0});
 
-    feedback_x_comparator = new Adder(this , {generator , feedback_sensor} , {0 , 0} , {Adder::POLARITY::PLUS} , 1);
-    feedback_y_comparator = new Adder(this , {generator , feedback_sensor} , {1 , 1} , {Adder::POLARITY::PLUS} , 1);
-    feedback_theta_comparator = new Adder(this , {theta_in , feedback_sensor} , {0 , 2} , {Adder::POLARITY::PLUS} , 1);;
+    feedback_x_comparator = new Adder(this , {generator , feedback_sensor} , {0 , 0} , {Adder::POLARITY::PLUS , Adder::POLARITY::MINUS} , 1);
+    feedback_y_comparator = new Adder(this , {generator , feedback_sensor} , {1 , 1} , {Adder::POLARITY::PLUS , Adder::POLARITY::MINUS} , 1);
+    feedback_theta_comparator = new Adder(this , {theta_in , feedback_sensor} , {0 , 2} , {Adder::POLARITY::PLUS , Adder::POLARITY::MINUS} , 1);;
 
 
     to_parameters = new FunctionBlock(this , {feedback_x_comparator , feedback_y_comparator , feedback_theta_comparator , feedback_sensor} , {0 , 0 , 0 , 2});
@@ -25,13 +25,13 @@ System_project::System_project(const uint64_t Ts_ms, MobileBase *robot) : System
 
 
     std::function<std::valarray<scalar>(std::valarray<scalar>)> atan_2_lambda = [=](const std::valarray<scalar>&){
-        return std::valarray<scalar> {static_cast<scalar>(std::fmod(std::atan2(d_y_in->output() , d_x_in->output()) , 2*PI_LD))};
+        return std::valarray<scalar> {static_cast<scalar>(std::fmod(std::atan2(d_y_in->output() , d_x_in->output()) , T_PI_LD))};
     };
 
 
     std::function<std::valarray<scalar>(std::valarray<scalar>)> to_parameters_lambda = [=](const std::valarray<scalar>&){
 
-        const scalar alpha = static_cast<scalar>(std::fmod(std::atan2(feedback_y_comparator->output() ,feedback_x_comparator->output() ) , 2*PI_LD)) - feedback_theta_comparator->output();
+        const scalar alpha = static_cast<scalar>(std::fmod(std::atan2(feedback_y_comparator->output() ,feedback_x_comparator->output() ) , T_PI_LD)) - feedback_theta_comparator->output();
 
         return std::valarray<scalar>({
                                        std::sqrt(std::pow(feedback_x_comparator->output() , 2) + std::pow(feedback_y_comparator->output() , 2)),
