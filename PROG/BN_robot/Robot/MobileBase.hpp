@@ -18,9 +18,9 @@
 
 #include "Lidar.hpp"
 #include "Usb.hpp"
-#include "Regression.hpp"
-#include "utility.h"
-#include "ICP.hpp"
+#include "Algorithms/Regression.hpp"
+#include "SequenceHandler_STL/utility.h"
+#include "Algorithms/ICP.hpp"
 
 class MobileBase {
     public:

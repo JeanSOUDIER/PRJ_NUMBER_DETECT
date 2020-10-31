@@ -8,7 +8,7 @@
 #include "Lidar.hpp"
 #include "Bluetooth.hpp"
 #include "MobileBase.hpp"
-#include "sequencehandler.h"
+#include "SequenceHandler_STL/sequencehandler.h"
 
 constexpr int DIST_BASE = 50;
 constexpr int DIST_ARM = 50;
