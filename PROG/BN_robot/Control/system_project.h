@@ -30,10 +30,12 @@ public:
 
     scalar v() const;
     scalar w() const;
+    
+    void compute() override;
 
 protected:
 
-    void compute() override;
+    
 
 
 private:
