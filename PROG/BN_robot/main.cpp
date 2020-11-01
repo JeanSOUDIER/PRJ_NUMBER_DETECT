@@ -15,18 +15,25 @@ int main() {
     constexpr int ttyACM0 = 24;
     constexpr int ttyS0 = 0;
 
-    /*Sequencer Prgm(
-        new Arm(6, ttyUSB_ARBO, 115200),
-        nullptr,//new Bluetooth(rfcomm0, 115200),
-        new MobileBase(ttyACM0, 115200, new Lidar(ttyUSB_LDS, 230400))
-    );
+    int test;
+    std::cout << "learn mode ?" << std::endl;
+    std::cin >> test;
+    if(test != 1) {
+        Sequencer Prgm(
+            new Arm(6, ttyUSB_ARBO, 115200),
+            nullptr,//new Bluetooth(rfcomm0, 115200),
+            new MobileBase(ttyACM0, 115200, new Lidar(ttyUSB_LDS, 230400))
+        );
 
-    std::cout <<"----LOOP----" << std::endl;
-    while(Prgm.Execute()) {}*/
+        std::cout <<"----LOOP----" << std::endl;
+        while(Prgm.Execute()) {}
+    } else {
+        MobileBase OpenCR(ttyACM0, 115200, new Lidar(ttyUSB_LDS, 230400));
+        delay(1000);
 
-    //Arm WidowXL(6, ttyUSB_ARBO, 115200);
-    //WidowXL.ToKeyboard(false);
-
+        Arm WidowXL(6, ttyUSB_ARBO, 115200);
+        WidowXL.ToKeyboard(false);
+    }
 
     /*MobileBase OpenCR(ttyACM0, 115200, nullptr);
     for(int i=-330;i<331;i+=10) {
@@ -55,15 +62,16 @@ int main() {
     //BLE.SetTX("hello");
     delay(1000);*/
 
-    MobileBase OpenCR(ttyACM0, 115200, new Lidar(ttyUSB_LDS, 230400));
-    delay(1000);
+    //MobileBase OpenCR(ttyACM0, 115200, new Lidar(ttyUSB_LDS, 230400));
+    //delay(1000);
+    //OpenCR.GoPos(0,0,M_PI);
     //OpenCR.GetLidarPoints();
-    std::cout << "tic" << std::endl;
+    /*std::cout << "tic" << std::endl;
     OpenCR.PrintPos();
     OpenCR.GoPos(1000,0,0);
     std::cout << "toc" << std::endl;
     OpenCR.PrintPos();
-    delay(1000);
+    delay(1000);*/
 
     
     //Lidar RPLidar(true, ttyUSB_LDS, 230400);

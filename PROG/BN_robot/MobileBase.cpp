@@ -26,9 +26,9 @@ MobileBase::MobileBase(const double posX, const double posY, const double angle,
 	//thread
 	if(m_lidar_start) {
 		m_RPLidar->StartThread();
+		delay(1000);
+		StartPlacing();
 	}
-	delay(1000);
-	StartPlacing();
 	delay(1000);
 	m_start.store(true,std::memory_order_release);
 	StartThread();
@@ -47,13 +47,24 @@ MobileBase::~MobileBase() {
 
 void MobileBase::StartPlacing() {
 	char c = '\0';
+	double angle, dist_85, dist_board;
+	do{
+		GetLidarPoints(false);
+		dist_85 = std::sqrt(m_posXlid.at(85)*m_posXlid.at(85)+m_posYlid.at(85)*m_posYlid.at(85));
+		dist_board = std::sqrt(m_posYlid.at(90)*m_posYlid.at(90)+dist_85*dist_85-2*m_posYlid.at(90)*dist_85*std::cos(5*M_PI/180));
+		angle = std::acos((dist_85*dist_85-m_posYlid.at(90)*m_posYlid.at(90)-dist_board*dist_board)/(-2*m_posYlid.at(90)*dist_board))-M_PI/2;
+		std::cout << 2*angle << std::endl;
+		std::cin >> c;
+	}while(c != '1');
+	GoPos(0,0,2*angle);
+	c = '\0';
 	do{
 		GetLidarPoints(false);
 		std::cout << m_posYlid.at(90) << std::endl;
 		std::cin >> c;
 	}while(c != '1');
-	GoPos(0,m_posYlid.at(90)-300,0);
-	GoPos(0,-1*Utility::sign(m_posYlid.at(90)-300),0);
+	GoPos(0,m_posYlid.at(90)-START_DIST,-M_PI*Utility::sign(m_posYlid.at(90)-START_DIST));
+	std::cout << angle << std::endl;
 }
 
 /*void MobileBase::Go(const double x, const double y, const double a) {
@@ -64,25 +75,29 @@ void MobileBase::StartPlacing() {
 
 void MobileBase::GoPos(const double x, const double y, const double a) {
 	const double r = sqrt(x*x+y*y);
-    double gamma;
-    if(x == 0 && y == 0) {
-    	gamma = 0;
-    } else if(y == 0 && x < 0) {
-    	gamma = M_PI;
-    } else {
-    	gamma = 2*atan(y/(x+r));
-    }
-    gamma += a+M_PI;
-    gamma = std::fmod(gamma,2*M_PI);
-    gamma -= M_PI;
-    if(gamma != 0) {
-    	SetSpeed(-50*Utility::sign(gamma),50*Utility::sign(gamma));
-		delay(std::abs(gamma)*SPEED_ANGLE);
-    }
+    	double gamma;
+    	if(x == 0 && y == 0) {
+    		gamma = 0;
+    	} else if(y == 0 && x < 0) {
+    		gamma = M_PI;
+    	} else {
+    		gamma = 2*atan(y/(x+r));
+    	}
+    	gamma += M_PI;
+    	gamma = std::fmod(gamma,2*M_PI);
+    	gamma -= M_PI;
+    	if(gamma != 0) {
+    		SetSpeed(-SPEED_CST*Utility::sign(gamma),SPEED_CST*Utility::sign(gamma));
+		delay(std::abs(gamma)*2*SPEED_ANGLE);
+    	}
 	if(r != 0) {
-		SetSpeed(200*Utility::sign(r),200*Utility::sign(r));
+		SetSpeed(SPEED_CST*Utility::sign(r),SPEED_CST*Utility::sign(r));
     	std::cout << r*SPEED_NORM << std::endl;
 		delay(r*SPEED_NORM);
+	}
+	if(a != 0) {
+		SetSpeed(-SPEED_CST*Utility::sign(a),SPEED_CST*Utility::sign(a));
+		delay(std::abs(a)*SPEED_ANGLE);
 	}
 	SetSpeed(0, 0);
 }
@@ -114,10 +129,61 @@ void MobileBase::GetLidarPoints(bool nb) {
 	}
 }
 
-void MobileBase::SetMotBalance(const double rho, const double theta) {
+/*void MobileBase::GetPosBase() {
+	std::vector<double> res = FindSegment(12,27);
+	std::cout << res[0] << " " << res[1] << " " << res[2] << std::endl;
+	/*res = FindSegment(910,179);
+	std::cout << res[0] << " " << res[1] << " " << res[2] << std::endl;
+	res = FindSegment(179,269);
+	std::cout << res[0] << " " << res[1] << " " << res[2] << std::endl;
+	res = FindSegment(269,359);
+	std::cout << res[0] << " " << res[1] << " " << res[2] << std::endl;*/
+	//points cardinaux
+	//find a*x+b => a,b x4 + dist board
+	//set m_posX, m_posY, m_angle, m_dist_board
+/*}
+
+std::vector<double> MobileBase::FindSegment(int start, int stop) {
+	std::vector<double> subvectorX;
+	std::vector<double> subvectorY;
+	if(start < stop) {
+		for(int i=start;i<stop;i++) {
+			subvectorX.push_back(m_x.at(i));
+			subvectorY.push_back(m_y.at(i));
+		}
+	} else {
+		for(unsigned int i=start;i<m_x.size();i++) {
+			subvectorX.push_back(m_x.at(i));
+			subvectorY.push_back(m_y.at(i));
+		}
+		for(int i=0;i<stop;i++) {
+			subvectorX.push_back(m_x.at(i));
+			subvectorY.push_back(m_y.at(i));
+		}
+	}
+	for(unsigned int i=0;i<subvectorX.size();i++) {
+		if(std::isinf(subvectorX.at(i))) {
+			subvectorX.erase(subvectorX.begin()+i);
+			subvectorY.erase(subvectorY.begin()+i);
+		}
+	}
+	std::vector<std::vector<double>> v = {std::vector<double>() , std::vector<double>()};
+
+    for(unsigned int i=0;i<subvectorX.size();i++) {
+      v.at(0).push_back(subvectorX.at(i));
+      v.at(1).push_back(subvectorY.at(i));
+    }
+
+    Utility::writeCSV("graphXYreduit",v,";");
+	Regression reg;
+	std::vector<double> res = reg.RegressionLineaire(subvectorX,subvectorY);
+	return res;
+}*/
+
+/*void MobileBase::SetMotBalance(const double rho, const double theta) {
 	const int facteur = 4;
 	SetSpeed(rho+facteur*theta, rho-facteur*theta);
-}
+}*/
 
 void MobileBase::SetSpeed(int L, int R) {
 	if(L > 330) {L = 330;std::cout << "speed sat 0" << std::endl;}
@@ -146,11 +212,6 @@ double MobileBase::GetSpeedCons() {
 
 void MobileBase::PrintPos() {
 	std::cout << "x=" << m_posX << " y=" << m_posY << " a=" << m_angle << std::endl;
-}
-
-std::vector<double> MobileBase::GetCurrentPos() {
-	std::vector<double> res = {m_posX, m_posY, m_angle};
-	return res;
 }
 
 void* MobileBase::ThreadRun() {

@@ -155,7 +155,8 @@ void Arm::ToKeyboard(bool GamePad) {
     int pas = 10;
     SetTime(0);
     std::cout << "Entrer your caractere : ";
-    char caractere = getchar();
+    char caractere;
+    std::cin >> caractere;
     std::cout << "Votre caractere est : " << caractere << std::endl;
     std::vector<Movement> move;
     bool test = true;
@@ -314,7 +315,7 @@ void Arm::Homing() {
 std::vector<int> Arm::PosWriting(bool state, int time) {
     std::vector<int> pos(3);
     pos[0] = 300;
-    pos[1] = 120;
+    pos[1] = 220;
     pos[2] = 0;
 
     SetTime(time);

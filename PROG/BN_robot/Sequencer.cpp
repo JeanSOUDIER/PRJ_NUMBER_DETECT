@@ -57,9 +57,9 @@ bool Sequencer::Execute() {
 		}
 	}*/
 	int length;
-	std::vector<char> reading = {static_cast<std::vector<char>>(-1)};
+	std::vector<char> reading = {static_cast<std::vector<char>>(255)};
 	if(m_BLE_start) {
-		while(reading.at(0) == -1) {
+		while(reading.at(0) == 255) {
 			reading = m_BLE->GetRX();
 		}
 		if(reading.at(0) == 254) {return false;}
@@ -67,26 +67,29 @@ bool Sequencer::Execute() {
 		std::cout << "length = ";
 		int l;
 		std::cin >> l;
-		if(l == -1) {return false;}
+		if(l < 1) {return false;}
 		length = static_cast<unsigned char>(l);
 		length++;
 		std::cout << static_cast<unsigned char>(length) << std::endl;
 		int inp;
+		reading.clear();
 		for(int i=1;i<length;i++) {
 			std::cout << i << " : ";
-			reading.clear();
 			std::cin >> inp;
-			reading.push_back(static_cast<unsigned char>(inp));
+			reading.push_back(static_cast<unsigned char>(inp)+'0');
 		}
+	}
+	for(unsigned int i=0;i<reading.size();i++) {
+		std::cout << reading.at(i) << std::endl;
 	}
 	//m_TurtleBot->GoPos(0,0,0);
 	m_TurtleBot->SetSpeedCons(0);
 	m_WidowXL->PosWriting(true, 2000);
 	for(unsigned int i=0;i<reading.size();i++) {
 		std::vector<Movement> Move = seqHandler.find(reading[i]).getMovements();
-		m_WidowXL->WriteOff();
 		m_WidowXL->SetTime(0);
-		m_WidowXL->MoveArm(true);
+		//m_WidowXL->WriteOff();
+		//m_WidowXL->MoveArm(true);
 		for(unsigned int k=0;k<Move.size();k++) {
 			m_WidowXL->PlaceArm(Move[k].getX(), Move[k].getY(), Move[k].getZ());
 			m_WidowXL->MoveArm(true);
@@ -96,7 +99,7 @@ bool Sequencer::Execute() {
 			}
 		}
 		m_WidowXL->WriteOff();
-        m_WidowXL->MoveArm(true);
+        	m_WidowXL->MoveArm(true);
 		m_WidowXL->PosWriting(false, 0);
 		if(i < reading.size()-1) {
         	m_WidowXL->MoveArm(false);

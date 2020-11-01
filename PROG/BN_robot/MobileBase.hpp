@@ -32,7 +32,6 @@ class MobileBase {
 		void SetSpeedCons(double speed);
 		double GetSpeedCons();
 		void PrintPos();
-		std::vector<double> GetCurrentPos();
 
 		static void* MobileBaseHelper(void *context);
         void StartThread();
@@ -43,8 +42,11 @@ class MobileBase {
 		//void GetPosBase();
 		//std::vector<double> FindSegment(int start, int stop);
 
-		const double SPEED_NORM = 6.25;
-		const double SPEED_ANGLE = 1800*SPEED_NORM/M_PI;
+		const double START_DIST = 400;
+		const double SPEED_CST = 50;
+		const double DIST_BT_WHEEL = 23;
+		const double SPEED_NORM = 25.5;
+		const double SPEED_ANGLE = SPEED_NORM*DIST_BT_WHEEL*M_PI;
 
 		std::atomic<bool> m_start;
 		std::atomic<int> m_timeCont;
