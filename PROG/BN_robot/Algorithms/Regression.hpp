@@ -1,7 +1,7 @@
 #ifndef REGRESSION_H
 #define REGRESSION_H
 
-#include "utility.h"
+#include "SequenceHandler_STL/utility.h"
 
 #include <iostream>
 #include <cmath>

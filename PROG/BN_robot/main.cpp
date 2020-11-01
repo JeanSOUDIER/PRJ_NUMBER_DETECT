@@ -1,10 +1,10 @@
 #include <iostream>
 #include <cmath>
-#include "Arm.hpp"
-#include "MobileBase.hpp"
-#include "Bluetooth.hpp"
-#include "Lidar.hpp"
-#include "Sequencer.hpp"
+#include "Robot/Arm.hpp"
+#include "Robot/MobileBase.hpp"
+#include "Robot/Bluetooth.hpp"
+#include "Robot/Lidar.hpp"
+#include "Robot/Sequencer.hpp"
 
 int main() {
     std::cout <<"----SETUP----" << std::endl;
