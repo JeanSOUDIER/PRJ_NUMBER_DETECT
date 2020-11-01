@@ -64,7 +64,6 @@ void MobileBase::StartPlacing() {
 		std::cin >> c;
 	}while(c != '1');
 	GoPos(0,m_posYlid.at(90)-START_DIST,-M_PI*Utility::sign(m_posYlid.at(90)-START_DIST));
-	std::cout << angle << std::endl;
 }
 
 /*void MobileBase::Go(const double x, const double y, const double a) {
@@ -101,10 +100,6 @@ void MobileBase::GoPos(const double x, const double y, const double a) {
 	}
 	SetSpeed(0, 0);
 }
-
-/*double MobileBase::getDistBoard() {
-	return m_dist_board;
-}*/
 
 void MobileBase::GetLidarPoints(bool nb) {
 	if(m_lidar_start) {
@@ -162,7 +157,7 @@ std::valarray<double> MobileBase::GetCurrentPos() {
 	return std::valarray<double> ({m_posX, m_posY, m_angle});
 }
 
-std::valarray<double> MobileBase:currentPos_helper(void* context){return static_cast<MobileBase*>(context)->GetCurrentPos();}
+std::valarray<double> MobileBase::currentPos_helper(void* context){return static_cast<MobileBase*>(context)->GetCurrentPos();}
 
 void* MobileBase::ThreadRun() {
 	ICP myICP;

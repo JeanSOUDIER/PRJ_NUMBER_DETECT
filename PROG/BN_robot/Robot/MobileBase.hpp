@@ -18,9 +18,8 @@
 
 #include "Lidar.hpp"
 #include "Usb.hpp"
-#include "Algorithms/Regression.hpp"
-#include "SequenceHandler_STL/utility.h"
-#include "Algorithms/ICP.hpp"
+#include "../SequenceHandler_STL/utility.h"
+#include "../Algorithms/ICP.hpp"
 
 class MobileBase {
     public:
@@ -31,10 +30,7 @@ class MobileBase {
         ~MobileBase();
 
         void StartPlacing();
-        //void Go(const double x, const double y, const double a);
-        //double getDistBoard();
         void GoPos(const double x, const double y, const double a);
-        //void SetMotBalance(const double rho, const double theta);
         void SetSpeed(int L, int R);
         void SetSpeedCons(double speed);
         double GetSpeedCons();
@@ -49,11 +45,12 @@ class MobileBase {
         void* ThreadRun();
         void GetLidarPoints(bool nb);
     private:
-        //void GetPosBase();
-        //std::vector<double> FindSegment(int start, int stop);
 
-        const double SPEED_NORM = 6.25;
-        const double SPEED_ANGLE = 1800*SPEED_NORM/M_PI;
+        const double START_DIST = 400;
+        const double SPEED_CST = 50;
+        const double DIST_BT_WHEEL = 23;
+        const double SPEED_NORM = 25.5;
+        const double SPEED_ANGLE = SPEED_NORM*DIST_BT_WHEEL*M_PI;
 
         std::atomic<bool> m_start;
         std::atomic<int> m_timeCont;

@@ -161,12 +161,6 @@ std::vector<int> Lidar::GetIntensity(void) {
 std::vector<double> Lidar::GetXPos(void) {
 	while(!(m_lidar_endTr.load(std::memory_order_acquire) && m_first_frame.load(std::memory_order_acquire))) {}
     std::vector<double> returnValue(m_xPosSend.size());
-    /*std::generate(returnValue.begin() , returnValue.end() , [this]{
-        static unsigned int index = 0;
-        const double currentItem = m_xPosSend.at(index).load(std::memory_order_acquire);
-        index++;
-        return currentItem;
-    });*/
     for(unsigned int i=0;i<m_xPosSend.size();i++) {
         returnValue.at(i) = m_xPosSend.at(i).load(std::memory_order_acquire);
     }
@@ -175,12 +169,6 @@ std::vector<double> Lidar::GetXPos(void) {
 }
 std::vector<double> Lidar::GetYPos(void) {
     std::vector<double> returnValue(m_yPosSend.size());
-    /*std::generate(returnValue.begin() , returnValue.end() , [this]{
-        static unsigned int index = 0;
-        const double currentItem = m_yPosSend.at(index).load(std::memory_order_acquire);
-        index++;
-        return currentItem;
-    });*/
     for(unsigned int i=0;i<m_yPosSend.size();i++) {
         returnValue.at(i) = m_yPosSend.at(i).load(std::memory_order_acquire);
     }
@@ -195,7 +183,7 @@ void* Lidar::LidarHelper(void *context) {
 }
 
 void* Lidar::ThreadRun() {
-    while(m_start.load(std::memory_order_acquire)) {Poll();}//std::cout<<"poll"<<std::endl;}
+    while(m_start.load(std::memory_order_acquire)) {Poll();}
 
     pthread_exit(NULL);
     return 0;

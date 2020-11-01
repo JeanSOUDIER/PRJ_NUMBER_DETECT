@@ -12,7 +12,7 @@
 #include <string.h>
 #include "Usb.hpp"
 #include "algorithm"
-#include "SequenceHandler_STL/utility.h"
+#include "../SequenceHandler_STL/utility.h"
 
 class MobileBase;
 

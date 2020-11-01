@@ -21,41 +21,6 @@ Bluetooth::~Bluetooth() {
 	delete m_usb;
 }
 
-/*unsigned char Bluetooth::Read() {
-	std::vector<unsigned char> reading(1);
-	reading = m_usb->ReadBytes(1);
-	return reading.at(0);
-}
-
-void Bluetooth::WriteWord(std::string txt) {
-	std::vector<char> a(txt.begin(), txt.end());
-	WriteWord(a);
-}
-
-void Bluetooth::WriteWord(std::vector<char> txt) {
-	txt.insert(txt.begin(),txt.size());
-	txt.insert(txt.begin(),255);
-	m_usb->SendBytes(txt);
-}
-
-bool Bluetooth::IsAddrValid(std::string addr) {
-	if(addr.size() == 17) {
-		std::replace(addr.begin(), addr.end(), ':', ' ');  // replace ':' by ' '
-		std::stringstream ss(addr);
-		int temp;
-		bool test = true;
-		while (ss >> std::hex >> temp) {
-		    if(temp < 0 || temp > 255) {
-		    	test = false;
-		    	break;
-		    }
-		}
-		return test;
-	} else {
-		return false;
-	}
-}*/
-
 void* Bluetooth::ThreadRun() {
     while(m_start.load(std::memory_order_acquire)) {
     	UpdateThread();

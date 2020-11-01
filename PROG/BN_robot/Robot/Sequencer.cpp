@@ -27,35 +27,6 @@ Sequencer::~Sequencer() {
 }
 
 bool Sequencer::Execute() {
-	/*unsigned char length = 1, re = 0;
-	if(m_BLE_start) {
-		while(m_BLE->Read() != 255) {}
-		length = m_BLE->Read();
-		while(re == 0) {
-			re = m_BLE->Read();
-		}
-	} else {
-		std::cout << "length = ";
-		int l;
-		std::cin >> l;
-		if(l == -1) {return false;}
-		length = static_cast<unsigned char>(l);
-		length++;
-		std::cout << static_cast<unsigned char>(length) << std::endl;
-	}
-	std::vector<unsigned char> reading(length);
-	std::fill(reading.begin(), reading.end(), 0);
-	if(re == 252) {return false;} else {reading.at(0) = re;}
-	for(unsigned int i=1;i<length;i++) {
-		if(m_BLE_start) {
-			while(reading.at(i) == 0) {
-				reading.at(i) = m_BLE->Read();
-			}
-		} else {
-			std::cout << i << " : ";
-			std::cin >> reading.at(i);
-		}
-	}*/
 	int length;
 	std::vector<char> reading = {static_cast<std::vector<char>>(255)};
 	if(m_BLE_start) {
@@ -88,8 +59,6 @@ bool Sequencer::Execute() {
 	for(unsigned int i=0;i<reading.size();i++) {
 		std::vector<Movement> Move = seqHandler.find(reading[i]).getMovements();
 		m_WidowXL->SetTime(0);
-		//m_WidowXL->WriteOff();
-		//m_WidowXL->MoveArm(true);
 		for(unsigned int k=0;k<Move.size();k++) {
 			m_WidowXL->PlaceArm(Move[k].getX(), Move[k].getY(), Move[k].getZ());
 			m_WidowXL->MoveArm(true);

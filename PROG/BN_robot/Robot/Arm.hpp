@@ -9,9 +9,9 @@
 #include <termios.h>
 #include <string.h>
 #include "Usb.hpp"
-#include "joystick/js.hpp"
-#include "SequenceHandler_STL/sequencehandler.h"
-#include "SequenceHandler_STL/sequencewriter.h"
+#include "../Joystick/js.hpp"
+#include "../SequenceHandler_STL/sequencehandler.h"
+#include "../SequenceHandler_STL/sequencewriter.h"
 
 constexpr int ARB_SIZE_POSE = 7;
 constexpr int ARB_LOAD_POSE = 8;

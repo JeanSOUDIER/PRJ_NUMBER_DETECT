@@ -8,8 +8,8 @@
 #include <math.h>
 #include <string>
 #include <limits>
-#include "SequenceHandler_STL/utility.h"
-#include "Matrix/Matrix.hpp"
+#include "../SequenceHandler_STL/utility.h"
+#include "../Matrix/Matrix.hpp"
 
 class ICP {
 	public:

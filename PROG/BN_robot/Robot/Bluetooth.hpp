@@ -34,11 +34,7 @@ class Bluetooth {
                 void WriteThread();
                 void UpdateThread();
                 int GetRXsize();
-		/*unsigned char Read();
-		void WriteWord(std::string txt);
-		void WriteWord(std::vector<char> txt);*/
 	private:
-		//bool IsAddrValid(std::string addr);
 
                 std::atomic<bool> m_start;
                 std::atomic<bool> m_rec;
