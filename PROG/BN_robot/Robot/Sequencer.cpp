@@ -53,8 +53,6 @@ bool Sequencer::Execute() {
 	for(unsigned int i=0;i<reading.size();i++) {
 		std::cout << reading.at(i) << std::endl;
 	}
-	//m_TurtleBot->GoPos(0,0,0);
-	m_TurtleBot->SetSpeedCons(0);
 	m_WidowXL->PosWriting(true, 2000);
 	for(unsigned int i=0;i<reading.size();i++) {
 		std::vector<Movement> Move = seqHandler.find(reading[i]).getMovements();
@@ -73,12 +71,24 @@ bool Sequencer::Execute() {
 		if(i < reading.size()-1) {
         	m_WidowXL->MoveArm(false);
         	delay(20);
-			//m_TurtleBot->GoPos(DIST_BASE,0,0); //*(i+1)
-			m_TurtleBot->SetSpeedCons(100);
+			MoveRobot(2000);
 		} else {
 			m_WidowXL->MoveArm(true);
 		}
 	}
 	if(m_BLE_start) {m_BLE->SetTX("done");}
 	return true;
+}
+
+void Sequencer::MoveRobot(const uint64_t time) {
+    System_project sys;
+    auto begin_timestamp std::chrono::high_resolution_clock::now();
+    auto begining_timestamp std::chrono::high_resolution_clock::now();
+    do {
+        auto current_timestamp = std::chrono::high_resolution_clock::now();
+        if(std::chrono::duration_cast<std::chrono::microseconds>(current_timestamp - begin_timestamp).count() >= sys.Ts()) {
+            begin_timestamp std::chrono::high_resolution_clock::now();
+            sys.compute();
+        }
+    }while(std::chrono::duration_cast<std::chrono::microseconds>(current_timestamp - begining_timestamp).count() < time);
 }

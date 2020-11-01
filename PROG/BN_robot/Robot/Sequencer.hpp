@@ -9,6 +9,7 @@
 #include "Bluetooth.hpp"
 #include "MobileBase.hpp"
 #include "../SequenceHandler_STL/sequencehandler.h"
+#include "../Control/system_project.h"
 
 constexpr int DIST_BASE = 50;
 constexpr int DIST_ARM = 50;
@@ -22,6 +23,8 @@ class Sequencer {
 
         bool Execute();
     protected:
+    	void MoveRobot(const uint64_t time);
+
     	bool m_BLE_start;
 
 	private:
