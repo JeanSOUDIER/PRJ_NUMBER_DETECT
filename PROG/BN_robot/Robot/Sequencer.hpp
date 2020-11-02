@@ -3,6 +3,9 @@
 
 #include <iostream>
 #include <string.h>
+#include <valarray>
+#include <ctime>
+#include <chrono>
 
 #include "Arm.hpp"
 #include "Lidar.hpp"
@@ -31,6 +34,8 @@ class Sequencer {
 		Arm* m_WidowXL;
 		Bluetooth* m_BLE;
 		MobileBase* m_TurtleBot;
+
+		System_project* m_sys;
 
 		SequenceHandler seqHandler;
 };
