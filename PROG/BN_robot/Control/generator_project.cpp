@@ -29,13 +29,13 @@ void Generator_Project::compute(){
     const scalar v = _robot->GetSpeedCons();
 
     x() = is_on_part_1_flag * (0)+
-          is_on_part_2_flag * (x() + Ts()*v)+
+          is_on_part_2_flag * (x() + Ts()*v/1000.)+
           is_on_part_3_flag * (arc_diameter())+
-          is_on_part_4_flag * ((x() - Ts()*v > 0)*(x() - Ts()*v));
+          is_on_part_4_flag * ((x() - Ts()*v/1000. > 0)*(x() - Ts()*v/1000.));
 
-    y() = is_on_part_1_flag * (y() + Ts()*v)+
+    y() = is_on_part_1_flag * (y() + Ts()*v/1000.)+
           is_on_part_2_flag * (line_length() + (arc_diameter()/2)*std::sin(PI_LD*x()/arc_diameter()))+
-          is_on_part_3_flag * (y() - Ts()*v)+
+          is_on_part_3_flag * (y() - Ts()*v/1000.)+
           is_on_part_4_flag * (- (arc_diameter()/2)*std::sin(PI_LD*x()/arc_diameter()));
 
 }

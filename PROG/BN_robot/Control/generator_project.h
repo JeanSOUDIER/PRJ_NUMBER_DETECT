@@ -18,7 +18,7 @@ class Generator_Project : public Generator{
 
 public:
 
-    Generator_Project(System_project* sys , MobileBase *robot ,std::valarray<scalar> initial_conditions = {0 , 0}, const scalar &line_length = 10 , const scalar &arc_diameter = 5);
+    Generator_Project(System_project* sys , MobileBase *robot , std::valarray<scalar> initial_conditions = {0 , 0}, const scalar &line_length = 1 , const scalar &arc_diameter = 0.5);
     ~Generator_Project() override;
 
     void compute() override;

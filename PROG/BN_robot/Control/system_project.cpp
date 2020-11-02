@@ -7,8 +7,8 @@ System_project::System_project(const uint64_t Ts_ms, MobileBase *robot, std::val
     generator = new Generator_Project(this , robot , initial_conditions, line_length , arc_diameter);
     feedback_sensor = new Sensor<MobileBase*>(this , robot , &MobileBase::currentPos_helper_meter , {0 , 0 , 0});
 
-    d_x_in = new Differentiator(this , generator , 0 , Ts() , 0 , 1 , true);
-    d_y_in = new Differentiator(this , generator , 1 , Ts() , 0 , 1 , true);
+    d_x_in = new Differentiator(this , generator , 0 , Ts() , 0 , 1 , false);
+    d_y_in = new Differentiator(this , generator , 1 , Ts() , 0 , 1 , false);
 
     theta_in = new FunctionBlock(this , {d_x_in , d_y_in} , {0 , 0});
 
@@ -19,7 +19,7 @@ System_project::System_project(const uint64_t Ts_ms, MobileBase *robot, std::val
     to_parameters = new FunctionBlock(this , {feedback_x_comparator , feedback_y_comparator , feedback_theta_comparator , feedback_sensor} , {0 , 0 , 0 , 2});
 
     to_v_w = new FunctionBlock(this , {to_parameters} , {0});
-    w_integrator = new Integrator(this , to_v_w , 1 , Ts() , 0 , 1 , true);
+    w_integrator = new Integrator(this , to_v_w , 1 , Ts() , 0 , 0 , 1 , false);
     to_vx_vy = new FunctionBlock(this , {to_v_w , w_integrator} , {0 , 1});
 
 
@@ -47,7 +47,7 @@ System_project::System_project(const uint64_t Ts_ms, MobileBase *robot, std::val
 
         return std::valarray<scalar>({
                                       -k_lambda * to_parameters->output(0) ,
-                                      -k_alpha*to_parameters->output(1) - k_beta*to_parameters->output(2)
+                                      - k_alpha*to_parameters->output(1) - k_beta*to_parameters->output(2)
                                      });
     };
 
@@ -63,7 +63,6 @@ System_project::System_project(const uint64_t Ts_ms, MobileBase *robot, std::val
     to_parameters->setFunction(to_parameters_lambda);
     to_v_w->setFunction(to_v_w_lambda);
     to_vx_vy->setFunction(to_vx_vy_lambda);
-
 }
 
 System_project::~System_project(){

@@ -21,7 +21,7 @@
 
 namespace Control {
 
-class System_project : public System {
+class System_project final : public System {
 
 public:
 
@@ -30,10 +30,10 @@ public:
 
     scalar vx() const;
     scalar vy() const;
-    void compute() override;
-
+    
+     void compute() override;
+     
 protected:
-
 
 
 private:
