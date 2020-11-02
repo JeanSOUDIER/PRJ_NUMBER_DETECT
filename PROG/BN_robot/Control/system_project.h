@@ -30,10 +30,10 @@ public:
 
     scalar vx() const;
     scalar vy() const;
+    void compute() override;
 
 protected:
 
-    void compute() override;
 
 
 private:
