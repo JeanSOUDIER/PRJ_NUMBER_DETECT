@@ -28,14 +28,12 @@ public:
     System_project(const uint64_t Ts_ms = 1 , MobileBase* robot= nullptr , std::valarray<scalar> initial_conditions = {0 , 0}, const scalar &line_length = 10 , const scalar &arc_diameter = 5);
     ~System_project();
 
-    scalar v() const;
-    scalar w() const;
-    
-    void compute() override;
+    scalar vx() const;
+    scalar vy() const;
 
 protected:
 
-    
+    void compute() override;
 
 
 private:
@@ -59,6 +57,8 @@ private:
 
 
     FunctionBlock *to_v_w;
+    Integrator *w_integrator;
+    FunctionBlock *to_vx_vy;
 
 };
 

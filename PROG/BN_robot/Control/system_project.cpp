@@ -16,12 +16,11 @@ System_project::System_project(const uint64_t Ts_ms, MobileBase *robot, std::val
     feedback_y_comparator = new Adder(this , {generator , feedback_sensor} , {1 , 1} , {Adder::POLARITY::PLUS , Adder::POLARITY::MINUS} , 1);
     feedback_theta_comparator = new Adder(this , {theta_in , feedback_sensor} , {0 , 2} , {Adder::POLARITY::PLUS , Adder::POLARITY::MINUS} , 1);;
 
-
     to_parameters = new FunctionBlock(this , {feedback_x_comparator , feedback_y_comparator , feedback_theta_comparator , feedback_sensor} , {0 , 0 , 0 , 2});
 
-
     to_v_w = new FunctionBlock(this , {to_parameters} , {0});
-
+    w_integrator = new Integrator(this , to_v_w , 1 , Ts() , 0 , 1 , true);
+    to_vx_vy = new FunctionBlock(this , {to_v_w , w_integrator} , {0 , 1});
 
 
     std::function<std::valarray<scalar>(std::valarray<scalar>)> atan_2_lambda = [=](const std::valarray<scalar>&){
@@ -36,7 +35,7 @@ System_project::System_project(const uint64_t Ts_ms, MobileBase *robot, std::val
         return std::valarray<scalar>({
                                        std::sqrt(std::pow(feedback_x_comparator->output() , 2) + std::pow(feedback_y_comparator->output() , 2)),
                                        alpha,
-                                       feedback_sensor->output(3) - alpha
+                                       feedback_theta_comparator->output() - alpha
                                      });
     };
 
@@ -46,19 +45,24 @@ System_project::System_project(const uint64_t Ts_ms, MobileBase *robot, std::val
         constexpr scalar k_alpha = -220;
         constexpr scalar k_beta = -20;
 
-
         return std::valarray<scalar>({
                                       -k_lambda * to_parameters->output(0) ,
                                       - k_alpha*to_parameters->output(1) - k_beta*to_parameters->output(2)
                                      });
     };
 
+    std::function<std::valarray<scalar>(std::valarray<scalar>)> to_vx_vy_lambda = [=](const std::valarray<scalar>&){
+
+        return std::valarray<scalar>({
+                                       to_v_w->output(0) * std::cos(w_integrator->output()),
+                                       to_v_w->output(1) * std::sin(w_integrator->output())
+                                     });
+    };
+
     theta_in->setFunction(atan_2_lambda);
     to_parameters->setFunction(to_parameters_lambda);
     to_v_w->setFunction(to_v_w_lambda);
-
-    ///TODO ??????? Convert (v ; w) to <something>
-
+    to_vx_vy->setFunction(to_vx_vy_lambda);
 
 }
 
@@ -73,17 +77,15 @@ System_project::~System_project(){
 
     delete theta_in;
 
-
-
     delete feedback_x_comparator;
     delete feedback_y_comparator;
     delete feedback_theta_comparator;
 
-
     delete to_parameters;
 
-
     delete to_v_w;
+    delete w_integrator;
+    delete to_vx_vy;
 
     _blocks.clear();
 
@@ -110,12 +112,14 @@ void System_project::compute(){
 
     to_parameters->compute();
     to_v_w->compute();
+    w_integrator->compute();
+    to_vx_vy->compute();
 
 
 }
 
-scalar System_project::v() const{return to_v_w->output(0);}
-scalar System_project::w() const{return to_v_w->output(1);}
+scalar System_project::vx() const{return to_vx_vy->output(0);}
+scalar System_project::vy() const{return to_vx_vy->output(1);}
 
 /**************************************************************************/
 } //namespace Control
