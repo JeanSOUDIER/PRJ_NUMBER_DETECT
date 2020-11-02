@@ -87,13 +87,16 @@ void Sequencer::MoveRobot(const uint64_t time) {
     auto begin_timestamp = std::chrono::high_resolution_clock::now();
     auto begining_timestamp = std::chrono::high_resolution_clock::now();
     auto current_timestamp = std::chrono::high_resolution_clock::now();
-    m_TurtleBot->SetSpeedCons(0.02);
+    m_TurtleBot->SetSpeedCons(0.2);
     do {
         current_timestamp = std::chrono::high_resolution_clock::now();
         if(std::chrono::duration_cast<std::chrono::microseconds>(current_timestamp - begin_timestamp).count() >= 1000*m_sys->Ts()) {
             begin_timestamp = std::chrono::high_resolution_clock::now();
             m_sys->compute();
-            //m_TurtleBot->SetSpeed(m_sys->vx(), m_sys->vy());
+	    double x = m_sys->vx();
+	    double y = m_sys->vy();
+	    std::cout << x << " " << y << std::endl;
+            m_TurtleBot->SetSpeed(-x, -y);
         }
     } while(std::chrono::duration_cast<std::chrono::microseconds>(current_timestamp - begining_timestamp).count() < 1000*time);
     m_TurtleBot->SetSpeedCons(0);
