@@ -66,12 +66,6 @@ void MobileBase::StartPlacing() {
 	GoPos(0,m_posYlid.at(90)-START_DIST,-M_PI*Utility::sign(m_posYlid.at(90)-START_DIST));
 }
 
-/*void MobileBase::Go(const double x, const double y, const double a) {
-	m_posXgoal = x;
-	m_posYgoal = y;
-	m_angle_goal = a;
-}*/
-
 void MobileBase::GoPos(const double x, const double y, const double a) {
 	const double r = sqrt(x*x+y*y);
     	double gamma;
@@ -119,8 +113,6 @@ void MobileBase::GetLidarPoints(bool nb) {
 			m_posXlid.push_back(xP.at(i));
 			m_posYlid.push_back(yP.at(i));
 		}
-		//m_RPLidar->Display(false);
-		//std::cout << "out : " << m_RPLidar->SaveLidarPoints() << std::endl;
 	}
 }
 
