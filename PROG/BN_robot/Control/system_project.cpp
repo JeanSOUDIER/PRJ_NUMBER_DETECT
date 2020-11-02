@@ -99,21 +99,44 @@ void System_project::compute(){
     /// Indeed, all blocks were declared in the correct order of computation. This implies that is was not necessary to declare them as attribute of the class.
     /// However, for documentation purposes, this is let as such.
 
+    std::cout << "System compute called.\n" << std::endl;
+
     generator->compute();
+    std::cout << "xr: " << generator->x() << " yr: " << generator->y() << "\n";
+
     feedback_sensor->compute();
+    std::cout << "x (feedback): " << feedback_sensor->output(0) << " y (feedback): " << feedback_sensor->output(1)  << " theta (feedback): "<< feedback_sensor->output(2) << "\n";
 
     d_x_in->compute();
+    std::cout << "d_x_r: " << d_x_in->output();
+
     d_y_in->compute();
+    std::cout << "d_y_r: " << d_y_in->output();
+
     theta_in->compute();
+    std::cout << "theta_in: " << theta_in->output(0);
 
     feedback_x_comparator->compute();
+    std::cout << "feedback_x_comparator: " << feedback_x_comparator->output() << "\n";
+
     feedback_y_comparator->compute();
+    std::cout << "feedback_y_comparator: " << feedback_y_comparator->output() << "\n";;
+
     feedback_theta_comparator->compute();
+    std::cout << "feedback_theta_comparator: " << feedback_theta_comparator->output() << "\n";;
 
     to_parameters->compute();
+    std::cout << "lambda: " << to_parameters->output(0) << " alpha: " << to_parameters->output(1) << " beta: " << to_parameters->output(2) << "\n";
+
     to_v_w->compute();
+    std::cout << "v: " << to_v_w->output(0) << " w: " << to_v_w->output(1)  << "\n";
+
     w_integrator->compute();
+    std::cout << "w_integrator: " << w_integrator->output() << "\n";
+
+
     to_vx_vy->compute();
+    std::cout << "vx: " << to_vx_vy->output(0) << " vy: " << to_vx_vy->output(1) << "\n"<<std::endl;
 
 
 }

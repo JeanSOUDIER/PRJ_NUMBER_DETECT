@@ -17,8 +17,8 @@ Sequencer::Sequencer(Arm* WidowXL, Bluetooth* BLE, MobileBase* TurtleBot) {
 		path = "CSV/seq_"+std::to_string(i)+".csv";
 		seqHandler.addSequence(static_cast<unsigned char>(i),path);
 	}
-	std::valarray<Control::scalar> posi = static_cast<std::valarray<Control::scalar>>(m_TurtleBot->GetCurrentPos());
-	m_sys = new Control::System_project{1, m_TurtleBot, posi, 1, 0.5};
+	//std::valarray<Control::scalar> posi = static_cast<std::valarray<Control::scalar>>(m_TurtleBot->GetCurrentPos());
+	m_sys = new Control::System_project{1, m_TurtleBot, {m_TurtleBot->GetCurrentPos()[0] , m_TurtleBot->GetCurrentPos()[1]}, 1, 0.5};
     std::cout << "Sequencer start" << std::endl;
 }
 
