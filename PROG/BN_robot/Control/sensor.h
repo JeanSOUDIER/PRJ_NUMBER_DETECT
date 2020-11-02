@@ -13,7 +13,7 @@ class Sensor : public Block {
 public:
 
     Sensor(System* sys,
-           Device* device, std::function<std::valarray<scalar>(Device*)> accessor,
+           Device device, std::function<std::valarray<scalar>(Device)> accessor,
            const uint64_t &output_number)
         : Block(sys , {} , output_number , 1){
 
@@ -23,7 +23,7 @@ public:
     }
 
     Sensor(System* sys,
-           Device* device, std::function<std::valarray<scalar>(Device*)> accessor,
+           Device device, std::function<std::valarray<scalar>(Device)> accessor,
            const std::valarray<scalar> &initial_conditions)
         : Block(sys , {} , initial_conditions , 1){
 
@@ -33,8 +33,8 @@ public:
     }
 
 
-    Device* device(){return _device;}
-    std::function<std::valarray<scalar>(Device*)>& accessor(){return _device_accessor;}
+    Device& device(){return _device;}
+    std::function<std::valarray<scalar>(Device)>& accessor(){return _device_accessor;}
 
 
     void addInput(Block *block , const uint64_t &bind_index) override{(void)block; (void)bind_index;} //Do nothing for this particular instanciation of Block.
@@ -45,8 +45,8 @@ public:
 
 protected:
 
-    Device* _device;
-    std::function<std::valarray<scalar>(Device*)> _device_accessor;
+    Device _device;
+    std::function<std::valarray<scalar>(Device)> _device_accessor;
 
 };//class Sensor
 

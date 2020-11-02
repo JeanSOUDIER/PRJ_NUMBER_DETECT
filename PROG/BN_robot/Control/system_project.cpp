@@ -5,7 +5,7 @@ namespace Control {
 System_project::System_project(const uint64_t Ts_ms, MobileBase *robot, std::valarray<scalar> initial_conditions, const scalar &line_length, const scalar &arc_diameter) : System(Ts_ms){
 
     generator = new Generator_Project(this , robot , initial_conditions, line_length , arc_diameter);
-    feedback_sensor = new Sensor<MobileBase*>(this , &robot , &MobileBase::currentPos_helper , {0 , 0 , 0});
+    feedback_sensor = new Sensor<MobileBase*>(this , robot , &MobileBase::currentPos_helper , {0 , 0 , 0});
 
     d_x_in = new Differentiator(this , generator , 0 , Ts() , 0 , 1 , true);
     d_y_in = new Differentiator(this , generator , 1 , Ts() , 0 , 1 , true);
@@ -30,7 +30,7 @@ System_project::System_project(const uint64_t Ts_ms, MobileBase *robot, std::val
 
     std::function<std::valarray<scalar>(std::valarray<scalar>)> to_parameters_lambda = [=](const std::valarray<scalar>&){
 
-        const scalar alpha = static_cast<scalar>(std::fmod(std::atan2(feedback_y_comparator->output() ,feedback_x_comparator->output() ) , T_PI_LD)) - feedback_theta_comparator->output();
+        const scalar alpha = static_cast<scalar>(std::fmod(std::atan2(feedback_y_comparator->output() ,feedback_x_comparator->output() ) , T_PI_LD)) - feedback_sensor->output(2);
 
         return std::valarray<scalar>({
                                        std::sqrt(std::pow(feedback_x_comparator->output() , 2) + std::pow(feedback_y_comparator->output() , 2)),
@@ -47,7 +47,7 @@ System_project::System_project(const uint64_t Ts_ms, MobileBase *robot, std::val
 
         return std::valarray<scalar>({
                                       -k_lambda * to_parameters->output(0) ,
-                                      - k_alpha*to_parameters->output(1) - k_beta*to_parameters->output(2)
+                                      -k_alpha*to_parameters->output(1) - k_beta*to_parameters->output(2)
                                      });
     };
 
@@ -99,44 +99,44 @@ void System_project::compute(){
     /// Indeed, all blocks were declared in the correct order of computation. This implies that is was not necessary to declare them as attribute of the class.
     /// However, for documentation purposes, this is let as such.
 
-    std::cout << "System compute called.\n" << std::endl;
+    //std::cout << "System compute called.\n" << std::endl;
 
     generator->compute();
-    std::cout << "xr: " << generator->x() << " yr: " << generator->y() << "\n";
+    //std::cout << "xr: " << generator->x() << " yr: " << generator->y() << "\n";
 
     feedback_sensor->compute();
-    std::cout << "x (feedback): " << feedback_sensor->output(0) << " y (feedback): " << feedback_sensor->output(1)  << " theta (feedback): "<< feedback_sensor->output(2) << "\n";
+    //std::cout << "x (feedback): " << feedback_sensor->output(0) << " y (feedback): " << feedback_sensor->output(1)  << " theta (feedback): "<< feedback_sensor->output(2) << "\n";
 
     d_x_in->compute();
-    std::cout << "d_x_r: " << d_x_in->output();
+    //std::cout << "d_x_r: " << d_x_in->output();
 
     d_y_in->compute();
-    std::cout << "d_y_r: " << d_y_in->output();
+    //std::cout << "d_y_r: " << d_y_in->output();
 
     theta_in->compute();
-    std::cout << "theta_in: " << theta_in->output(0);
+    //std::cout << "theta_in: " << theta_in->output(0);
 
     feedback_x_comparator->compute();
-    std::cout << "feedback_x_comparator: " << feedback_x_comparator->output() << "\n";
+    //std::cout << "feedback_x_comparator: " << feedback_x_comparator->output() << "\n";
 
     feedback_y_comparator->compute();
-    std::cout << "feedback_y_comparator: " << feedback_y_comparator->output() << "\n";;
+    //std::cout << "feedback_y_comparator: " << feedback_y_comparator->output() << "\n";;
 
     feedback_theta_comparator->compute();
-    std::cout << "feedback_theta_comparator: " << feedback_theta_comparator->output() << "\n";;
+    //std::cout << "feedback_theta_comparator: " << feedback_theta_comparator->output() << "\n";;
 
     to_parameters->compute();
-    std::cout << "lambda: " << to_parameters->output(0) << " alpha: " << to_parameters->output(1) << " beta: " << to_parameters->output(2) << "\n";
+    //std::cout << "lambda: " << to_parameters->output(0) << " alpha: " << to_parameters->output(1) << " beta: " << to_parameters->output(2) << "\n";
 
     to_v_w->compute();
-    std::cout << "v: " << to_v_w->output(0) << " w: " << to_v_w->output(1)  << "\n";
+    //std::cout << "v: " << to_v_w->output(0) << " w: " << to_v_w->output(1)  << "\n";
 
     w_integrator->compute();
-    std::cout << "w_integrator: " << w_integrator->output() << "\n";
+    //std::cout << "w_integrator: " << w_integrator->output() << "\n";
 
 
     to_vx_vy->compute();
-    std::cout << "vx: " << to_vx_vy->output(0) << " vy: " << to_vx_vy->output(1) << "\n"<<std::endl;
+    //std::cout << "vx: " << to_vx_vy->output(0) << " vy: " << to_vx_vy->output(1) << "\n"<<std::endl;
 
 
 }
