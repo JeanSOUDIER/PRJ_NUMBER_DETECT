@@ -5,7 +5,7 @@ namespace Control {
 System_project::System_project(const uint64_t Ts_ms, MobileBase *robot, std::valarray<scalar> initial_conditions, const scalar &line_length, const scalar &arc_diameter) : System(Ts_ms){
 
     generator = new Generator_Project(this , robot , initial_conditions, line_length , arc_diameter);
-    feedback_sensor = new Sensor<MobileBase*>(this , robot , &MobileBase::currentPos_helper , {0 , 0 , 0});
+    feedback_sensor = new Sensor<MobileBase*>(this , robot , &MobileBase::currentPos_helper_meter , {0 , 0 , 0});
 
     d_x_in = new Differentiator(this , generator , 0 , Ts() , 0 , 1 , true);
     d_y_in = new Differentiator(this , generator , 1 , Ts() , 0 , 1 , true);

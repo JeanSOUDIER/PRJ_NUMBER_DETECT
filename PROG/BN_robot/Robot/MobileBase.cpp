@@ -150,6 +150,14 @@ std::valarray<double> MobileBase::GetCurrentPos() {
 }
 
 std::valarray<double> MobileBase::currentPos_helper(void* context){return static_cast<MobileBase*>(context)->GetCurrentPos();}
+std::valarray<double> MobileBase::currentPos_helper_meter(void* context){
+    
+    std::valarray<double> temp = static_cast<MobileBase*>(context)->GetCurrentPos();
+    
+    return std::valarray<double>({(1./1000.)*temp[0] , (1./1000.)*temp[1] , temp[2]});
+    
+}
+
 
 void* MobileBase::ThreadRun() {
 	ICP myICP;

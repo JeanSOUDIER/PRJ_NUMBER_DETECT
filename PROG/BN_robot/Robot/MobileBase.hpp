@@ -38,6 +38,7 @@ class MobileBase {
         std::valarray<double> GetCurrentPos();
         
         static std::valarray<double> currentPos_helper(void* context);
+        static std::valarray<double> currentPos_helper_meter(void* context);
 
         static void* MobileBaseHelper(void *context);
         void StartThread();
