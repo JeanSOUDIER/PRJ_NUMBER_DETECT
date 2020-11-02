@@ -20,7 +20,7 @@ System_project::System_project(const uint64_t Ts_ms, MobileBase *robot, std::val
     to_parameters = new FunctionBlock(this , {feedback_x_comparator , feedback_y_comparator , feedback_theta_comparator , feedback_sensor} , {0 , 0 , 0 , 2});
 
 
-    to_v_w = new FunctionBlock(this , {to_parameters} , {0 , 1 , 2});
+    to_v_w = new FunctionBlock(this , {to_parameters} , {0});
 
 
 

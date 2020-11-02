@@ -17,8 +17,8 @@ Sequencer::Sequencer(Arm* WidowXL, Bluetooth* BLE, MobileBase* TurtleBot) {
 		path = "CSV/seq_"+std::to_string(i)+".csv";
 		seqHandler.addSequence(static_cast<unsigned char>(i),path);
 	}
-	std::valarray<double> posi = m_TurtleBot->GetCurrentPos();
-	m_sys = new(1, &m_TurtleBot, {posi.at(0), posi.at(1)}, 1, 0.5);
+	std::valarray<Control::scalar> posi = static_cast<std::valarray<Control::scalar>>(m_TurtleBot->GetCurrentPos());
+	m_sys = new Control::System_project{1, m_TurtleBot, posi, 1, 0.5};
     std::cout << "Sequencer start" << std::endl;
 }
 
@@ -84,15 +84,18 @@ bool Sequencer::Execute() {
 }
 
 void Sequencer::MoveRobot(const uint64_t time) {
-    auto begin_timestamp std::chrono::high_resolution_clock::now();
-    auto begining_timestamp std::chrono::high_resolution_clock::now();
+	std::cout << "time " << time << std::endl;
+    auto begin_timestamp = std::chrono::high_resolution_clock::now();
+    auto begining_timestamp = std::chrono::high_resolution_clock::now();
+    auto current_timestamp = std::chrono::high_resolution_clock::now();
     m_TurtleBot->SetSpeedCons(0.02);
     do {
-        auto current_timestamp = std::chrono::high_resolution_clock::now();
-        if(std::chrono::duration_cast<std::chrono::microseconds>(current_timestamp - begin_timestamp).count() >= m_sys->Ts()) {
-            begin_timestamp std::chrono::high_resolution_clock::now();
+		std::cout << "t" << std::endl;
+        current_timestamp = std::chrono::high_resolution_clock::now();
+        if(std::chrono::duration_cast<std::chrono::microseconds>(current_timestamp - begin_timestamp).count() >= 1000*m_sys->Ts()) {
+            begin_timestamp = std::chrono::high_resolution_clock::now();
             m_sys->compute();
         }
-    } while(std::chrono::duration_cast<std::chrono::microseconds>(current_timestamp - begining_timestamp).count() < time);
+    } while(std::chrono::duration_cast<std::chrono::microseconds>(current_timestamp - begining_timestamp).count() < 1000*time);
     m_TurtleBot->SetSpeedCons(0);
 }

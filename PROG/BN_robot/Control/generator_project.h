@@ -5,7 +5,7 @@
 
 #include "generator.h"
 
-#include "Robot/MobileBase.hpp"
+#include "../Robot/MobileBase.hpp"
 
 namespace Control {
 

@@ -13,6 +13,7 @@
 #include "MobileBase.hpp"
 #include "../SequenceHandler_STL/sequencehandler.h"
 #include "../Control/system_project.h"
+#include "../Control/Control_global.h"
 
 constexpr int DIST_BASE = 50;
 constexpr int DIST_ARM = 50;
@@ -35,7 +36,7 @@ class Sequencer {
 		Bluetooth* m_BLE;
 		MobileBase* m_TurtleBot;
 
-		System_project* m_sys;
+		Control::System_project* m_sys;
 
 		SequenceHandler seqHandler;
 };

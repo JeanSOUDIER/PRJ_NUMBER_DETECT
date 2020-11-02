@@ -6,6 +6,7 @@
 #include "system.h"
 #include <vector>
 #include <valarray>
+#include <cmath>
 
 namespace Control {
 

@@ -46,7 +46,7 @@ void Block::resizeOutput(const uint64_t &size){
 
     _outputs.resize(size);
 
-    for(uint64_t index = 0 ; index < std::min(old_size , _outputs.size()) ; index++){_outputs[index] = old_data[index];}
+    for(uint64_t index = 0 ; index < std::min(old_size , static_cast<uint64_t>(_outputs.size())) ; index++){_outputs[index] = old_data[index];}
 
 }
 
