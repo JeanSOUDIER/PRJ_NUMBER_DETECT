@@ -25,7 +25,7 @@ class System_project : public System {
 
 public:
 
-    System_project(const uint64_t Ts_ms = 1 , MobileBase* robot= nullptr);
+    System_project(const uint64_t Ts_ms = 1 , MobileBase* robot= nullptr , std::valarray<scalar> initial_conditions = {0 , 0}, const scalar &line_length = 10 , const scalar &arc_diameter = 5);
     ~System_project();
 
     scalar v() const;
