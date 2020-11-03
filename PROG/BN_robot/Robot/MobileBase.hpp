@@ -15,6 +15,7 @@
 
 #include <valarray>
 #include <vector>
+#include <atomic>
 
 #include "Lidar.hpp"
 #include "Usb.hpp"
@@ -31,11 +32,12 @@ class MobileBase {
 
         void StartPlacing();
         void GoPos(const double x, const double y, const double a);
+        void SetSpeed(std::vector<int> speed);
         void SetSpeed(int L, int R);
         void SetSpeedCons(double speed);
         double GetSpeedCons();
         void PrintPos();
-        std::valarray<double> GetCurrentPos();
+        std::vector<double> GetCurrentPos();
         
         static std::valarray<double> currentPos_helper(void* context);
         static std::valarray<double> currentPos_helper_meter(void* context);
@@ -69,12 +71,12 @@ class MobileBase {
         std::vector<double> m_posXN1lid;
         std::vector<double> m_posYN1lid;
 
-        double m_posX = 0;
-        double m_posY = 0;
-        double m_angle = 0;
-        double m_posXgoal = 0;
-        double m_posYgoal = 0;
-        double m_angle_goal = 0;
+        std::atomic<double> m_posX;
+        std::atomic<double> m_posY;
+        std::atomic<double> m_angle;
+        double m_posXN1 = 0;
+        double m_posYN1 = 0;
+        double m_angleN1 = 0;
         double m_dist_board = 0;
 
         double m_speedNorm = 0;

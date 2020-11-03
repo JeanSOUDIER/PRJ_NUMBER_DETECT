@@ -18,9 +18,9 @@ MobileBase::MobileBase(const double posX, const double posY, const double angle,
 	}
 	m_port_nr = nb_usb;
 	m_bdrate = bdrate;
-	m_posX = posX;
-	m_posY = posY;
-	m_angle = angle;
+	m_posX.store(posX, std::memory_order_release);
+	m_posY.store(posY, std::memory_order_release);
+	m_angle.store(angle, std::memory_order_release);
 	m_RPLidar = RPLidar;
 	m_speedNorm = 0;
 	//thread
@@ -116,6 +116,10 @@ void MobileBase::GetLidarPoints(bool nb) {
 	}
 }
 
+void MobileBase::SetSpeed(std::vector<int> speed) {
+	SetSpeed(speed.at(0), speed.at(1));
+}
+
 void MobileBase::SetSpeed(int L, int R) {
 	if(L > 330) {L = 330;std::cout << "speed sat 0" << std::endl;}
 	if(L < -330) {L = -330;std::cout << "speed sat 1" << std::endl;}
@@ -142,19 +146,19 @@ double MobileBase::GetSpeedCons() {
 }
 
 void MobileBase::PrintPos() {
-	std::cout << "x=" << m_posX << " y=" << m_posY << " a=" << m_angle << std::endl;
+	std::cout << "x=" << m_posX.load() << " y=" << m_posY.load() << " a=" << m_angle.load() << std::endl;
 }
 
-std::valarray<double> MobileBase::GetCurrentPos() {
-	return std::valarray<double> ({m_posX, m_posY, m_angle});
+std::vector<double> MobileBase::GetCurrentPos() {
+	return std::vector<double> ({m_posX.load(), m_posY.load(), m_angle.load()});
 }
 
-std::valarray<double> MobileBase::currentPos_helper(void* context){return static_cast<MobileBase*>(context)->GetCurrentPos();}
+std::valarray<double> MobileBase::currentPos_helper(void* context){}//return static_cast<MobileBase*>(context)->GetCurrentPos();}
 std::valarray<double> MobileBase::currentPos_helper_meter(void* context){
     
-    std::valarray<double> temp = static_cast<MobileBase*>(context)->GetCurrentPos();
+    //std::valarray<double> temp = static_cast<MobileBase*>(context)->GetCurrentPos();
     
-    return std::valarray<double>({(1./1000.)*temp[0] , (1./1000.)*temp[1] , temp[2]});
+    //return std::valarray<double>({(1./1000.)*temp[0] , (1./1000.)*temp[1] , temp[2]});
     
 }
 
@@ -174,9 +178,24 @@ void* MobileBase::ThreadRun() {
 		double delta = (m_endTime-m_startTime)/(CLOCKS_PER_SEC/1000);
 		delta /= 1000;
 		//std::cout << "x=" << res.at(0) << " y=" << res.at(1) << " a=" << res.at(2) << " d=" << delta << std::endl;
-		m_posX += res.at(0)*delta;
-		m_posY += res.at(1)*delta;
-		m_angle += res.at(2)*delta;
+		if(res.at(0)*delta < 10) {
+			m_posX.store(m_posX+res.at(0)*delta, std::memory_order_release);
+		} else {
+			m_posX.store(m_posX+10, std::memory_order_release);
+		}
+		if(res.at(1)*delta < 10) {
+			m_posY.store(m_posY+res.at(1)*delta, std::memory_order_release);
+		} else {
+			m_posY.store(m_posY+10, std::memory_order_release);
+		}
+		if(res.at(0)*delta < 0.4) {
+			m_angle.store(m_angle+res.at(2)*delta, std::memory_order_release);
+		} else {
+			m_angle.store(m_angle+0.4, std::memory_order_release);
+		}
+		m_posXN1 = m_posX.load();
+		m_posYN1 = m_posY.load();
+		m_angleN1 = m_angle.load();
 		m_startTime = std::clock();
     }
     pthread_exit(NULL);

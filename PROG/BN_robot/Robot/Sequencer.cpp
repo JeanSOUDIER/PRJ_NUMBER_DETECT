@@ -12,20 +12,25 @@ Sequencer::Sequencer(Arm* WidowXL, Bluetooth* BLE, MobileBase* TurtleBot) {
 		m_BLE_start = false;
 	}
 	m_TurtleBot = TurtleBot;
+	m_TurtleBot->SetSpeed(0, 0);
 	std::string path;
 	for(int i=0;i<256;i++) {
 		path = "CSV/seq_"+std::to_string(i)+".csv";
 		seqHandler.addSequence(static_cast<unsigned char>(i),path);
 	}
-	std::valarray<Control::scalar> posi = static_cast<std::valarray<Control::scalar>>(m_TurtleBot->GetCurrentPos());
-	m_sys = new Control::System_project{20, m_TurtleBot, {posi[0], posi[1]}, 1, 0.5};
-    std::cout << "Sequencer start" << std::endl;
+	//std::valarray<Control::scalar> posi = static_cast<std::valarray<Control::scalar>>(m_TurtleBot->GetCurrentPos());
+	//m_sys = new Control::System_project{20, m_TurtleBot, {posi[0], posi[1]}, 1, 0.5};
+	m_syst = new asserv(200, 1000, 500);
+	std::cout << "Sequencer start" << std::endl;
 }
 
 Sequencer::~Sequencer() {
+	delay(1000);
+	m_TurtleBot->SetSpeed(0, 0);
 	delete m_WidowXL;
 	if(m_BLE_start) {delete m_BLE;}
-	delete m_sys;
+	//delete m_sys;
+	delete m_syst;
 	delete m_TurtleBot;
 }
 
@@ -74,7 +79,7 @@ bool Sequencer::Execute() {
 		if(i < reading.size()-1) {
         	m_WidowXL->MoveArm(false);
         	delay(20);
-			MoveRobot(5000);
+			MoveRobot(80000);
 		} else {
 			m_WidowXL->MoveArm(true);
 		}
@@ -88,17 +93,28 @@ void Sequencer::MoveRobot(const uint64_t time) {
     auto begin_timestamp = std::chrono::high_resolution_clock::now();
     auto begining_timestamp = std::chrono::high_resolution_clock::now();
     auto current_timestamp = std::chrono::high_resolution_clock::now();
-    m_TurtleBot->SetSpeedCons(0.1);
+    //m_TurtleBot->SetSpeedCons(0.1);
+    m_syst->SetSpeedNorm(0.5);
+    int v = -50;
     do {
         current_timestamp = std::chrono::high_resolution_clock::now();
-        if(std::chrono::duration_cast<std::chrono::milliseconds>(current_timestamp - begin_timestamp).count() >= m_sys->Ts()) {
-            m_sys->compute();
-	double x = m_sys->vx();
-	double y = m_sys->vy();
-            m_TurtleBot->SetSpeed(y, x);
+        if(std::chrono::duration_cast<std::chrono::milliseconds>(current_timestamp - begin_timestamp).count() >= m_syst->GetTe()) {
+            /*m_sys->compute();
+	    double x = m_sys->vx();
+	    double y = m_sys->vy();
+	    std::cout << "vx " << x << " vy " << y << std::endl;
+            m_TurtleBot->SetSpeed(y, x);*/
+	    std::vector<double> test = m_TurtleBot->GetCurrentPos();
+	    std::vector<int> teste = m_syst->Compute(test);
+	    //v *= -1;
+	    //m_TurtleBot->SetSpeed(v,v);
+	    m_TurtleBot->SetSpeed(teste);
+	    std::cout << "t " << std::chrono::duration_cast<std::chrono::milliseconds>(current_timestamp - begin_timestamp).count() << std::endl << std::endl;
             begin_timestamp = std::chrono::high_resolution_clock::now();
         }
     } while(std::chrono::duration_cast<std::chrono::milliseconds>(current_timestamp - begining_timestamp).count() < time);
     m_TurtleBot->SetSpeed(0, 0);
-    m_TurtleBot->SetSpeedCons(0);
+    //m_TurtleBot->SetSpeedCons(0);
+    m_syst->SetSpeedNorm(0);
+    delay(2000);
 }

@@ -7,7 +7,6 @@
 #include "Robot/Sequencer.hpp"
 
 int main() {
-    std::cout <<"----SETUP----" << std::endl;
     constexpr int ttyUSB_ARBO = 38;
     constexpr int ttyUSB_LDS = 39;
     //constexpr int rfcomm0 = 26;
@@ -16,8 +15,9 @@ int main() {
     constexpr int ttyS0 = 0;
 
     int test;
-    std::cout << "learn mode ?" << std::endl;
+    std::cout << "learn mode ? ";
     std::cin >> test;
+    std::cout <<"----SETUP----" << std::endl;
     if(test != 1) {
         Sequencer Prgm(
             new Arm(6, ttyUSB_ARBO, 115200),

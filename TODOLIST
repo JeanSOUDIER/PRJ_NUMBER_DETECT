@@ -1,11 +1,9 @@
 LOW :
- RPI
- - test sequencer (-Jean)
+ Jetson
  - test cam Img (-Jean)
 
 HIGH :
  RPI
- - test dessin (améliorer -Jean)
  - asserv pos (-Erwan)
  Jetson
  - CNN (-Erwan)
