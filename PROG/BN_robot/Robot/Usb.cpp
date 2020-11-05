@@ -28,6 +28,7 @@ void Usb::SendBytes(const std::vector<char> &data) {
         msg.at(i) = static_cast<unsigned char>(data.at(i));
     }
     RS232::cputs(m_port_nr, msg);
+    RS232::flushRXTX(m_port_nr);
 	//std::copy(data.begin(), data.end(), std::ostream_iterator<int>(std::cout, " "));
 	//std::cout << std::endl;
 }

@@ -25,6 +25,9 @@ class asserv {
 		double m_xOld, m_yOld;
 
 		double m_thet;
+		double m_xM, m_yM;
+
+		double m_ex, m_ey;
 };
 
 #endif //ASSERV_H

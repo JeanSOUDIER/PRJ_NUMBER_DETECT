@@ -46,23 +46,26 @@ MobileBase::~MobileBase() {
 }
 
 void MobileBase::StartPlacing() {
-	char c = '\0';
+	bool c = false;
 	double angle, dist_85, dist_board;
+	double N1 = 0;
 	do{
 		GetLidarPoints(false);
 		dist_85 = std::sqrt(m_posXlid.at(85)*m_posXlid.at(85)+m_posYlid.at(85)*m_posYlid.at(85));
 		dist_board = std::sqrt(m_posYlid.at(90)*m_posYlid.at(90)+dist_85*dist_85-2*m_posYlid.at(90)*dist_85*std::cos(5*M_PI/180));
 		angle = std::acos((dist_85*dist_85-m_posYlid.at(90)*m_posYlid.at(90)-dist_board*dist_board)/(-2*m_posYlid.at(90)*dist_board))-M_PI/2;
 		std::cout << 2*angle << std::endl;
-		std::cin >> c;
-	}while(c != '1');
+		if(static_cast<int>(2000*angle) == static_cast<int>(2000*N1) && !std::isnan(angle) && !std::isinf(angle) && 2*angle < 1) {c = true;}
+		N1 = angle;
+	}while(!c);
 	GoPos(0,0,2*angle);
-	c = '\0';
+	c = false;
+	N1 = 0;
 	do{
 		GetLidarPoints(false);
-		std::cout << m_posYlid.at(90) << std::endl;
-		std::cin >> c;
-	}while(c != '1');
+		if(static_cast<int>(N1) == m_posYlid.at(90) && !std::isinf(m_posYlid.at(90)) && !std::isnan(m_posYlid.at(90))) {c = true;}
+		N1 = static_cast<double>(m_posYlid.at(90));
+	}while(!c);
 	GoPos(0,m_posYlid.at(90)-START_DIST,-M_PI*Utility::sign(m_posYlid.at(90)-START_DIST));
 }
 

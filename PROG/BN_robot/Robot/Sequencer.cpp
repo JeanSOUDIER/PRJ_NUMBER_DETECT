@@ -20,7 +20,7 @@ Sequencer::Sequencer(Arm* WidowXL, Bluetooth* BLE, MobileBase* TurtleBot) {
 	}
 	//std::valarray<Control::scalar> posi = static_cast<std::valarray<Control::scalar>>(m_TurtleBot->GetCurrentPos());
 	//m_sys = new Control::System_project{20, m_TurtleBot, {posi[0], posi[1]}, 1, 0.5};
-	m_syst = new asserv(200, 1000, 500);
+	m_syst = new asserv(20, 2000, 1000);
 	std::cout << "Sequencer start" << std::endl;
 }
 
@@ -79,7 +79,7 @@ bool Sequencer::Execute() {
 		if(i < reading.size()-1) {
         	m_WidowXL->MoveArm(false);
         	delay(20);
-			MoveRobot(80000);
+			MoveRobot(2500);
 		} else {
 			m_WidowXL->MoveArm(true);
 		}
@@ -89,12 +89,11 @@ bool Sequencer::Execute() {
 }
 
 void Sequencer::MoveRobot(const uint64_t time) {
-    delay(2000);
     auto begin_timestamp = std::chrono::high_resolution_clock::now();
     auto begining_timestamp = std::chrono::high_resolution_clock::now();
     auto current_timestamp = std::chrono::high_resolution_clock::now();
     //m_TurtleBot->SetSpeedCons(0.1);
-    m_syst->SetSpeedNorm(0.5);
+    m_syst->SetSpeedNorm(100);
     int v = -50;
     do {
         current_timestamp = std::chrono::high_resolution_clock::now();
@@ -104,8 +103,8 @@ void Sequencer::MoveRobot(const uint64_t time) {
 	    double y = m_sys->vy();
 	    std::cout << "vx " << x << " vy " << y << std::endl;
             m_TurtleBot->SetSpeed(y, x);*/
-	    std::vector<double> test = m_TurtleBot->GetCurrentPos();
-	    std::vector<int> teste = m_syst->Compute(test);
+	    //std::vector<double> test = m_TurtleBot->GetCurrentPos();
+	    std::vector<int> teste = m_syst->Compute({0, 0, 0});
 	    //v *= -1;
 	    //m_TurtleBot->SetSpeed(v,v);
 	    m_TurtleBot->SetSpeed(teste);
@@ -113,8 +112,14 @@ void Sequencer::MoveRobot(const uint64_t time) {
             begin_timestamp = std::chrono::high_resolution_clock::now();
         }
     } while(std::chrono::duration_cast<std::chrono::milliseconds>(current_timestamp - begining_timestamp).count() < time);
-    m_TurtleBot->SetSpeed(0, 0);
     //m_TurtleBot->SetSpeedCons(0);
     m_syst->SetSpeedNorm(0);
-    delay(2000);
+    delay(m_syst->GetTe());
+    m_TurtleBot->SetSpeed(0, 0);
+    delay(m_syst->GetTe());
+    m_TurtleBot->SetSpeed(0, 0);
+    delay(m_syst->GetTe());
+    m_TurtleBot->SetSpeed(0, 0);
+    delay(m_syst->GetTe());
+    m_TurtleBot->SetSpeed(0, 0);
 }
