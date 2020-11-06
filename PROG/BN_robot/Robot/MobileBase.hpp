@@ -49,7 +49,7 @@ class MobileBase {
         void GetLidarPoints(bool nb);
     private:
 
-        const double START_DIST = 400;
+        const double START_DIST = 390;
         const double SPEED_CST = 50;
         const double DIST_BT_WHEEL = 23;
         const double SPEED_NORM = 25.5;

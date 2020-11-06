@@ -8,7 +8,7 @@
 class asserv {
 	public:
 		asserv();
-		asserv(int Te, double l, double d);
+		asserv(double Te, double l, double d);
 		~asserv();
 
 		int GetTe();
@@ -17,7 +17,7 @@ class asserv {
 	private:
 		double m_d;
 		double m_l;
-		int m_Te;
+		double m_Te;
 
 		double m_speedN;
 

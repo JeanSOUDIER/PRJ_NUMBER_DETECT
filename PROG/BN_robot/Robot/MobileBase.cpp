@@ -49,6 +49,7 @@ void MobileBase::StartPlacing() {
 	bool c = false;
 	double angle, dist_85, dist_board;
 	double N1 = 0;
+	GetLidarPoints(false);
 	do{
 		GetLidarPoints(false);
 		dist_85 = std::sqrt(m_posXlid.at(85)*m_posXlid.at(85)+m_posYlid.at(85)*m_posYlid.at(85));
@@ -60,6 +61,8 @@ void MobileBase::StartPlacing() {
 	}while(!c);
 	GoPos(0,0,2*angle);
 	c = false;
+	delay(500);
+	GetLidarPoints(false);
 	N1 = 0;
 	do{
 		GetLidarPoints(false);
