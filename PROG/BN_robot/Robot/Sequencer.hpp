@@ -30,6 +30,7 @@ class Sequencer {
         bool Execute();
     protected:
     	void MoveRobot(const uint64_t time);
+	void RollOver(int nb);
 
     	bool m_BLE_start;
 

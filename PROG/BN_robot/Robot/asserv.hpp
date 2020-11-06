@@ -15,6 +15,9 @@ class asserv {
 		std::vector<int> Compute(std::vector<double> pos);
 		void SetSpeedNorm(double speed);
 	private:
+		const double SPEED_TR = 80;
+		const double SPEED_ROT = 1.5;
+
 		double m_d;
 		double m_l;
 		double m_Te;

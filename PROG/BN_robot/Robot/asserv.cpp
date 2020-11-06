@@ -19,9 +19,6 @@ asserv::~asserv() {}
 
 void asserv::SetSpeedNorm(double speed) {
 	m_speedN = speed;
-	if(!m_speedN) {
-		//m_thet = 0;
-	}
 }
 
 int asserv::GetTe() {
@@ -29,7 +26,7 @@ int asserv::GetTe() {
 }
 
 std::vector<int> asserv::Compute(std::vector<double> pos) {
-	std::vector<double> in = {m_xM, m_yM, m_thet};
+	std::vector<double> in = {m_xM, m_yM, m_thet};//pos;
 
 	std::cout << "data x " << in.at(0) << " y " << in.at(1) << " thet " << in.at(2) << std::endl;
 	//compute consigne
@@ -85,11 +82,11 @@ std::vector<int> asserv::Compute(std::vector<double> pos) {
 
 	double vr, vl;
 	if(m_yM > m_l/2) {
-		vr = 80*v*(1+1.4*std::cos(m_thet));
-		vl = 80*v*(1-1.4*std::cos(m_thet));
+		vr = SPEED_TR*v*(1+SPEED_ROT*std::cos(m_thet));
+		vl = SPEED_TR*v*(1-SPEED_ROT*std::cos(m_thet));
 	} else {
-		vr = 80*v*(1-1.4*std::cos(m_thet));
-		vl = 80*v*(1+1.4*std::cos(m_thet));
+		vr = SPEED_TR*v*(1-SPEED_ROT*std::cos(m_thet));
+		vl = SPEED_TR*v*(1+SPEED_ROT*std::cos(m_thet));
 	}
 	std::cout << "speed vr " << vr << " vl " << vl << std::endl << std::endl;
 	speed.at(0) = static_cast<int>(vr);

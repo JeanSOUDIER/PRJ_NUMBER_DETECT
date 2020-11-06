@@ -4,7 +4,7 @@ LOW :
 
 HIGH :
  RPI
- - asserv pos (-Erwan)
+ - asserv pos (-Jean)
  Jetson
  - CNN (-Erwan)
  - Compilation CUDA sur Qt (-Erwan)

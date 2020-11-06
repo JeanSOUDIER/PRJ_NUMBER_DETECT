@@ -1,7 +1,7 @@
 #include "ICP.hpp"
 
 ICP::ICP()
-	: ICP(1e-10,100) {}
+	: ICP(1e-5,100) {}
 
 ICP::ICP(const double error, const unsigned int MaxIter) {
 	m_error = error;
@@ -143,6 +143,9 @@ std::vector<double> ICP::GetPos(const std::vector<std::vector<double>> &DynData,
         	if(std::fabs(oldres-res) < m_error) {
            		break;
         	}
+    	}
+    	if(iter == m_maxIter-1) {
+    		std::cout << "sat ICP" << std::endl;
     	}
 	}
 	std::vector<double> result = {TT.at(0,0), TT.at(1,0), std::acos(TR.at(0,1))};

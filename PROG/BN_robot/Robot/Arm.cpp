@@ -328,6 +328,22 @@ std::vector<int> Arm::PosWriting(bool state, int time) {
     MoveArm(true);
     return pos;
 }
+std::vector<int> Arm::PosPreWriting(bool state, int time) {
+    std::vector<int> pos(3);
+    pos[0] = 300;
+    pos[1] = 100;
+    pos[2] = 0;
+
+    SetTime(time);
+    PlaceArm(pos[0], pos[1], pos[2]);
+    if(state) {
+        WriteOn();
+    } else {
+        WriteOff();
+    }
+    MoveArm(true);
+    return pos;
+}
 void Arm::PosToMove() {
     SetAxePos(1, -M_PI/2);
     SetAxePos(2, M_PI/2);

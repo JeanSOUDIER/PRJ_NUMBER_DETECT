@@ -56,7 +56,7 @@ void MobileBase::StartPlacing() {
 		dist_board = std::sqrt(m_posYlid.at(90)*m_posYlid.at(90)+dist_85*dist_85-2*m_posYlid.at(90)*dist_85*std::cos(5*M_PI/180));
 		angle = std::acos((dist_85*dist_85-m_posYlid.at(90)*m_posYlid.at(90)-dist_board*dist_board)/(-2*m_posYlid.at(90)*dist_board))-M_PI/2;
 		std::cout << 2*angle << std::endl;
-		if(static_cast<int>(2000*angle) == static_cast<int>(2000*N1) && !std::isnan(angle) && !std::isinf(angle) && 2*angle < 1) {c = true;}
+		if(static_cast<int>(2000*angle) == static_cast<int>(2000*N1) && !std::isnan(angle) && !std::isinf(angle) && std::fabs(2*angle) < 1) {c = true;}
 		N1 = angle;
 	}while(!c);
 	GoPos(0,0,2*angle);
@@ -66,7 +66,7 @@ void MobileBase::StartPlacing() {
 	N1 = 0;
 	do{
 		GetLidarPoints(false);
-		if(static_cast<int>(N1) == m_posYlid.at(90) && !std::isinf(m_posYlid.at(90)) && !std::isnan(m_posYlid.at(90))) {c = true;}
+		if(static_cast<int>(N1) == m_posYlid.at(90) && !std::isinf(m_posYlid.at(90)) && !std::isnan(m_posYlid.at(90)) && m_posYlid.at(90) > 0 && m_posYlid.at(90) < 500) {c = true;}
 		N1 = static_cast<double>(m_posYlid.at(90));
 	}while(!c);
 	GoPos(0,m_posYlid.at(90)-START_DIST,-M_PI*Utility::sign(m_posYlid.at(90)-START_DIST));
@@ -182,8 +182,9 @@ void* MobileBase::ThreadRun() {
 		std::vector<double> res = myICP.GetPos(posi, posiN1);
 		m_endTime = std::clock();
 		double delta = (m_endTime-m_startTime)/(CLOCKS_PER_SEC/1000);
+		m_startTime = std::clock();
 		delta /= 1000;
-		//std::cout << "x=" << res.at(0) << " y=" << res.at(1) << " a=" << res.at(2) << " d=" << delta << std::endl;
+		//std::cout << "				x=" << res.at(0) << " y=" << res.at(1) << " a=" << res.at(2) << " d=" << delta << std::endl;
 		if(res.at(0)*delta < 10) {
 			m_posX.store(m_posX+res.at(0)*delta, std::memory_order_release);
 		} else {
@@ -202,7 +203,6 @@ void* MobileBase::ThreadRun() {
 		m_posXN1 = m_posX.load();
 		m_posYN1 = m_posY.load();
 		m_angleN1 = m_angle.load();
-		m_startTime = std::clock();
     }
     pthread_exit(NULL);
     return 0;
