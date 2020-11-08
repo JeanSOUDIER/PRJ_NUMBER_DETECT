@@ -6,3 +6,6 @@ C0 = 0.008; %ex 1 Ted
 C1 = 1.6e-6; %ex1 Ted
 g = 9.81;
 rho = 1.225; %air
+VBAT = 12; %V
+T = 600; %s
+Cbat = 800; %Ah

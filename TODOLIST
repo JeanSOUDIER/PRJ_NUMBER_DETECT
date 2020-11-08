@@ -1,10 +1,12 @@
 LOW :
  Jetson
- - test cam Img (-Jean)
+ - test cam Img (-Jean) -> MECA
+ - save img (-Jean)
 
 HIGH :
  RPI
- - asserv pos (-Jean)
+ ~ asserv pos ICP coeff (-Jean)
+ ~ integrate Control code (-Jean)
  Jetson
  - CNN (-Erwan)
  - Compilation CUDA sur Qt (-Erwan)
@@ -12,11 +14,13 @@ HIGH :
  - test pre traitement (-Jean)
 
 PRJ AUTOM :
+ - done ?
 
 PRJ RT :
+ - done ?
 
 PRJ E-MOBI :
- - estimation batterie (-Jean)
+ - done ?
 
 MECA :
 - lum cam ?

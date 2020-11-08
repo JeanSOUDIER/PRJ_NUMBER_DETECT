@@ -18,5 +18,3 @@ Travail
 Travail [j] = 0.0002777778 [W.h]
 soit 0.025 W.h
 Vbus = 12V
-donc 0.00208 A.h = 2.08 mA.h
-avec une 12V 800 mA.h, on a 384,61 h = 16 jours
