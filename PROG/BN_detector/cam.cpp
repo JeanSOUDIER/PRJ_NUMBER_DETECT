@@ -36,21 +36,9 @@ cv::Mat Cam::TakePhoto() {
 	cv::Mat img;
 	if(m_start) {
 		if(!m_cap->read(img)) {std::cout << "error capture cam" << std::endl;}
+		if(!m_cap->read(img)) {std::cout << "error capture cam" << std::endl;}
 	}
 	return img;
-}
-
-ste::Matrix<double> Cam::TakePhotoM() {
-	cv::Mat img = TakePhoto();
-	img = TakePhoto();
-	//ImgShow(img);
-	ste::Matrix<double> res(img.cols,img.rows);
-	for(unsigned int i=0;i<img.cols;i++) {
-		for(unsigned int j=0;j<img.rows;j++) {
-			res.at(i,j) = img.at<int>(j,i);
-		}
-	}
-	return res;
 }
 
 void Cam::TakePhoto(std::string path) {
@@ -66,7 +54,9 @@ void Cam::ImgShow(cv::Mat img) {
 		int keycode = cv::waitKey(30) & 0xff;
 		if (keycode == 27) break ;
 	}
+	sleep(1000);
 }
+
 void Cam::ImgShow() {
 	ImgShow(TakePhoto());
 }
