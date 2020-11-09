@@ -16,9 +16,6 @@ Cam::Cam(int width, int height, int frameRate, int flip) {
 	m_fr,
 	m_flip);
 
-	m_start.store(true, std::memory_order_release);
-	m_buff.store(false, std::memory_order_release);
-
 	m_cap = new cv::VideoCapture(m_pipeline, cv::CAP_GSTREAMER);
 	if(!m_cap->isOpened()) {
 		std::cout<<"Failed to open camera."<<std::endl;
@@ -63,13 +60,12 @@ void Cam::TakePhoto(std::string path) {
 }
 
 void Cam::ImgShow(cv::Mat img) {
-	/*cv::namedWindow("CSI Camera", cv::WINDOW_AUTOSIZE);
+	cv::namedWindow("CSI Camera", cv::WINDOW_AUTOSIZE);
 	cv::imshow("CSI Camera",img);
 	while(1) {
 		int keycode = cv::waitKey(30) & 0xff;
 		if (keycode == 27) break ;
-	}*/
-	MatToArray(img);
+	}
 }
 void Cam::ImgShow() {
 	ImgShow(TakePhoto());
@@ -99,26 +95,6 @@ void Cam::Test() {
     }
 }
 
-cv::Mat Cam::ArrayToMat() {
-	cv::Mat res(1280, 720,int);
-	for(unsigned int i=0;i<img.size();i++) {
-		for(unsigned int j=0;j<img.at(0).size();j++) {
-			res.at<int>(i,j) = m_buffImg[j][i];
-		}
-	}
-	return res;
-}
-
-void Cam::MatToArray(cv::Mat img) {
-	std::array<std::array<int, 1280>, 720> res;
-	for(unsigned int i=0;i<img.size();i++) {
-		for(unsigned int j=0;j<img.at(0).size();j++) {
-			m_buffImg[j][i].store(img.at<int>(j,i),std::memory_order_release);
-		}
-	}
-	m_buff.store(true, std::memory_order_release);
-}
-
 std::string Cam::gstreamer_pipeline (int capture_width, int capture_height, int display_width, int display_height, int framerate, int flip_method) {
     return "nvarguscamerasrc ! video/x-raw(memory:NVMM), width=(int)" + std::to_string(capture_width) + ", height=(int)" +
            std::to_string(capture_height) + ", format=(string)NV12, framerate=(fraction)" + std::to_string(framerate) +
@@ -138,40 +114,3 @@ void Cam::ImageWrite(const cv::Mat &image, const std::string filename) {
     //cv::imwrite(path, image, compression_params);
 }
 
-void* Cam::CamHelper(void *context) { 
-    return static_cast<Cam*>(context)->ThreadRun();
-}
-
-void* Cam::ThreadRun() {
-    while(m_start.load(std::memory_order_acquire)) {
-		UpdateImShow();
-    	if(m_imgShow.size()) {
-    		cv::namedWindow("CSI Camera", cv::WINDOW_AUTOSIZE);
-			cv::imshow("CSI Camera",m_imgShow.at(0));
-			while(1) {
-				int keycode = cv::waitKey(30) & 0xff;
-				if (keycode == 27) break;
-				UpdateImShow();
-			}
-			m_imgShow.erase(m_imgShow.begin());
-    	}
-    }
-
-    pthread_exit(NULL);
-    return 0;
-}
-
-void Cam::StartThread() {
-    inc_x_thread = new pthread_t();
-    const int rcL = pthread_create(inc_x_thread, NULL, &Cam::CamHelper, this);
-    if (rcL) {
-        std::cout << "Error:unable to create thread Cam," << rcL << std::endl;
-    }
-}
-
-void Cam::UpdateImShow() {
-	if(m_buff.load(std::memory_order_acquire)) {
-		m_imgShow.push_back(ArrayToMat());
-		m_buff.store(false, std::memory_order_release);
-	}
-}

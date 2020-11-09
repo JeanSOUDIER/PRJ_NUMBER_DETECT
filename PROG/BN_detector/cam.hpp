@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 #include <opencv2/opencv.hpp>
-#include <pthread.h>
 #include "Matrix.hpp"
 
 constexpr int CV_IMWRITE_JPEG_QUALITY = 1;
@@ -24,15 +23,6 @@ class Cam {
 		void ImgShow();
 		cv::Mat ImgShow(std::string path);
 		void Test();
-
-		static void* CamHelper(void *context);
-        void StartThread();
-	protected:
-        void* ThreadRun();
-        cv::Mat ArrayToMat();
-        void MatToArray(cv::Mat img);
-        void Cam::UpdateImShow();
-
 	private:
 		std::string gstreamer_pipeline (int capture_width, int capture_height, int display_width, int display_height, int framerate, int flip_method);
 		void ImageWrite(const cv::Mat &image, const std::string filename);
@@ -43,12 +33,6 @@ class Cam {
 		std::string m_pipeline;
 		bool m_start = false;
 
-		std::array<std::array<std::atomic<int> , 1280>, 720> m_buffImg;
-		std::vector<cv::Mat> m_imgShow;
-		std::atomic<bool> m_start;
-		std::atomic<bool> m_buff;
-
-		pthread_t *inc_x_thread;
 };
 
 #endif //CAM_H
