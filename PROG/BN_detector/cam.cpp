@@ -35,16 +35,18 @@ Cam::~Cam() {
 cv::Mat Cam::TakePhoto() {
 	cv::Mat img;
 	if(m_start) {
-		if(!m_cap->read(img)) {std::cout << "error capture cam" << std::endl;}
-		if(!m_cap->read(img)) {std::cout << "error capture cam" << std::endl;}
+		if(!m_cap->read(img)) {std::cout << "error capture cam" << std::endl;} else {
+			if(!m_cap->read(img)) {std::cout << "error capture cam" << std::endl;}
+		}
 	}
 	return img;
 }
 
 void Cam::TakePhoto(std::string path) {
 	cv::Mat img = TakePhoto();
-	path += ".jpg";
-	ImageWrite(img,path);
+	std::cout << "taken" << std::endl;
+	bool test = ImgWrite(path, img);
+	std::cout << "test " << static_cast<int>(test) << std::endl;
 }
 
 void Cam::ImgShow(cv::Mat img) {
@@ -54,35 +56,16 @@ void Cam::ImgShow(cv::Mat img) {
 		int keycode = cv::waitKey(30) & 0xff;
 		if (keycode == 27) break ;
 	}
-	sleep(1000);
+	sleep(1);
 }
 
 void Cam::ImgShow() {
 	ImgShow(TakePhoto());
 }
 
-cv::Mat Cam::ImgShow(std::string path) {
-	cv::FileStorage file(path+".jpg", cv::FileStorage::WRITE);
-	//cv::Mat img;
-	//file >> img;
-	//ImgShow(img);
-}
-
-void Cam::Test() {
-	cv::namedWindow("CSI Camera", cv::WINDOW_AUTOSIZE);
-    cv::Mat img;
-	std::cout << "Hit ESC to exit" << "\n" ;
-    while(true)
-    {
-    	if (!m_cap->read(img)) {
-		std::cout<<"Capture read error"<<std::endl;
-		break;
-	}
-	
-	cv::imshow("CSI Camera",img);
-	int keycode = cv::waitKey(30) & 0xff ; 
-        if (keycode == 27) break ;
-    }
+void Cam::ImgShow(std::string path) {
+	cv::Mat img = ImgRead(path);
+	ImgShow(img);
 }
 
 std::string Cam::gstreamer_pipeline (int capture_width, int capture_height, int display_width, int display_height, int framerate, int flip_method) {
@@ -92,15 +75,24 @@ std::string Cam::gstreamer_pipeline (int capture_width, int capture_height, int 
            std::to_string(display_height) + ", format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR ! appsink";
 }
 
-void Cam::ImageWrite(const cv::Mat &image, const std::string filename) {
-    // Support for writing JPG
-    std::vector<int> compression_params;
-    compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
-    compression_params.push_back(100);
-
-    // This writes to the specified path
-    std::string path = "/path/you/provide/" + filename + ".jpg";
-
-    //cv::imwrite(path, image, compression_params);
+cv::Mat Cam::ImgRead(std::string fileName) {
+	fileName = fileName + ".png";
+	std::cout << fileName << std::endl;
+	cv::Mat img = cv::imread("lena.png");
+	std::cout << img.cols << " " << img.rows << std::endl;
+	return img;
 }
 
+bool Cam::ImgWrite(std::string fileName, cv::Mat img) {
+    std::vector<int> compression_params;
+    compression_params.push_back(cv::IMWRITE_PNG_COMPRESSION);
+    compression_params.push_back(9);
+    bool result = false;
+    std::cout << "try" << std::endl;
+    try {
+        result = cv::imwrite(fileName+".png", img, compression_params);
+    } catch (const cv::Exception& ex) {
+        fprintf(stderr, "Exception converting image to PNG format: %s\n", ex.what());
+    }
+    return result;
+}

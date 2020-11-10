@@ -1,7 +1,6 @@
 LOW :
  Jetson
  - test cam Img (-Jean) -> MECA
- - save img (-Jean)
 
 HIGH :
  RPI
@@ -14,13 +13,16 @@ HIGH :
  - test pre traitement (-Jean)
 
 PRJ AUTOM :
- - done ?
+ - parler
 
 PRJ RT :
- - done ?
+ - thread cammera
+
+PRJ BD :
+ - parler
 
 PRJ E-MOBI :
- - done ?
+ - techno de batt + parler
 
 MECA :
 - lum cam ?
