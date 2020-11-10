@@ -14,8 +14,8 @@ int main() {
     //constexpr int ttyS0 = 0;
     constexpr int ttyTHS1 = 40;
 
-	TF myTF;
-	myTF.ToProcessed("lena");
+	TF myTF(true);
+	myTF.ToProcessed();
 
     //Bluetooth BLE(ttyTHS1, 9600);
     //BLE.SetTX("1234");

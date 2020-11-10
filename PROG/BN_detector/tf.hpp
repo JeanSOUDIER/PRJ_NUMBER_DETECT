@@ -21,6 +21,7 @@
 class TF {
 	public:
 		TF();
+		TF(bool print);
 		~TF();
 
 		void ToProcessed();
@@ -31,6 +32,7 @@ class TF {
 		cv::Mat show_histogram(cv::Mat const& image);
 		//QImage ToQImage(cv::Mat img);
 		double m_moy;
+		bool m_print;
 		Cam CPI2;
 
 };

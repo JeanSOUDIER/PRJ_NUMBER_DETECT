@@ -1,6 +1,12 @@
 #include "tf.hpp"
 
-TF::TF() {}
+TF::TF() {
+	m_print = false;
+}
+
+TF::TF(bool print) {
+	m_print = print;
+}
 
 TF::~TF() {}
 
@@ -15,25 +21,25 @@ void TF::ToProcessed(std::string path) {
 }
 
 void TF::ToProcessed(cv::Mat img) {
-	std::cout << "start process" << std::endl;
-	cv::Mat imgGray, imgThres, histo, dst, test;
-	//dst.create(img.size(), img.type());
-	CPI2.ImgShow(img);
+	std::cout << "image in" << std::endl;
+	if(m_print) {CPI2.ImgShow(img);}
 
 	std::cout << "to gray" << std::endl;
+	cv::Mat imgGray;
 	cv::cvtColor(img, imgGray, cv::COLOR_BGR2GRAY);
-	CPI2.ImgShow(imgGray);
+	if(m_print) {CPI2.ImgShow(imgGray);}
 
 	std::cout << "histogram" << std::endl;
+	cv::Mat histo;
 	cv::Mat imgHisto = show_histogram(imgGray);
-	CPI2.ImgShow(imgHisto);
+	if(m_print) {CPI2.ImgShow(imgHisto);}
 	int thres = m_moy;
 	std::cout << "thres " << thres << std::endl;
-	//thres = cv::threshold(imgGray, dst, 0, 255, cv::THRESH_OTSU);
 
 	std::cout << "threshold" << std::endl;
+	cv::Mat imgThres;
 	threshold(imgGray, imgThres, thres, 255, 3);
-	CPI2.ImgShow(imgThres);
+	if(m_print) {CPI2.ImgShow(imgThres);}
 
 	std::cout << "to regioprops" << std::endl;
 	std::vector<std::vector<cv::Point>> cnt;
@@ -43,6 +49,8 @@ void TF::ToProcessed(cv::Mat img) {
 	cv::Mat imgDraw = imgGray;
 	std::vector<cv::Rect> rectan(cnt.size());
 	std::vector<cv::Mat> rez;
+	std::vector<cv::Mat> rez2;
+	std::vector<double> places;
 	//std::vector<QImage> res;
 	for(size_t i=0;i<cnt.size();i++) {
 		if(cv::contourArea(cnt.at(i)) > 5000 && cv::contourArea(cnt.at(i)) < 900000) {
@@ -53,13 +61,29 @@ void TF::ToProcessed(cv::Mat img) {
 			rez.push_back(imgGray(rectan.at(i)));
 			double l = 28/static_cast<double>(rectan.at(i).height);
 			double h = 28/static_cast<double>(rectan.at(i).width);
+			places.push_back(rectan.at(i).x);
 			std::cout << l << " " << h << std::endl;
 			cv::resize(rez.at(rez.size()-1), rez.at(rez.size()-1), cv::Size(), h, l);
-			CPI2.ImgShow(rez.at(rez.size()-1));
-			//res.push_back(ToQImage(rez.at(rez.size()-1)));
 		}
 	}
-	CPI2.ImgShow(imgDraw);
+	
+	std::cout << "sorting" << std::endl;
+	do {
+		double mini = places.at(0);
+		int id = 0;
+		for(unsigned int j=0;j<places.size();j++) {
+			if(mini > places.at(j)) {
+				mini = places.at(j);
+				id = j;
+			}
+		}
+		rez2.push_back(rez.at(id));
+		//res.push_back(ToQImage(rez.at(id)));
+		if(m_print) {CPI2.ImgShow(rez2.at(rez2.size()-1));}
+		rez.erase(rez.begin()+id);
+		places.erase(places.begin()+id);
+	} while(places.size() > 0);
+	if(m_print) {CPI2.ImgShow(imgDraw);}
 
 	//return res;
 }
