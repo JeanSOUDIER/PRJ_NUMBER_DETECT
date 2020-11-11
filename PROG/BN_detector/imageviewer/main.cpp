@@ -50,11 +50,13 @@
 
 #include <QApplication>
 #include <QCommandLineParser>
+#include "Camera/Bluetooth.hpp"
 
 #include "imageviewer.h"
 
 int main(int argc, char *argv[])
 {
+    constexpr int ttyTHS1 = 40;
     QApplication app(argc, argv);
     QGuiApplication::setApplicationDisplayName(ImageViewer::tr("Image Viewer"));
     /*QCommandLineParser commandLineParser;
@@ -67,6 +69,8 @@ int main(int argc, char *argv[])
         && !imageViewer.loadFile(commandLineParser.positionalArguments().front())) {
         return -1;
     }*/
+    Bluetooth BLE(ttyTHS1, 9600);
+    BLE.SetTX("1234");
     imageViewer.show();
 
     return app.exec();

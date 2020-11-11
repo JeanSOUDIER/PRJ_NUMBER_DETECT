@@ -12,11 +12,11 @@ int main() {
     //constexpr int ttyS0 = 0;
     constexpr int ttyTHS1 = 40;
 
-    TF myTF;
-    myTF.ToProcessed();
+    //TF myTF;
+    //myTF.ToProcessed();
 
-    //Bluetooth BLE(ttyTHS1, 9600);
-    //BLE.SetTX("1234");
+    Bluetooth BLE(ttyTHS1, 9600);
+    BLE.SetTX("1234");
 	
     sleep(1);
     return 0;

@@ -53,11 +53,17 @@ OBJECTS_DIR   = ./
 SOURCES       = ../imageviewer/imageviewer.cpp \
 		../imageviewer/main.cpp \
 		../imageviewer/Camera/cam.cpp \
-		../imageviewer/Camera/tf.cpp moc_imageviewer.cpp
+		../imageviewer/Camera/tf.cpp \
+		../imageviewer/Camera/Bluetooth.cpp \
+		../imageviewer/Camera/rs232.cpp \
+		../imageviewer/Camera/Usb.cpp moc_imageviewer.cpp
 OBJECTS       = imageviewer.o \
 		main.o \
 		cam.o \
 		tf.o \
+		Bluetooth.o \
+		rs232.o \
+		Usb.o \
 		moc_imageviewer.o
 DIST          = /usr/lib/aarch64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/aarch64-linux-gnu/qt5/mkspecs/common/unix.conf \
@@ -137,10 +143,16 @@ DIST          = /usr/lib/aarch64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/aarch64-linux-gnu/qt5/mkspecs/features/lex.prf \
 		../imageviewer/imageviewer.pro ../imageviewer/imageviewer.h \
 		../imageviewer/Camera/cam.hpp \
-		../imageviewer/Camera/tf.hpp ../imageviewer/imageviewer.cpp \
+		../imageviewer/Camera/tf.hpp \
+		../imageviewer/Camera/Bluetooth.hpp \
+		../imageviewer/Camera/rs232.hpp \
+		../imageviewer/Camera/Usb.hpp ../imageviewer/imageviewer.cpp \
 		../imageviewer/main.cpp \
 		../imageviewer/Camera/cam.cpp \
-		../imageviewer/Camera/tf.cpp
+		../imageviewer/Camera/tf.cpp \
+		../imageviewer/Camera/Bluetooth.cpp \
+		../imageviewer/Camera/rs232.cpp \
+		../imageviewer/Camera/Usb.cpp
 QMAKE_TARGET  = imageviewer
 DESTDIR       = 
 TARGET        = imageviewer
@@ -330,8 +342,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/aarch64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../imageviewer/imageviewer.h ../imageviewer/Camera/cam.hpp ../imageviewer/Camera/tf.hpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../imageviewer/imageviewer.cpp ../imageviewer/main.cpp ../imageviewer/Camera/cam.cpp ../imageviewer/Camera/tf.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../imageviewer/imageviewer.h ../imageviewer/Camera/cam.hpp ../imageviewer/Camera/tf.hpp ../imageviewer/Camera/Bluetooth.hpp ../imageviewer/Camera/rs232.hpp ../imageviewer/Camera/Usb.hpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../imageviewer/imageviewer.cpp ../imageviewer/main.cpp ../imageviewer/Camera/cam.cpp ../imageviewer/Camera/tf.cpp ../imageviewer/Camera/Bluetooth.cpp ../imageviewer/Camera/rs232.cpp ../imageviewer/Camera/Usb.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -392,7 +404,10 @@ imageviewer.o: ../imageviewer/imageviewer.cpp ../imageviewer/imageviewer.h \
 		../imageviewer/Camera/cam.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o imageviewer.o ../imageviewer/imageviewer.cpp
 
-main.o: ../imageviewer/main.cpp ../imageviewer/imageviewer.h \
+main.o: ../imageviewer/main.cpp ../imageviewer/Camera/Bluetooth.hpp \
+		../imageviewer/Camera/Usb.hpp \
+		../imageviewer/Camera/rs232.hpp \
+		../imageviewer/imageviewer.h \
 		../imageviewer/Camera/tf.hpp \
 		../imageviewer/Camera/cam.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../imageviewer/main.cpp
@@ -403,6 +418,18 @@ cam.o: ../imageviewer/Camera/cam.cpp ../imageviewer/Camera/cam.hpp
 tf.o: ../imageviewer/Camera/tf.cpp ../imageviewer/Camera/tf.hpp \
 		../imageviewer/Camera/cam.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o tf.o ../imageviewer/Camera/tf.cpp
+
+Bluetooth.o: ../imageviewer/Camera/Bluetooth.cpp ../imageviewer/Camera/Bluetooth.hpp \
+		../imageviewer/Camera/Usb.hpp \
+		../imageviewer/Camera/rs232.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Bluetooth.o ../imageviewer/Camera/Bluetooth.cpp
+
+rs232.o: ../imageviewer/Camera/rs232.cpp ../imageviewer/Camera/rs232.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o rs232.o ../imageviewer/Camera/rs232.cpp
+
+Usb.o: ../imageviewer/Camera/Usb.cpp ../imageviewer/Camera/Usb.hpp \
+		../imageviewer/Camera/rs232.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Usb.o ../imageviewer/Camera/Usb.cpp
 
 moc_imageviewer.o: moc_imageviewer.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_imageviewer.o moc_imageviewer.cpp

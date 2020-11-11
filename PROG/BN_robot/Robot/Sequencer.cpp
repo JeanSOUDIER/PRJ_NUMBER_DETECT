@@ -19,7 +19,7 @@ Sequencer::Sequencer(Arm* WidowXL, Bluetooth* BLE, MobileBase* TurtleBot) {
 		seqHandler.addSequence(static_cast<unsigned char>(i),path);
 	}
 	//std::valarray<Control::scalar> posi = static_cast<std::valarray<Control::scalar>>(m_TurtleBot->GetCurrentPos());
-	//m_sys = new Control::System_project{20, m_TurtleBot, {posi[0], posi[1]}, 1, 0.5};
+	//m_sys = new Control::System_project{20, m_TurtleBot, {posi[0], posi[1]}, 10, 5};
 	m_syst = new asserv(0.02, 10, 5);
 	std::cout << "Sequencer start" << std::endl;
 }
