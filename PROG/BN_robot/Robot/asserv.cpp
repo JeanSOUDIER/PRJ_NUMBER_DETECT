@@ -1,9 +1,12 @@
 #include "asserv.hpp"
 
 asserv::asserv()
-	: asserv(0.02,10,5) {}
+	: asserv(0.02,10,5,false) {}
 
-asserv::asserv(double Te, double l, double d) {
+asserv::asserv(double Te, double l, double d)
+	: asserv(Te,l,d,false) {}
+
+asserv::asserv(double Te, double l, double d, bool sensor) {
 	m_Te = Te;
 	m_l = l;
 	m_d = d;
@@ -12,6 +15,7 @@ asserv::asserv(double Te, double l, double d) {
 	m_thet = -M_PI/2;
 	m_xM = 0;
 	m_yM = 0;
+	m_sensor = sensor;
 	std::cout << "asserv start" << std::endl;
 }
 
@@ -26,13 +30,28 @@ int asserv::GetTe() {
 }
 
 std::vector<int> asserv::Compute(std::vector<double> pos) {
-	std::vector<double> in = {m_xM, m_yM, m_thet};//pos;
+	double delta;
+	std::vector<double> in(3);
+	if(m_sensor) {
+		in.at(0) = pos.at(1)*4;
+		in.at(1) = pos.at(0)*4;
+		in.at(2) = pos.at(2);
+		m_xOld = m_x;
+		m_yOld = m_y;
+		SPEED_TR = 10;
+		SPEED_ROT = 1;
+		delta = 0.1;
+	} else {
+		in.at(0) = m_xM;
+		in.at(1) = m_yM;
+		in.at(2) = m_thet;
+		m_xOld = m_x;
+		m_yOld = m_y;
+		delta = 0.1;
+	}
 
 	std::cout << "data x " << in.at(0) << " y " << in.at(1) << " thet " << in.at(2) << std::endl;
 	//compute consigne
-	m_xOld = m_x;
-	m_yOld = m_y;
-	double delta = 0.1;
 	if(m_xOld <= delta && m_yOld < m_l && m_yOld >= 0) {
 		std::cout << "1" << std::endl;
 		m_x = 0;

@@ -66,6 +66,7 @@ void MobileBase::StartPlacing() {
 	N1 = 0;
 	do{
 		GetLidarPoints(false);
+		std::cout << m_posYlid.at(90) << std::endl;
 		if(static_cast<int>(N1) == m_posYlid.at(90) && !std::isinf(m_posYlid.at(90)) && !std::isnan(m_posYlid.at(90)) && m_posYlid.at(90) > 0 && m_posYlid.at(90) < 500) {c = true;}
 		N1 = static_cast<double>(m_posYlid.at(90));
 	}while(!c);
@@ -185,21 +186,24 @@ void* MobileBase::ThreadRun() {
 		m_startTime = std::clock();
 		delta /= 1000;
 		//std::cout << "				x=" << res.at(0) << " y=" << res.at(1) << " a=" << res.at(2) << " d=" << delta << std::endl;
-		if(res.at(0)*delta < 10) {
-			m_posX.store(m_posX+res.at(0)*delta, std::memory_order_release);
+		/*if(res.at(0)*delta < 10) {
+			m_posX.store(m_posX.load()+res.at(0)*delta, std::memory_order_release);
 		} else {
-			m_posX.store(m_posX+10, std::memory_order_release);
+			m_posX.store(m_posX.load()+10, std::memory_order_release);
 		}
 		if(res.at(1)*delta < 10) {
-			m_posY.store(m_posY+res.at(1)*delta, std::memory_order_release);
+			m_posY.store(m_posY.load()+res.at(1)*delta, std::memory_order_release);
 		} else {
-			m_posY.store(m_posY+10, std::memory_order_release);
+			m_posY.store(m_posY.load()+10, std::memory_order_release);
 		}
 		if(res.at(0)*delta < 0.4) {
-			m_angle.store(m_angle+res.at(2)*delta, std::memory_order_release);
+			m_angle.store(m_angle.load()+res.at(2)*delta, std::memory_order_release);
 		} else {
-			m_angle.store(m_angle+0.4, std::memory_order_release);
-		}
+			m_angle.store(m_angle.load()+0.4, std::memory_order_release);
+		}*/
+		m_posX.store(m_posX.load()+res.at(0)*delta, std::memory_order_release);
+		m_posY.store(m_posY.load()+res.at(1)*delta, std::memory_order_release);
+		m_angle.store(m_angle.load()+res.at(2)*delta, std::memory_order_release);
 		m_posXN1 = m_posX.load();
 		m_posYN1 = m_posY.load();
 		m_angleN1 = m_angle.load();
