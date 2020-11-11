@@ -1,7 +1,3 @@
-LOW :
- Jetson
- - test cam Img (-Jean) -> MECA
-
 HIGH :
  RPI
  ~ asserv pos ICP coeff (-Jean)
@@ -10,10 +6,9 @@ HIGH :
  - CNN (-Erwan)
  - Compilation CUDA sur Qt (-Erwan)
  - Interface graphique rendu CNN [en cours] (-Erwan)
- - test pre traitement (-Jean)
 
 PRJ AUTOM :
- - parler
+ - kalman filter (-Jean)
 
 PRJ RT :
  - thread cammera
@@ -23,6 +18,3 @@ PRJ BD :
 
 PRJ E-MOBI :
  - techno de batt + parler
-
-MECA :
-- lum cam ?

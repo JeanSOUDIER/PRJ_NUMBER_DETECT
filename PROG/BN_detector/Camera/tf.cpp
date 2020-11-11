@@ -68,21 +68,29 @@ void TF::ToProcessed(cv::Mat img) {
 	}
 	
 	std::cout << "sorting" << std::endl;
-	do {
-		double mini = places.at(0);
-		int id = 0;
-		for(unsigned int j=0;j<places.size();j++) {
-			if(mini > places.at(j)) {
-				mini = places.at(j);
-				id = j;
+	std::cout << places.size() << std::endl;
+	if(places.size() > 1) {
+		do {
+			double mini = places.at(0);
+			int id = 0;
+			for(unsigned int j=0;j<places.size();j++) {
+				if(mini > places.at(j)) {
+					mini = places.at(j);
+					id = j;
+				}
 			}
-		}
-		rez2.push_back(rez.at(id));
-		//res.push_back(ToQImage(rez.at(id)));
-		if(m_print) {CPI2.ImgShow(rez2.at(rez2.size()-1));}
-		rez.erase(rez.begin()+id);
-		places.erase(places.begin()+id);
-	} while(places.size() > 0);
+			rez2.push_back(rez.at(id));
+			//res.push_back(ToQImage(rez.at(id)));
+			if(m_print) {CPI2.ImgShow(rez2.at(rez2.size()-1));}
+			rez.erase(rez.begin()+id);
+			places.erase(places.begin()+id);
+		} while(places.size() > 0);
+	} else if(places.size() == 1) {
+		rez2.push_back(rez.at(0));
+		if(m_print) {CPI2.ImgShow(rez2.at(0));}
+	} else {
+		std::cout << "no pattern found" << std::endl;
+	}	
 	if(m_print) {CPI2.ImgShow(imgDraw);}
 
 	//return res;
