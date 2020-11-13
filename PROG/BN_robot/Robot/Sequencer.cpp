@@ -92,7 +92,7 @@ bool Sequencer::Execute() {
 		}
 		tempo = i;
 	}
-	RollOver(tempo);
+	//RollOver(tempo);
 	if(m_BLE_start) {m_BLE->SetTX("done");}
 	return true;
 }
@@ -111,7 +111,8 @@ void Sequencer::MoveRobot(const uint64_t time) {
 		    double x = m_sys->vx();
 		    double y = m_sys->vy();
 	        m_TurtleBot->SetSpeed(y, x);*/
-		    m_TurtleBot->SetSpeed(m_syst->Compute(m_TurtleBot->GetCurrentPos()));
+		m_syst->Compute(m_TurtleBot->GetCurrentPos());
+		    m_TurtleBot->SetSpeed(1, 1);
 		    std::cout << "t " << std::chrono::duration_cast<std::chrono::milliseconds>(current_timestamp - begin_timestamp).count() << std::endl << std::endl;
         }
     } while(std::chrono::duration_cast<std::chrono::milliseconds>(current_timestamp - begining_timestamp).count() < time);

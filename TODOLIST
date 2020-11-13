@@ -1,14 +1,13 @@
 HIGH :
  RPI
- ~ asserv pos ICP coeff (-Jean)
- ~ integrate Control code (-Jean)
+  ~ integrate Control code (-Jean)
  Jetson
- - CNN (-Erwan)
- - Compilation CUDA sur Qt (-Erwan)
- - Interface graphique rendu CNN [en cours] (-Erwan)
+  - CNN (-Erwan)
+  - Compilation CUDA sur Qt (-Erwan)
+  - Interface graphique rendu CNN [en cours] (-Erwan)
 
 PRJ AUTOM :
- - kalman filter (-Jean)
+ - parler
 
 PRJ RT :
  - thread cammera

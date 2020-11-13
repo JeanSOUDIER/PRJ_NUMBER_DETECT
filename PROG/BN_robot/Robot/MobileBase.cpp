@@ -67,7 +67,7 @@ void MobileBase::StartPlacing() {
 	do{
 		GetLidarPoints(false);
 		std::cout << m_posYlid.at(90) << std::endl;
-		if(static_cast<int>(N1) == m_posYlid.at(90) && !std::isinf(m_posYlid.at(90)) && !std::isnan(m_posYlid.at(90)) && m_posYlid.at(90) > 0 && m_posYlid.at(90) < 500) {c = true;}
+		if(static_cast<int>(N1) == m_posYlid.at(90) && !std::isinf(m_posYlid.at(90)) && !std::isnan(m_posYlid.at(90)) && m_posYlid.at(90) > 0 && m_posYlid.at(90) < 700) {c = true;}
 		N1 = static_cast<double>(m_posYlid.at(90));
 	}while(!c);
 	GoPos(0,m_posYlid.at(90)-START_DIST,-M_PI*Utility::sign(m_posYlid.at(90)-START_DIST));
@@ -186,24 +186,25 @@ void* MobileBase::ThreadRun() {
 		m_startTime = std::clock();
 		delta /= 1000;
 		//std::cout << "				x=" << res.at(0) << " y=" << res.at(1) << " a=" << res.at(2) << " d=" << delta << std::endl;
-		/*if(res.at(0)*delta < 10) {
+		double cst = 5;
+		if(res.at(0) < cst) {
 			m_posX.store(m_posX.load()+res.at(0)*delta, std::memory_order_release);
 		} else {
-			m_posX.store(m_posX.load()+10, std::memory_order_release);
+			m_posX.store(m_posX.load()+cst*delta, std::memory_order_release);
 		}
-		if(res.at(1)*delta < 10) {
+		if(res.at(1) < cst) {
 			m_posY.store(m_posY.load()+res.at(1)*delta, std::memory_order_release);
 		} else {
-			m_posY.store(m_posY.load()+10, std::memory_order_release);
+			m_posY.store(m_posY.load()+cst*delta, std::memory_order_release);
 		}
-		if(res.at(0)*delta < 0.4) {
+		if(res.at(0) < 0.2) {
 			m_angle.store(m_angle.load()+res.at(2)*delta, std::memory_order_release);
 		} else {
-			m_angle.store(m_angle.load()+0.4, std::memory_order_release);
-		}*/
-		m_posX.store(m_posX.load()+res.at(0)*delta, std::memory_order_release);
+			m_angle.store(m_angle.load()+0.2*delta, std::memory_order_release);
+		}
+		/*m_posX.store(m_posX.load()+res.at(0)*delta, std::memory_order_release);
 		m_posY.store(m_posY.load()+res.at(1)*delta, std::memory_order_release);
-		m_angle.store(m_angle.load()+res.at(2)*delta, std::memory_order_release);
+		m_angle.store(m_angle.load()+res.at(2)*delta, std::memory_order_release);*/
 		m_posXN1 = m_posX.load();
 		m_posYN1 = m_posY.load();
 		m_angleN1 = m_angle.load();

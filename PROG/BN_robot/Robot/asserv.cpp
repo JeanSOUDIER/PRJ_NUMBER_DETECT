@@ -30,9 +30,9 @@ int asserv::GetTe() {
 }
 
 std::vector<int> asserv::Compute(std::vector<double> pos) {
-	double delta;
+	double delta = 0.1;
 	std::vector<double> in(3);
-	if(m_sensor) {
+	/*if(m_sensor) {
 		in.at(0) = pos.at(1)*4;
 		in.at(1) = pos.at(0)*4;
 		in.at(2) = pos.at(2);
@@ -48,7 +48,12 @@ std::vector<int> asserv::Compute(std::vector<double> pos) {
 		m_xOld = m_x;
 		m_yOld = m_y;
 		delta = 0.1;
-	}
+	}*/
+	in.at(0) = pos.at(0);
+	in.at(1) = pos.at(1);
+	in.at(2) = pos.at(2);
+	m_xOld = m_x;
+	m_yOld = m_y;
 
 	std::cout << "data x " << in.at(0) << " y " << in.at(1) << " thet " << in.at(2) << std::endl;
 	//compute consigne
