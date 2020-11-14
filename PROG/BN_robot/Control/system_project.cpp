@@ -22,6 +22,10 @@ System_project::System_project(const uint64_t Ts_ms, MobileBase *robot, std::val
     w_integrator = new Integrator(this , to_v_w , 1 , Ts() , 0 , 0 , 1 , false);
     to_vx_vy = new FunctionBlock(this , {to_v_w , w_integrator} , {0 , 1});
 
+    to_vr_vl = new FunctionBlock(this, {to_v_w, w_integrator}, {0, 1});
+    vx_intgrator = new Integrator(this , to_vx_vy , 0 , Ts() , 0 , 0 , 1 , false);
+    vy_intgrator = new Integrator(this , to_vx_vy , 1 , Ts() , 0 , 0 , 1 , false);
+
 
     std::function<std::valarray<scalar>(std::valarray<scalar>)> atan_2_lambda = [=](const std::valarray<scalar>&){
         return std::valarray<scalar> {static_cast<scalar>(std::fmod(std::atan2(d_y_in->output() , d_x_in->output()) , T_PI_LD))};
@@ -59,10 +63,19 @@ System_project::System_project(const uint64_t Ts_ms, MobileBase *robot, std::val
                                      });
     };
 
+    std::function<std::valarray<scalar>(std::valarray<scalar>)> to_vr_vl_lambda = [=](const std::valarray<scalar>&){
+
+        return std::valarray<scalar>({
+                                       80*to_v_w->output(0)*(1 - 1.5*std::cos(w_integrator->output())*(std::sign(initial_conditions.at(1)-line_length/2))),
+                                       80*to_v_w->output(1)*(1 + 1.5*std::cos(w_integrator->output())*(std::sign(initial_conditions.at(1)-line_length/2)))
+                                     });
+    };
+
     theta_in->setFunction(atan_2_lambda);
     to_parameters->setFunction(to_parameters_lambda);
     to_v_w->setFunction(to_v_w_lambda);
     to_vx_vy->setFunction(to_vx_vy_lambda);
+    to_vr_vl->setFunction(to_vx_vy_lambda);
 }
 
 System_project::~System_project(){
@@ -85,6 +98,10 @@ System_project::~System_project(){
     delete to_v_w;
     delete w_integrator;
     delete to_vx_vy;
+
+    delete to_vr_vl;
+    delete vx_intgrator;
+    delete vy_intgrator;
 
     _blocks.clear();
 
@@ -133,15 +150,20 @@ void System_project::compute(){
     w_integrator->compute();
     //std::cout << "w_integrator: " << w_integrator->output() << "\n";
 
-
     to_vx_vy->compute();
     //std::cout << "vx: " << to_vx_vy->output(0) << " vy: " << to_vx_vy->output(1) << "\n"<<std::endl;
 
+    to_vr_vl->compute();
+
+    vx_intgrator->compute();
+
+    vy_intgrator->compute();
 
 }
 
-scalar System_project::vx() const{return to_vx_vy->output(0);}
-scalar System_project::vy() const{return to_vx_vy->output(1);}
+scalar System_project::vr() const{return to_vr_vl->output(0);}
+scalar System_project::vl() const{return to_vr_vl->output(1);}
+std::valarray<scalar> System_project::coord() const{return {vx_intgrator->output(), vy_intgrator->output(), w_integrator->output()};}
 
 /**************************************************************************/
 } //namespace Control
