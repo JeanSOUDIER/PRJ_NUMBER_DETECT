@@ -49,9 +49,9 @@ std::vector<int> asserv::Compute(std::vector<double> pos) {
 		m_yOld = m_y;
 		delta = 0.1;
 	}*/
-	in.at(0) = pos.at(0);
-	in.at(1) = pos.at(1);
-	in.at(2) = pos.at(2);
+	in.at(0) = m_xM;
+	in.at(1) = m_yM;
+	in.at(2) = m_thet;
 	m_xOld = m_x;
 	m_yOld = m_y;
 

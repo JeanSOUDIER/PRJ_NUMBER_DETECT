@@ -1,6 +1,6 @@
 HIGH :
  RPI
-  ~ integrate Control code (-Jean)
+  - integrate Control code (-Jean)
  Jetson
   - CNN (-Erwan)
   - Compilation CUDA sur Qt (-Erwan)

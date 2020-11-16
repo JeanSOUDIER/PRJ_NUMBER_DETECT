@@ -23,6 +23,7 @@ MobileBase::MobileBase(const double posX, const double posY, const double angle,
 	m_angle.store(angle, std::memory_order_release);
 	m_RPLidar = RPLidar;
 	m_speedNorm = 0;
+	m_posEmul = {0, 0, M_PI/2};
 	//thread
 	if(m_lidar_start) {
 		m_RPLidar->StartThread();
@@ -160,12 +161,20 @@ std::vector<double> MobileBase::GetCurrentPos() {
 	return std::vector<double> ({m_posX.load(), m_posY.load(), m_angle.load()});
 }
 
-std::valarray<double> MobileBase::currentPos_helper(void* context){}//return static_cast<MobileBase*>(context)->GetCurrentPos();}
+std::valarray<double> MobileBase::GetCurrentPosi() {
+	return m_posEmul;
+}
+
+void MobileBase::SetCurrentPosi(std::valarray<double> p) {
+	m_posEmul = p;
+}
+
+std::valarray<double> MobileBase::currentPos_helper(void* context){return static_cast<MobileBase*>(context)->GetCurrentPosi();}
 std::valarray<double> MobileBase::currentPos_helper_meter(void* context){
     
-    //std::valarray<double> temp = static_cast<MobileBase*>(context)->GetCurrentPos();
+    std::valarray<double> temp = static_cast<MobileBase*>(context)->GetCurrentPosi();
     
-    //return std::valarray<double>({(1./1000.)*temp[0] , (1./1000.)*temp[1] , temp[2]});
+    return std::valarray<double>({(1./1000.)*temp[0] , (1./1000.)*temp[1] , temp[2]});
     
 }
 

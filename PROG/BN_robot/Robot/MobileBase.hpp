@@ -39,6 +39,8 @@ class MobileBase {
         void PrintPos();
         std::vector<double> GetCurrentPos();
         
+        void SetCurrentPosi(std::valarray<double> p);
+        std::valarray<double> GetCurrentPosi();
         static std::valarray<double> currentPos_helper(void* context);
         static std::valarray<double> currentPos_helper_meter(void* context);
 
@@ -80,6 +82,8 @@ class MobileBase {
         double m_dist_board = 0;
 
         double m_speedNorm = 0;
+        
+        std::valarray<double> m_posEmul;
 
         std::clock_t m_startTime;
         std::clock_t m_endTime;

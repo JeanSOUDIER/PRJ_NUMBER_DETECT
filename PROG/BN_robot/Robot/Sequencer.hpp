@@ -40,7 +40,7 @@ class Sequencer {
 		MobileBase* m_TurtleBot;
 
 		Control::System_project* m_sys;
-		asserv* m_syst;
+		//asserv* m_syst;
 
 		SequenceHandler seqHandler;
 };

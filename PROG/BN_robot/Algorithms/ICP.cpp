@@ -1,7 +1,7 @@
 #include "ICP.hpp"
 
 ICP::ICP()
-	: ICP(1e-5,100) {}
+	: ICP(1e-5,200) {}
 
 ICP::ICP(const double error, const unsigned int MaxIter) {
 	m_error = error;
@@ -11,6 +11,7 @@ ICP::ICP(const double error, const unsigned int MaxIter) {
 ICP::~ICP() {}
 
 std::vector<double> ICP::GetPos(const std::vector<std::vector<double>> &DynData, const std::vector<std::vector<double>> &StaData) {
+	bool m_satur = false;
 	// ---- Init ---- //
 	std::vector<std::vector<double>> model = {std::vector<double>() , std::vector<double>()};
 	std::vector<std::vector<double>> data = {std::vector<double>() , std::vector<double>()};
@@ -146,9 +147,19 @@ std::vector<double> ICP::GetPos(const std::vector<std::vector<double>> &DynData,
     	}
     	if(iter == m_maxIter-1) {
     		std::cout << "sat ICP" << std::endl;
+		m_satur = true;
     	}
 	}
-	std::vector<double> result = {TT.at(0,0), TT.at(1,0), std::acos(TR.at(0,1))};
+	std::vector<double> result(3);
+	if(m_satur) {
+		result.at(0) = 0;
+		result.at(1) = 0;
+		result.at(2) = 0;
+	} else {
+		result.at(0) = TT.at(0,0);
+		result.at(1) = TT.at(1,0);
+		result.at(2) = std::acos(TR.at(0,1));
+	}
 	return result;
 }
 
