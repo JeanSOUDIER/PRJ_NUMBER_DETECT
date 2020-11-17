@@ -5,10 +5,7 @@ ___________________________________
  Jetson
   - Correction entraînement NN (-Erwan)
   - Interface graphique rendu CNN [en cours] (-Erwan)
-  
-PRJ AUTOM :
- - parler
-
+ 
 PRJ RT :
  - thread camera (-Erwan)
 
@@ -16,4 +13,5 @@ PRJ BD :
  - parler
 
 PRJ E-MOBI :
- - techno de batt + parler
+ - techno de batt
+   --> Batterie au plomb
