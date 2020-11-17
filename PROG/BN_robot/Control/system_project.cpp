@@ -7,8 +7,8 @@ System_project::System_project(const uint64_t Ts_ms, MobileBase *robot, std::val
     generator = new Generator_Project(this , robot , initial_conditions, line_length , arc_diameter);
     feedback_sensor = new Sensor<MobileBase*>(this , robot , &MobileBase::currentPos_helper_meter , initial_conditions);
 
-    d_x_in = new Differentiator(this , generator , 0 , Ts() , 0 , 1 , false);
-    d_y_in = new Differentiator(this , generator , 1 , Ts() , 0 , 1 , false);
+    d_x_in = new Differentiator(this , generator , 0 , Ts()/1000., 0 , 1 , false);
+    d_y_in = new Differentiator(this , generator , 1 , Ts()/1000., 0 , 1 , false);
 
     theta_in = new FunctionBlock(this , {d_x_in , d_y_in} , {0 , 0});
 
@@ -19,12 +19,12 @@ System_project::System_project(const uint64_t Ts_ms, MobileBase *robot, std::val
     to_parameters = new FunctionBlock(this , {feedback_x_comparator , feedback_y_comparator , feedback_theta_comparator , feedback_sensor} , {0 , 0 , 0 , 2});
 
     to_v_w = new FunctionBlock(this , {to_parameters} , {0});
-    w_integrator = new Integrator(this , to_v_w , 1 , Ts() , 0 , 0 , 1 , false);
+    w_integrator = new Integrator(this , to_v_w , 1 , Ts()/1000., 0 , 0 , 1 , false);
     to_vx_vy = new FunctionBlock(this , {to_v_w , w_integrator} , {0 , 1});
     
 
-    vx_intgrator = new Integrator(this , to_vx_vy , 0 , Ts() , 0 , 0 , 1 , false);
-    vy_intgrator = new Integrator(this , to_vx_vy , 1 , Ts() , 0 , 0 , 1 , false);
+    vx_intgrator = new Integrator(this , to_vx_vy , 0 , Ts()/1000., 0 , 0 , 1 , false);
+    vy_intgrator = new Integrator(this , to_vx_vy , 1 , Ts()/1000., 0 , 0 , 1 , false);
     to_vr_vl = new FunctionBlock(this, {to_v_w, w_integrator, vy_intgrator}, {0, 1, 1});
 
     std::function<std::valarray<scalar>(std::valarray<scalar>)> atan_2_lambda = [=](const std::valarray<scalar>&){
