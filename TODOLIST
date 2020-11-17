@@ -1,16 +1,16 @@
 HIGH :
+___________________________________
  RPI
   - integrate Control code (-Jean)
  Jetson
-  - CNN (-Erwan)
-  - Compilation CUDA sur Qt (-Erwan)
+  - Correction entraînement NN (-Erwan)
   - Interface graphique rendu CNN [en cours] (-Erwan)
-
+  
 PRJ AUTOM :
  - parler
 
 PRJ RT :
- - thread cammera (-Erwan)
+ - thread camera (-Erwan)
 
 PRJ BD :
  - parler
