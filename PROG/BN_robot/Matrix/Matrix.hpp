@@ -1,12 +1,8 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-#define USE_GPU
+//#define USE_GPU
 
-#ifdef USE_GPU
-#include "CUDA_src/CUDA_setup.h"
-#include "CUDA_src/CUDA_matrix_operators.h"
-#endif
 
 ///TODO :
 ///     * bool CUDA_setup()
@@ -47,12 +43,13 @@
 
     • Matrix            | Constructor. Accepts either a size (x , y or same for both) or a std::vector<std::vector<T>> to construct a Matrix.
 
-    • size              | Returns the size of the matrix, as const std::vector<unsigned long long>.
+    • size              | Returns the size of the matrix, as const std::vector<uint64_t>.
     • columns           | Returns the number of columns of the matrix.
     • rows              | Returns the number of rows of the matrix.
     • lines             | Alias for row().
 
-    • isLine            | Returns true if the matrix is a line, false otherwise.
+    • isRow             | Returns true if the matrix is row, false otherwise.
+    • isLine            | Alias for isRow.
     • isColumn          | Returns true if the matrix is a column, false otherwise.
     • isSquare          | Returns true if the matrix is square, false otherwise.
     • isInvertible      | Returns true if the matrix is invertible, false otherwise.
@@ -127,6 +124,10 @@
 */
 
 
+#ifdef USE_GPU
+#include "CUDA_src/CUDA_setup.h"
+#include "CUDA_src/CUDA_matrix_operators.h"
+#endif
 
 #include <algorithm>
 
@@ -137,6 +138,7 @@
 #include <iostream>
 #include <iterator>
 
+#include <stdint.h>
 #include <stdexcept>
 #include <string>
 
@@ -163,7 +165,7 @@ class Matrix{
         /***************************************************/
 
         ///Constructor                                                                               | Inits the matrix with empty vectors.
-        Matrix(const unsigned long long &lines , const unsigned long long&columns){
+        Matrix(const uint64_t &lines , const uint64_t&columns){
 
             #ifdef USE_GPU
             if(!CUDA_setup()){throw std::runtime_error("ste::Matrix::Matrix\nUnable to setup GPU.");}
@@ -171,13 +173,13 @@ class Matrix{
 
 
             _data.reserve(lines);
-            for(unsigned long long index = 0 ; index < lines ; index++){
+            for(uint64_t index = 0 ; index < lines ; index++){
                 _data.push_back(std::vector<T>(columns));
             }
 
         }
         ///Constructor                                                                               | Creates an empty square matrix of dimension size.
-        Matrix(const unsigned long long &size) : Matrix(size , size){}
+        Matrix(const uint64_t &size) : Matrix(size , size){}
 
         ///Constructor                                                                               | Inits the data of the matrix using a std::vector<std::vector<T>>
         Matrix(const std::vector<std::vector<T>> &data){
@@ -186,7 +188,7 @@ class Matrix{
             if(!CUDA_setup()){throw std::runtime_error("ste::Matrix::Matrix\nUnable to setup GPU.");}
             #endif
 
-            const unsigned long long column_length = data.at(0).size();
+            const uint64_t column_length = data.at(0).size();
 
             for(auto &line:data){
                 if(line.size() != column_length){throw std::invalid_argument("ste::Matrix::Matrix\nCannot construct a matrix with irregular column size.");}
@@ -195,7 +197,7 @@ class Matrix{
             _data = data;
         }
 
-    Matrix(const std::vector<T> &data , const unsigned long long &rows , const unsigned long long&columns){
+    Matrix(const std::vector<T> &data , const uint64_t &rows , const uint64_t&columns){
 
         #ifdef USE_GPU
         if(!CUDA_setup()){throw std::runtime_error("ste::Matrix::Matrix\nUnable to setup GPU.");}
@@ -271,13 +273,13 @@ class Matrix{
         }*/
 
         /***************************************************/
-        ///size                                                                                      | Returns the size of the matrix as const std::vector<unsigned long long>.
-        const std::vector<unsigned long long> size() const {
+        ///size                                                                                      | Returns the size of the matrix as const std::vector<uint64_t>.
+        const std::vector<uint64_t> size() const {
             if(_data.empty()){return {0 , 0};}
 
-            if(_data.at(0).empty()){return std::vector<unsigned long long>({_data.size() , 0});}
+            if(_data.at(0).empty()){return std::vector<uint64_t>({_data.size() , 0});}
 
-            return std::vector<unsigned long long>({_data.size() , _data.at(0).size()});
+            return std::vector<uint64_t>({_data.size() , _data.at(0).size()});
 
         }
 
@@ -303,6 +305,9 @@ class Matrix{
             return (rows() == 1);
 
         }
+
+        /// isRow                                                                                    | Returns true if the matrix is a line, false otherwise.
+        bool isRow() const {return isLine();}
 
         ///isColumn                                                                                  | Returns true if the matrix is a column, false otherwise.
         bool isColumn() const{
@@ -342,7 +347,7 @@ class Matrix{
         /***************************************************/
 
         ///at                                                                                        | Returns by reference the element at (line , column).
-        T& at(const unsigned long long &line , const unsigned long long &column){
+        T& at(const uint64_t &line , const uint64_t &column){
 
             if(empty()){throw std::out_of_range("ste::Matrix::at\nIndex out of range.");}
 
@@ -353,7 +358,7 @@ class Matrix{
         }
 
         ///at                                                                                        | Returns by reference the element at the linear index specified.
-        T& at(const unsigned long long &index){
+        T& at(const uint64_t &index){
 
          if(index >= rows()*columns()){throw std::out_of_range("ste::Matrix::at\nIndex out of range.");}
 
@@ -362,7 +367,7 @@ class Matrix{
         }
 
         ///at                                                                                        | Returns the value of the element at (line , column).
-        T at(const unsigned long long &line , const unsigned long long &column) const{
+        T at(const uint64_t &line , const uint64_t &column) const{
 
             if(empty()){throw std::out_of_range("ste::Matrix::at\nIndex out of range.");}
 
@@ -373,7 +378,7 @@ class Matrix{
         }
 
         ///at                                                                                        | Returns the value of the element at the linear index specified.
-        T at(const unsigned long long &index) const{
+        T at(const uint64_t &index) const{
 
          if(index >= rows()*columns()){throw std::out_of_range("ste::Matrix::at\nIndex out of range.");}
 
@@ -383,7 +388,7 @@ class Matrix{
         }
 
         ///lineAt                                                                                    | Returns by reference the line at the specified index.
-        std::vector<T>& lineAt(const unsigned long long &index){
+        std::vector<T>& lineAt(const uint64_t &index){
 
             if(empty()){throw std::out_of_range("ste::Matrix::lineAt\nIndex out of range.");}
             if(index >= rows()){throw std::out_of_range("ste::Matrix::lineAt\nIndex out of range.");}
@@ -392,7 +397,7 @@ class Matrix{
         }
 
         ///lineAt                                                                                    | Returns the value of the line at the specified index.
-        std::vector<T> lineAt(const unsigned long long &index) const{
+        std::vector<T> lineAt(const uint64_t &index) const{
 
             if(empty()){throw std::out_of_range("ste::Matrix::lineAt\nIndex out of range.");}
             if(index >= rows()){throw std::out_of_range("ste::Matrix::lineAt\nIndex out of range.");}
@@ -401,7 +406,7 @@ class Matrix{
         }
 
         ///columnAt                                                                                  | Returns the value of the column at the specified index.
-        std::vector<T>& columnAt(const unsigned long long &index) const {
+        std::vector<T>& columnAt(const uint64_t &index) const {
 
             if(hasEmptyData()){throw std::out_of_range("ste::Matrix::columnAt\nIndex out of range.");}
             if(index >= columns()){throw std::out_of_range("ste::Matrix::columnAt\nIndex out of range.");}
@@ -422,13 +427,13 @@ class Matrix{
 
 
         ///replace                                                                                   | Replaces the element at (line , column) by value.
-        void replace(const unsigned long long &line , const unsigned &column , const T &value){_data.at(line).at(column) = value;}
+        void replace(const uint64_t &line , const unsigned &column , const T &value){_data.at(line).at(column) = value;}
 
         ///replace                                                                                   | Replaces the element at index (linear index) by value.
-        void replace(const unsigned long long &index, const T &value){at(index) = value;}
+        void replace(const uint64_t &index, const T &value){at(index) = value;}
 
         ///replace                                                                                   | Replaces the line or column specified in argument by value.
-        void replace(const unsigned long long &value_index ,const Orientation &orientation , const std::vector<T> &value){
+        void replace(const uint64_t &value_index ,const Orientation &orientation , const std::vector<T> &value){
 
 
             switch(orientation){
@@ -444,7 +449,7 @@ class Matrix{
                     if(value_index  >=  columns()){throw std::invalid_argument("ste::Matrix::replace\nCannot replace a column outside the matrix.");}
                     if(value.size() != rows()){throw std::invalid_argument("ste::Matrix::replace\nCannot replace a column by another one with different length.");}
 
-                        for(unsigned long long index_line = 0 ; index_line < rows() ; index_line++){
+                        for(uint64_t index_line = 0 ; index_line < rows() ; index_line++){
                             replace(index_line , value_index , value.at(index_line));
                         }
 
@@ -460,14 +465,14 @@ class Matrix{
         }
 
         ///replace_line                                                                              | Replaces the line specified in argument by value.
-        void replace_line(const unsigned long long &value_index , const std::vector<T> &value){replace(value_index , Orientation::LINE , value);}
+        void replace_line(const uint64_t &value_index , const std::vector<T> &value){replace(value_index , Orientation::LINE , value);}
 
         ///replace_column                                                                            | Replaces the column specified in argument by value.
-        void replace_column(const unsigned long long &value_index , const std::vector<T> &value){replace(value_index , Orientation::COLUMN , value);}
+        void replace_column(const uint64_t &value_index , const std::vector<T> &value){replace(value_index , Orientation::COLUMN , value);}
 
         /// replace                                                                                  | Replaces the elements in the range specified by value.
-        void replace(const unsigned long long &line_begin, const unsigned long long &line_end ,
-                     const unsigned long long &column_begin, const unsigned long long &column_end,
+        void replace(const uint64_t &line_begin, const uint64_t &line_end ,
+                     const uint64_t &column_begin, const uint64_t &column_end,
                      const T &value){
 
 
@@ -477,9 +482,9 @@ class Matrix{
                    column_end > end_column()){throw std::invalid_argument("ste::Matrix::replace\nCannot replace an element outside the matrix.");}
 
 
-                for(unsigned long long line = line_begin ; line < line_end ; line++){
+                for(uint64_t line = line_begin ; line < line_end ; line++){
 
-                    for(unsigned long long column = column_begin ; column < column_end ; column++){
+                    for(uint64_t column = column_begin ; column < column_end ; column++){
 
                         _data.at(line).at(column) = value;
 
@@ -506,7 +511,7 @@ class Matrix{
                 case(Orientation::COLUMN):{
                     if(data.size() != rows()){throw std::invalid_argument("ste::Matrix::add\nSizes must match when appending a new line to a matrix.");}
 
-                    for(unsigned long long index = 0 ; index < rows() ; index++){
+                    for(uint64_t index = 0 ; index < rows() ; index++){
                         _data.at(index).push_back(data.at(index));
                     }
                 break;
@@ -540,7 +545,7 @@ class Matrix{
                   /***************************************************/
 
         ///remove(const std::vector<T> &data , const Orientation &orientation)                       | Removes either a column or a line at the specified index containing data according to orientation.
-        void remove(const unsigned long long &element_index , const Orientation &orientation){
+        void remove(const uint64_t &element_index , const Orientation &orientation){
 
             switch(orientation){
 
@@ -555,7 +560,7 @@ class Matrix{
                 case(Orientation::COLUMN):{
 
                 if(element_index >= columns()){throw std::invalid_argument("ste::Matrix::remove\nCannot remove a column outside the matrix.");}
-                for(unsigned long long index = 0 ; index < rows() ; index++){
+                for(uint64_t index = 0 ; index < rows() ; index++){
                     _data.at(index).erase(_data.at(index).begin()+element_index);
                 }
                 break;
@@ -569,15 +574,15 @@ class Matrix{
         }
 
         ///remove_line                                                                               | Removes a line at the specified index.
-        void remove_line(const unsigned long long &index){remove(index, Orientation::LINE);}
+        void remove_line(const uint64_t &index){remove(index, Orientation::LINE);}
 
         ///remove_column                                                                             | Removes a column at the specified index.
-        void remove_column(const unsigned long long &index){remove(index, Orientation::COLUMN);}
+        void remove_column(const uint64_t &index){remove(index, Orientation::COLUMN);}
 
 
                   /***************************************************/
         ///insert                                                                                    | Inserts a column or a line containing data at the specified index.
-        void insert(const unsigned long long &element_index , const Orientation &orientation , const std::vector<T> &data){
+        void insert(const uint64_t &element_index , const Orientation &orientation , const std::vector<T> &data){
 
             switch(orientation){
 
@@ -593,7 +598,7 @@ class Matrix{
                     if(data.size() != rows()){throw std::invalid_argument("ste::Matrix::insert\nCannot insert a column which does not have the same length as the others.");}
                     if(element_index>columns()){insert(columns() , orientation , data); return;}
 
-                    for(unsigned long long index_line = 0 ; index_line < rows() ; index_line++){
+                    for(uint64_t index_line = 0 ; index_line < rows() ; index_line++){
                         _data.at(index_line).insert(_data.at(index_line).begin() +  element_index , data.at(index_line));
                     }
 
@@ -609,14 +614,14 @@ class Matrix{
 
         }
         ///insert_line                                                                               | Inserts a line at index containing data.
-        void insert_line(const unsigned long long &index , const std::vector<T> &data){insert(index, Orientation::LINE , data);}
+        void insert_line(const uint64_t &index , const std::vector<T> &data){insert(index, Orientation::LINE , data);}
 
         ///insert_column                                                                             | Inserts a column at index containing data.
-        void insert_column(const unsigned long long &index , const std::vector<T> &data){insert(index, Orientation::COLUMN , data);}
+        void insert_column(const uint64_t &index , const std::vector<T> &data){insert(index, Orientation::COLUMN , data);}
 
         /***************************************************/
         ///swap                                                                                      | Swaps two lines or two columns at the positions specified.
-        void swap(const unsigned long long &element_1 , const unsigned long long element_2 ,const Orientation &orientation){
+        void swap(const uint64_t &element_1 , const uint64_t element_2 ,const Orientation &orientation){
 
             switch(orientation){
 
@@ -656,10 +661,10 @@ class Matrix{
         }
 
         ///swap_lines                                                                                | Convience function to swap two lines at a specified positions.
-        void swap_lines(const unsigned long long &element_1 , const unsigned long long element_2){swap(element_1, element_2 ,Orientation::LINE);}
+        void swap_lines(const uint64_t &element_1 , const uint64_t element_2){swap(element_1, element_2 ,Orientation::LINE);}
 
         ///swap_columns                                                                              | Convience function to swap two columns at a specified positions.
-        void swap_columns(const unsigned long long &element_1 , const unsigned long long element_2){swap(element_1, element_2 ,Orientation::COLUMN);}
+        void swap_columns(const uint64_t &element_1 , const uint64_t element_2){swap(element_1, element_2 ,Orientation::COLUMN);}
 
         /***************************************************/
 
@@ -744,11 +749,11 @@ class Matrix{
         }
 
         ///begin_line | begin_column | begin_line | end_column                                       | Convinience functions that returns the beginning or the end of a line / a column. Provided to obtain syntax as close as std::algorithm functions as possible.
-        unsigned long long begin_line() const{return 0;}
-        unsigned long long begin_column() const{return 0;}
+        uint64_t begin_line() const{return 0;}
+        uint64_t begin_column() const{return 0;}
 
-        unsigned long long end_line() const{return _data.size();}
-        unsigned long long end_column() const{return _data.at(0).size();}
+        uint64_t end_line() const{return _data.size();}
+        uint64_t end_column() const{return _data.at(0).size();}
 
                 /***************************************************/
 
@@ -761,7 +766,7 @@ class Matrix{
 
             T accumulator = T(0);
 
-            for(unsigned long long index = 0 ; index < rows() ; index++){
+            for(uint64_t index = 0 ; index < rows() ; index++){
                 accumulator += T(at(index , index));
             }
 
@@ -780,8 +785,8 @@ class Matrix{
             #else
             T accumulator = T(0);
 
-            for(unsigned long long index_line = 0 ; index_line < rows() ; index_line++){
-                for(unsigned long long index_column = 0 ; index_column < columns() ; index_column++){
+            for(uint64_t index_line = 0 ; index_line < rows() ; index_line++){
+                for(uint64_t index_column = 0 ; index_column < columns() ; index_column++){
                     accumulator += at(index_line , index_column);
                 }
             }
@@ -816,15 +821,15 @@ class Matrix{
             //#else
             T determinant = T(0);
 
-            for(unsigned long long row_index = 0 ; row_index < columns() ; row_index++){
+            for(uint64_t row_index = 0 ; row_index < columns() ; row_index++){
 
                 std::vector<std::vector<T>> temp_data;
 
-                for(unsigned long long i = 1 ; i < rows() ; i++){
+                for(uint64_t i = 1 ; i < rows() ; i++){
 
                     std::vector<T> temp_row;
 
-                    for(unsigned long long j = 0 ; j < columns()  ; j++){
+                    for(uint64_t j = 0 ; j < columns()  ; j++){
 
                         if(j != row_index){temp_row.push_back(at(i , j));}
 
@@ -847,7 +852,7 @@ class Matrix{
         }
 
         ///cofactor                                                                                   | Returns the cofactor of the specified line and column.
-        T cofactor(unsigned long long line , unsigned long long column) const{
+        T cofactor(uint64_t line , uint64_t column) const{
 
             if(line >= rows()){throw std::invalid_argument("ste::Matrix::cofactor\nLine is outside the matrix.");}
             if(column >= columns()){throw std::invalid_argument("ste::Matrix::cofactor\nColumn is outside the matrix.");}
@@ -863,7 +868,7 @@ class Matrix{
 
 
         ///cofactor                                                                                   | Returns the cofactor of the specified linear index.
-        T cofactor(unsigned long long index) const{return cofactor(index / columns() , index % columns());}
+        T cofactor(uint64_t index) const{return cofactor(index / columns() , index % columns());}
 
 
         ///comatrix                                                                                   | Returns the cofactor matrix. Convinience function that returns cofactormatrix().
@@ -879,7 +884,7 @@ class Matrix{
             //#else
             Matrix result(_data);
 
-            for(unsigned long long index = 0 ; index < rows()*columns() ; index++){
+            for(uint64_t index = 0 ; index < rows()*columns() ; index++){
 
                 Matrix temp(_data);
 
@@ -908,53 +913,19 @@ class Matrix{
 
 
         //#ifdef USE_GPU
-        //return Matrix(CUDA_transpose(toArray() , rows() , columns()) , rows() , columns());
-       // #else
+        //return Matrix(CUDA_transpose(toVector1D(), rows() , columns()) , rows() , columns());
+        //#else
 
             Matrix result(columns() , rows());
 
-            if(isLine()){
-
-                std::vector<std::vector<T>> data (columns());
-
-                for(unsigned long long index = 0 ; index < columns() ; index++){
-                    data.at(index) = std::vector<T>({result.at(0 , index)});
+            for(uint64_t row = 0 ; row < rows() ; row++){
+                for(uint64_t column = 0 ; column < columns() ; column++){
+                    result.replace(column , row , at(row  , column));
                 }
-
-                result = data;
-
             }
-            else if(isColumn()){
-
-                std::vector<T> data (rows());
-
-                for(unsigned long long index = 0 ; index < lines() ; index++){
-                    data.at(index) = (result.at(index , 0));
-                }
-
-                result = std::vector<std::vector<T>>{data};
-
-            }
-
-            else{
-
-                for(uint64_t index = 0 ; index < rows() * columns() ; index++){
-                    result.replace(index , at(index / columns()  , index % columns()));
-                }
-
-            }
-
-
-
             return result;
 
        // #endif
-
-
-
-
-
-
         }
 
 
@@ -994,16 +965,16 @@ class Matrix{
                 /***************************************************/
 
         ///fill                                                                                        | Resizes the matrix to [size ; size] and fills it with value.
-        void fill(const unsigned long long &size , const T &value){
+        void fill(const uint64_t &size , const T &value){
             fill(size , size , value);
         }
 
         ///fill                                                                                        | Resizes the matrix to [length ; width] and fills it with value.
-        void fill(const unsigned long long &length , const unsigned long long &width , const T &value){
+        void fill(const uint64_t &length , const uint64_t &width , const T &value){
 
             _data.clear();
             _data.reserve(length);
-            for(unsigned long long line = 0 ; line < length ; line++){
+            for(uint64_t line = 0 ; line < length ; line++){
                 std::vector<T> line_data(width);
                 std::fill(line_data.begin() , line_data.end() , T(value));
                 _data.push_back(line_data);
@@ -1016,16 +987,16 @@ class Matrix{
                   /***************************************************/
 
         ///zeroes                                                                                      | Resizes the matrix to [size ; size] and fills it with 0.
-        void zeroes(const unsigned long long &size){
+        void zeroes(const uint64_t &size){
             zeroes(size , size);
         }
 
         ///zeroes                                                                                      | Resizes the matrix to [length ; width] and fills it with 0.
-        void zeroes(const unsigned long long &length , const unsigned long long &width){
+        void zeroes(const uint64_t &length , const uint64_t &width){
 
            _data.clear();
            _data.reserve(length);
-            for(unsigned long long line = 0 ; line < length ; line++){
+            for(uint64_t line = 0 ; line < length ; line++){
                 std::vector<T> line_data(width);
                 std::fill(line_data.begin() , line_data.end() , T(0));
                 _data.push_back(line_data);
@@ -1035,16 +1006,16 @@ class Matrix{
 
                     /***************************************************/
         ///ones                                                                                        | Resizes the matrix to [size ; size] and fills it with 1.
-        void ones(const unsigned long long &size){
+        void ones(const uint64_t &size){
             ones(size , size);
         }
 
         ///ones                                                                                        | Resizes the matrix to [length ; width] and fills it with 1.
-        void ones(const unsigned long long &length , const unsigned long long &width){
+        void ones(const uint64_t &length , const uint64_t &width){
 
             _data.clear();
             _data.reserve(length);
-            for(unsigned long long line = 0 ; line < length ; line++){
+            for(uint64_t line = 0 ; line < length ; line++){
                 std::vector<T> line_data(width);
                 std::fill(line_data.begin() , line_data.end() , T(1));
                 _data.push_back(line_data);
@@ -1056,11 +1027,11 @@ class Matrix{
                  /***************************************************/
 
         ///ones                                                                                         | Resizes the matrix to [size ; size] fills it to be the identity matrix.
-        void eye(const unsigned long long &size){
+        void eye(const uint64_t &size){
 
             zeroes(size);
 
-            for(unsigned long long line = 0 ; line < size ; line++){
+            for(uint64_t line = 0 ; line < size ; line++){
                 replace(line , line , 1);
             }
 
@@ -1077,7 +1048,7 @@ class Matrix{
         ///operator=                                                                                 | Assignement operator. Changes the data to the one from arg if possible, throws std::invalid_argument otherwise.
         virtual void operator=(const std::vector<std::vector<T>> &arg){
 
-            const unsigned long long column_length = arg.at(0).size();
+            const uint64_t column_length = arg.at(0).size();
 
             for(auto &line:arg){
                 if(line.size() != column_length){throw std::invalid_argument("ste::Matrix::operator=\nCannot construct a matrix with irregular column size.");}
@@ -1105,11 +1076,11 @@ class Matrix{
 
             Matrix result(rows() , arg.columns());
 
-            for(unsigned long long index_line = 0 ; index_line < rows() ; index_line++){
+            for(uint64_t index_line = 0 ; index_line < rows() ; index_line++){
 
-                for(unsigned long long index_column = 0 ; index_column < arg.columns() ; index_column++){
+                for(uint64_t index_column = 0 ; index_column < arg.columns() ; index_column++){
                     T value = T(0);
-                    for(unsigned long long index_sum = 0 ; index_sum < columns(); index_sum++){
+                    for(uint64_t index_sum = 0 ; index_sum < columns(); index_sum++){
                         value += T(_data.at(index_line).at(index_sum)) * T(arg._data.at(index_sum).at(index_column));
                     }
                     result.replace(index_line , index_column , value);
@@ -1165,7 +1136,7 @@ class Matrix{
            // #else
            Matrix result(_data);
 
-            for(unsigned long long index = 0 ; index < result.rows() ; index++){
+            for(uint64_t index = 0 ; index < result.rows() ; index++){
 
                 std::transform (result._data.at(index).begin(),
                                 result._data.at(index).end(),
