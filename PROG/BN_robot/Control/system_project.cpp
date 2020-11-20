@@ -103,7 +103,6 @@ System_project::System_project(const uint64_t Ts_ms, MobileBase *robot, std::val
     to_v_w->compute();
     std::cout << "v: " << to_v_w->output(0) << " w: " << to_v_w->output(1)  << "\n";
     
-    w_integrator->compute();
     std::cout << "w_integrator: " << w_integrator->output() << "\n";
 
     to_vx_vy->compute();
