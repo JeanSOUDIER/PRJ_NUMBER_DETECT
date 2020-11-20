@@ -82,6 +82,7 @@ std::vector<int> asserv::Compute(std::vector<double> pos) {
 	//compute artan2
 	double vxR = (m_x-m_xOld)/m_Te;
 	double vyR = (m_y-m_yOld)/m_Te;
+	std::cout << "vxR " << vxR << " vyR " << vyR << std::endl;
 	double thetaR = std::fmod(std::atan2(vyR, vxR),2*M_PI);
 	std::cout << "cons x " << m_x << " y " << m_y << " thet " << thetaR << std::endl;
 	//compute error

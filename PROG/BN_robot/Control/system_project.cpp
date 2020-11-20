@@ -19,7 +19,7 @@ System_project::System_project(const uint64_t Ts_ms, MobileBase *robot, std::val
     to_parameters = new FunctionBlock(this , {feedback_x_comparator , feedback_y_comparator , feedback_theta_comparator , feedback_sensor} , {0 , 0 , 0 , 2});
 
     to_v_w = new FunctionBlock(this , {to_parameters} , {0});
-    w_integrator = new Integrator(this , to_v_w , 1 , Ts()/1000., 0 , 0 , 1 , false);
+    w_integrator = new Integrator(this , to_v_w , 1 , Ts()/1000., -M_PI/2 , -M_PI/2 , 0.5 , false);
     to_vx_vy = new FunctionBlock(this , {to_v_w , w_integrator} , {0 , 1});
     
 
@@ -58,15 +58,15 @@ System_project::System_project(const uint64_t Ts_ms, MobileBase *robot, std::val
 
         return std::valarray<scalar>({
                                        to_v_w->output(0) * std::cos(w_integrator->output()),
-                                       to_v_w->output(1) * std::sin(w_integrator->output())
+                                       to_v_w->output(0) * std::sin(w_integrator->output())
                                      });
     };
 
     std::function<std::valarray<scalar>(std::valarray<scalar>)> to_vr_vl_lambda = [=](const std::valarray<scalar>&){
 
         return std::valarray<scalar>({
-                                       80*to_v_w->output(0)*(1 - 1.5*std::cos(w_integrator->output())*(Utility::sign(vy_intgrator->output()-line_length/2))),
-                                       80*to_v_w->output(1)*(1 + 1.5*std::cos(w_integrator->output())*(Utility::sign(vy_intgrator->output()-line_length/2)))
+                                       80*to_v_w->output(0)*(1 + 1.5*std::cos(w_integrator->output())),//*(Utility::sign(vy_intgrator->output()-line_length/2))),
+                                       80*to_v_w->output(0)*(1 - 1.5*std::cos(w_integrator->output()))//*(Utility::sign(vy_intgrator->output()-line_length/2)))
                                      });
     };
 
@@ -75,6 +75,47 @@ System_project::System_project(const uint64_t Ts_ms, MobileBase *robot, std::val
     to_v_w->setFunction(to_v_w_lambda);
     to_vx_vy->setFunction(to_vx_vy_lambda);
     to_vr_vl->setFunction(to_vr_vl_lambda);
+    
+    feedback_sensor->compute();
+    std::cout << "x (feedback): " << feedback_sensor->output(0) << " y (feedback): " << feedback_sensor->output(1)  << " theta (feedback): "<< feedback_sensor->output(2) << "\n";
+
+    d_x_in->compute();
+    std::cout << "d_x_r: " << d_x_in->output();
+
+    d_y_in->compute();
+    std::cout << " d_y_r: " << d_y_in->output();
+
+    theta_in->compute();
+    std::cout << " theta_in: " << theta_in->output(0) << "\n";
+
+    feedback_x_comparator->compute();
+    std::cout << "feedback_x_comparator: " << feedback_x_comparator->output();
+
+    feedback_y_comparator->compute();
+    std::cout << " feedback_y_comparator: " << feedback_y_comparator->output();
+
+    feedback_theta_comparator->compute();
+    std::cout << " feedback_theta_comparator: " << feedback_theta_comparator->output() << "\n";;
+
+    to_parameters->compute();
+    std::cout << "lambda: " << to_parameters->output(0) << " alpha: " << to_parameters->output(1) << " beta: " << to_parameters->output(2) << "\n";
+
+    to_v_w->compute();
+    std::cout << "v: " << to_v_w->output(0) << " w: " << to_v_w->output(1)  << "\n";
+    
+    std::cout << "w_integrator: " << w_integrator->output() << "\n";
+
+    to_vx_vy->compute();
+    std::cout << "vx: " << to_vx_vy->output(0) << " vy: " << to_vx_vy->output(1) <<std::endl;
+
+    to_vr_vl->compute();
+    std::cout << "vr: " << to_vr_vl->output(0) << " vl: " << to_vr_vl->output(1) <<std::endl;
+
+    vx_intgrator->compute();
+    std::cout << "vx_integrator: " << vx_intgrator->output() << "\n";
+
+    vy_intgrator->compute();
+    std::cout << "vy_integrator: " << vy_intgrator->output() << "\n";
 }
 
 System_project::~System_project(){
@@ -138,34 +179,36 @@ void System_project::compute(){
     std::cout << " feedback_y_comparator: " << feedback_y_comparator->output();
 
     feedback_theta_comparator->compute();
-    std::cout << " feedback_theta_comparator: " << feedback_theta_comparator->output() << "\n";;
+    std::cout << " feedback_theta_comparator: " << feedback_theta_comparator->output() << "\n";
 
     to_parameters->compute();
     std::cout << "lambda: " << to_parameters->output(0) << " alpha: " << to_parameters->output(1) << " beta: " << to_parameters->output(2) << "\n";
 
     to_v_w->compute();
     std::cout << "v: " << to_v_w->output(0) << " w: " << to_v_w->output(1)  << "\n";
-
-    w_integrator->compute();
+    
     std::cout << "w_integrator: " << w_integrator->output() << "\n";
 
     to_vx_vy->compute();
-    std::cout << "vx: " << to_vx_vy->output(0) << " vy: " << to_vx_vy->output(1) << "\n"<<std::endl;
+    std::cout << "vx: " << to_vx_vy->output(0) << " vy: " << to_vx_vy->output(1) <<std::endl;
 
     to_vr_vl->compute();
-    std::cout << "vr: " << to_vr_vl->output(0) << " vl: " << to_vr_vl->output(1) << "\n"<<std::endl;
+    std::cout << "vr: " << to_vr_vl->output(0) << " vl: " << to_vr_vl->output(1) <<std::endl;
 
     vx_intgrator->compute();
     std::cout << "vx_integrator: " << vx_intgrator->output() << "\n";
 
     vy_intgrator->compute();
     std::cout << "vy_integrator: " << vy_intgrator->output() << "\n";
+    
+    w_integrator->compute();
+    std::cout << "w_integrator: " << w_integrator->output() << "\n";
 
 }
 
 scalar System_project::vr() const{return to_vr_vl->output(0);}
 scalar System_project::vl() const{return to_vr_vl->output(1);}
-std::valarray<scalar> System_project::coord() const{return {vx_intgrator->output()/2, vy_intgrator->output()/2, w_integrator->output()/1000};}
+std::valarray<scalar> System_project::coord() const{return {vx_intgrator->output()*1000, vy_intgrator->output()*1000, w_integrator->output()};}
 
 /**************************************************************************/
 } //namespace Control

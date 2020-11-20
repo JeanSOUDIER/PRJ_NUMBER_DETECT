@@ -19,7 +19,7 @@ Sequencer::Sequencer(Arm* WidowXL, Bluetooth* BLE, MobileBase* TurtleBot) {
 		seqHandler.addSequence(static_cast<unsigned char>(i),path);
 	}
 	m_sys = new Control::System_project{20, m_TurtleBot, {0, 0, -M_PI/2}, 10, 5};
-	//m_syst = new asserv(0.02, 10, 5);
+	m_syst = new asserv(0.02, 10, 5);
 	std::cout << "Sequencer start" << std::endl;
 }
 
@@ -29,7 +29,7 @@ Sequencer::~Sequencer() {
 	delete m_WidowXL;
 	if(m_BLE_start) {delete m_BLE;}
 	delete m_sys;
-	//delete m_syst;
+	delete m_syst;
 	delete m_TurtleBot;
 }
 
@@ -101,10 +101,10 @@ void Sequencer::MoveRobot(const uint64_t time) {
     auto begining_timestamp = std::chrono::high_resolution_clock::now();
     auto current_timestamp = std::chrono::high_resolution_clock::now();
     m_TurtleBot->SetSpeedCons(1);
-    //m_syst->SetSpeedNorm(1);
+    m_syst->SetSpeedNorm(1);
     do {
         current_timestamp = std::chrono::high_resolution_clock::now();
-        if(std::chrono::duration_cast<std::chrono::milliseconds>(current_timestamp - begin_timestamp).count() >= m_sys->Ts()) {//m_syst->GetTe()) {
+        if(std::chrono::duration_cast<std::chrono::milliseconds>(current_timestamp - begin_timestamp).count() >= m_sys->Ts()) { //m_syst->GetTe()) {
             begin_timestamp = std::chrono::high_resolution_clock::now();
             m_sys->compute();
 	    m_TurtleBot->SetCurrentPosi(m_sys->coord());
@@ -114,7 +114,7 @@ void Sequencer::MoveRobot(const uint64_t time) {
         }
     } while(std::chrono::duration_cast<std::chrono::milliseconds>(current_timestamp - begining_timestamp).count() < time);
     m_TurtleBot->SetSpeedCons(0);
-    //m_syst->SetSpeedNorm(0);
+    m_syst->SetSpeedNorm(0);
     delay(m_sys->Ts());
     //delay(m_syst->GetTe());
     m_TurtleBot->SetSpeed(0, 0);

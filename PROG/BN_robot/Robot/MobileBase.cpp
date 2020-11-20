@@ -23,7 +23,7 @@ MobileBase::MobileBase(const double posX, const double posY, const double angle,
 	m_angle.store(angle, std::memory_order_release);
 	m_RPLidar = RPLidar;
 	m_speedNorm = 0;
-	m_posEmul = {0, 0, M_PI/2};
+	m_posEmul = {0, 0, -M_PI/2};
 	//thread
 	if(m_lidar_start) {
 		m_RPLidar->StartThread();

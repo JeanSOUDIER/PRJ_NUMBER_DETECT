@@ -1,6 +1,7 @@
 #ifndef INTEGRATOR_H
 #define INTEGRATOR_H
 
+#include <iostream>
 #include "Control_global.h"
 #include "block.h"
 

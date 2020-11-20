@@ -1,10 +1,8 @@
-HIGH :
-___________________________________
- RPI
-  - integrate Control code (-Jean)
- Jetson
-  - Correction entraînement NN (-Erwan)
-  - Interface graphique rendu CNN [en cours] (-Erwan)
+RPI
+ - integrate Control code (-Jean)
+Jetson
+ - Correction entraînement NN (-Erwan)
+ - Interface graphique rendu CNN [en cours] (-Erwan)
  
 PRJ RT :
  - thread camera (-Erwan)
@@ -14,4 +12,3 @@ PRJ BD :
 
 PRJ E-MOBI :
  - techno de batt
-   --> Batterie au plomb
