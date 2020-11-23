@@ -95,20 +95,21 @@ bool ImageViewer::loadFile(const QString &fileName, bool test)
         return false;
     }*/
 //! [2]
+    if(VectNewImage.size()) {
+        QSize s = VectNewImage.at(0).size();
+        std::cout << s.rwidth() << " " << s.rheight() << std::endl;
+        QImage res((5+s.rwidth())*VectNewImage.size(), s.rheight(), QImage::Format_Grayscale8);
+        res.fill(Qt::white);
+        QPainter result(&res);
+        for(unsigned int i=0;i<VectNewImage.size();i++) {
+            result.drawImage(i*(s.rwidth()+5), 0, VectNewImage.at(i));
+        }
 
-    QSize s = VectNewImage.at(0).size();
-    std::cout << s.rwidth() << " " << s.rheight() << std::endl;
-    QImage res((5+s.rwidth())*VectNewImage.size(), s.rheight(), QImage::Format_Grayscale8);
-    res.fill(Qt::white);
-    QPainter result(&res);
-    for(unsigned int i=0;i<VectNewImage.size();i++) {
-        result.drawImage(i*(s.rwidth()+5), 0, VectNewImage.at(i));
-    }
-
-    if(test) {
-        setImage(res);
-    } else {
-        setImage(myTF.TakePhoto());
+        if(test) {
+            setImage(res);
+        } else {
+            setImage(myTF.TakePhoto());
+        }
     }
 
     return true;

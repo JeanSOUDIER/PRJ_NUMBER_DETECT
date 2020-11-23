@@ -24,78 +24,119 @@ std::vector<QImage> TF::ToProcessed(cv::Mat img) {
 	std::cout << "image in" << std::endl;
 	if(m_print) {CPI2.ImgShow(img);}
 
-	std::cout << "to gray" << std::endl;
-	cv::Mat imgGray;
-	cv::cvtColor(img, imgGray, cv::COLOR_BGR2GRAY);
-	if(m_print) {CPI2.ImgShow(imgGray);}
+    cv::Mat imgGray = ToGray(img);
 
-	std::cout << "histogram" << std::endl;
-	cv::Mat histo;
-	cv::Mat imgHisto = show_histogram(imgGray);
-	if(m_print) {CPI2.ImgShow(imgHisto);}
-	int thres = m_moy;
-	std::cout << "thres " << thres << std::endl;
+    cv::Mat imgHisto = ToHistogram(imgGray);
 
-	std::cout << "threshold" << std::endl;
-	cv::Mat imgThres;
-	threshold(imgGray, imgThres, thres, 255, 3);
-	if(m_print) {CPI2.ImgShow(imgThres);}
+    cv::Mat imgThres = ToThreshold(imgGray,GetThreshold());
 
-	std::cout << "to regioprops" << std::endl;
-	std::vector<std::vector<cv::Point>> cnt;
-	std::vector<cv::Vec4i> hier;
-	cv::findContours(imgThres, cnt, hier, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
-
-	cv::Mat imgDraw = imgGray;
-	std::vector<cv::Rect> rectan(cnt.size());
-	std::vector<cv::Mat> rez;
-	std::vector<cv::Mat> rez2;
-	std::vector<double> places;
-    std::vector<QImage> res;
-	for(size_t i=0;i<cnt.size();i++) {
-		if(cv::contourArea(cnt.at(i)) > 5000 && cv::contourArea(cnt.at(i)) < 900000) {
-			std::cout << (int)(i) << " " << cv::contourArea(cnt.at(i)) << std::endl;
-			rectan.at(i) = cv::boundingRect(cnt.at(i));
-			cv::rectangle(imgDraw, rectan.at(i), {0, 255, 0}, 2);
-
-			rez.push_back(imgGray(rectan.at(i)));
-            double l = 28/static_cast<double>(rectan.at(i).height);
-            double h = 28/static_cast<double>(rectan.at(i).width);
-			places.push_back(rectan.at(i).x);
-			std::cout << l << " " << h << std::endl;
-            cv::resize(rez.at(rez.size()-1), rez.at(rez.size()-1), cv::Size(), h, l);
-		}
-	}
-	
-	std::cout << "sorting" << std::endl;
-	std::cout << places.size() << std::endl;
-	if(places.size() > 1) {
-		do {
-			double mini = places.at(0);
-			int id = 0;
-			for(unsigned int j=0;j<places.size();j++) {
-				if(mini > places.at(j)) {
-					mini = places.at(j);
-					id = j;
-				}
-			}
-			rez2.push_back(rez.at(id));
-            res.push_back(ToQImage(rez.at(id), true));
-			if(m_print) {CPI2.ImgShow(rez2.at(rez2.size()-1));}
-			rez.erase(rez.begin()+id);
-			places.erase(places.begin()+id);
-		} while(places.size() > 0);
-	} else if(places.size() == 1) {
-		rez2.push_back(rez.at(0));
-        res.push_back(ToQImage(rez.at(0), true));
-		if(m_print) {CPI2.ImgShow(rez2.at(0));}
-	} else {
-		std::cout << "no pattern found" << std::endl;
-	}	
-	if(m_print) {CPI2.ImgShow(imgDraw);}
+    std::vector<cv::Mat> imgSort = ToRegionprops(imgGray, imgThres, false);
 
     std::cout << "done !" << std::endl;
-    return res;
+    return ToQImageVect(imgSort, true);
+}
+
+QImage TF::QToGray(QImage img) {
+    return ToQImage(ToGray(ToCVMat(img, true)), true);
+}
+
+cv::Mat TF::ToGray(cv::Mat img) {
+    std::cout << "to gray" << std::endl;
+    cv::Mat imgGray;
+    cv::cvtColor(img, imgGray, cv::COLOR_BGR2GRAY);
+    if(m_print) {CPI2.ImgShow(imgGray);}
+    return imgGray;
+}
+
+QImage TF::QToHistogram(QImage img) {
+    return ToQImage(ToHistogram(ToCVMat(img, true)), true);
+}
+
+cv::Mat TF::ToHistogram(cv::Mat imgGray) {
+    std::cout << "histogram" << std::endl;
+    cv::Mat histo;
+    cv::Mat imgHisto = show_histogram(imgGray);
+    if(m_print) {CPI2.ImgShow(imgHisto);}
+    return imgHisto;
+}
+
+double TF::GetThreshold() {
+    std::cout << "thres " << m_moy << std::endl;
+    return m_moy;
+}
+
+QImage TF::QToThreshold(QImage img, double thres) {
+    return ToQImage(ToThreshold(ToCVMat(img, true), thres), true);
+}
+
+cv::Mat TF::ToThreshold(cv::Mat imgGray, double thres) {
+    std::cout << "threshold" << std::endl;
+    cv::Mat imgThres;
+    threshold(imgGray, imgThres, thres, 255, 3);
+    if(m_print) {CPI2.ImgShow(imgThres);}
+    return imgThres;
+}
+
+std::vector<QImage> TF::QToRegionprops(QImage imgGray, QImage imgThres, bool test) {
+    return ToQImageVect(ToRegionprops(ToCVMat(imgGray, true), ToCVMat(imgThres, true), test), true);
+}
+
+std::vector<cv::Mat> TF::ToRegionprops(cv::Mat imgGray, cv::Mat imgThres, bool test) {
+    std::cout << "to regioprops" << std::endl;
+    std::vector<std::vector<cv::Point>> cnt;
+    std::vector<cv::Vec4i> hier;
+    cv::findContours(imgThres, cnt, hier, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
+
+    cv::Mat imgDraw = imgGray;
+    std::vector<cv::Rect> rectan(cnt.size());
+    std::vector<cv::Mat> rez;
+    std::vector<cv::Mat> rez2;
+    std::vector<double> places;
+
+    for(size_t i=0;i<cnt.size();i++) {
+        if(cv::contourArea(cnt.at(i)) > 5000 && cv::contourArea(cnt.at(i)) < 900000) {
+            std::cout << (int)(i) << " " << cv::contourArea(cnt.at(i)) << std::endl;
+            rectan.at(i) = cv::boundingRect(cnt.at(i));
+            cv::rectangle(imgDraw, rectan.at(i), {0, 255, 0}, 2);
+
+            rez.push_back(imgGray(rectan.at(i)));
+            double l = 28/static_cast<double>(rectan.at(i).height);
+            double h = 28/static_cast<double>(rectan.at(i).width);
+            places.push_back(rectan.at(i).x);
+            std::cout << l << " " << h << std::endl;
+            cv::resize(rez.at(rez.size()-1), rez.at(rez.size()-1), cv::Size(), h, l);
+        }
+    }
+
+    std::cout << "sorting" << std::endl;
+    std::cout << places.size() << std::endl;
+    if(places.size() > 1) {
+        do {
+            double mini = places.at(0);
+            int id = 0;
+            for(unsigned int j=0;j<places.size();j++) {
+                if(mini > places.at(j)) {
+                    mini = places.at(j);
+                    id = j;
+                }
+            }
+            rez2.push_back(rez.at(id));
+            if(m_print) {CPI2.ImgShow(rez2.at(rez2.size()-1));}
+            rez.erase(rez.begin()+id);
+            places.erase(places.begin()+id);
+        } while(places.size() > 0);
+    } else if(places.size() == 1) {
+        rez2.push_back(rez.at(0));
+        if(m_print) {CPI2.ImgShow(rez2.at(0));}
+    } else {
+        std::cout << "no pattern found" << std::endl;
+    }
+
+    if(m_print) {CPI2.ImgShow(imgDraw);}
+
+    if(test) {rez2.push_back(imgDraw);}
+
+    return rez2;
 }
 
 cv::Mat TF::show_histogram(cv::Mat const& image) {
@@ -146,6 +187,32 @@ QImage TF::ToQImage(cv::Mat img, bool format) {
         QImage imgIn = QImage((uchar*) img.data, img.cols, img.rows, img.step, QImage::Format_RGB888);
         return imgIn;
     }
+}
+
+std::vector<QImage> TF::ToQImageVect(std::vector<cv::Mat> img, bool format) {
+    std::vector<QImage> res;
+    for(unsigned int i=0;i<img.size();i++) {
+        res.push_back(ToQImage(img.at(i), format));
+    }
+    return res;
+}
+
+cv::Mat TF::ToCVMat(QImage img, bool format) { //pb de convesion
+    if(format) {
+        cv::Mat res(img.height(), img.width(), CV_8U,img.bits());
+        return res;
+    } else {
+        cv::Mat res(img.height(), img.width(), CV_8UC3,img.bits());
+        return res;
+    }
+}
+
+std::vector<cv::Mat> TF::ToCVMatVect(std::vector<QImage> img, bool format) {
+    std::vector<cv::Mat> res;
+    for(unsigned int i=0;i<img.size();i++) {
+        res.push_back(ToCVMat(img.at(i), format));
+    }
+    return res;
 }
 
 QImage TF::TakePhoto() {
