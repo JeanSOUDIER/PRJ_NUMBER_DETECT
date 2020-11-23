@@ -19,12 +19,12 @@ System_project::System_project(const uint64_t Ts_ms, MobileBase *robot, std::val
     to_parameters = new FunctionBlock(this , {feedback_x_comparator , feedback_y_comparator , feedback_theta_comparator , feedback_sensor} , {0 , 0 , 0 , 2});
 
     to_v_w = new FunctionBlock(this , {to_parameters} , {0});
-    w_integrator = new Integrator(this , to_v_w , 1 , Ts()/1000., -M_PI/2 , -M_PI/2 , 0.5 , false);
+    w_integrator = new Integrator(this , to_v_w , 1 , Ts()/1000., -M_PI/2 , -M_PI/2 , 1 , true);
     to_vx_vy = new FunctionBlock(this , {to_v_w , w_integrator} , {0 , 1});
     
 
-    vx_intgrator = new Integrator(this , to_vx_vy , 0 , Ts()/1000., 0 , 0 , 1 , false);
-    vy_intgrator = new Integrator(this , to_vx_vy , 1 , Ts()/1000., 0 , 0 , 1 , false);
+    vx_intgrator = new Integrator(this , to_vx_vy , 0 , Ts()/1000., 0 , 0 , 1 , true);
+    vy_intgrator = new Integrator(this , to_vx_vy , 1 , Ts()/1000., 0 , 0 , 1 , true);
     to_vr_vl = new FunctionBlock(this, {to_v_w, w_integrator, vy_intgrator}, {0, 1, 1});
 
     std::function<std::valarray<scalar>(std::valarray<scalar>)> atan_2_lambda = [=](const std::valarray<scalar>&){
@@ -65,8 +65,8 @@ System_project::System_project(const uint64_t Ts_ms, MobileBase *robot, std::val
     std::function<std::valarray<scalar>(std::valarray<scalar>)> to_vr_vl_lambda = [=](const std::valarray<scalar>&){
 
         return std::valarray<scalar>({
-                                       80*to_v_w->output(0)*(1 + 1.5*std::cos(w_integrator->output())),//*(Utility::sign(vy_intgrator->output()-line_length/2))),
-                                       80*to_v_w->output(0)*(1 - 1.5*std::cos(w_integrator->output()))//*(Utility::sign(vy_intgrator->output()-line_length/2)))
+                                       80*to_v_w->output(0)*(1 + 1.45*std::cos(w_integrator->output())*(Utility::sign(vy_intgrator->output()-line_length/2))),
+                                       80*to_v_w->output(0)*(1 - 1.45*std::cos(w_integrator->output())*(Utility::sign(vy_intgrator->output()-line_length/2)))
                                      });
     };
 

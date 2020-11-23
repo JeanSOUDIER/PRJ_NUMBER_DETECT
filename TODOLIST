@@ -1,5 +1,3 @@
-RPI
- - integrate Control code (-Jean)
 Jetson
  - Correction entraînement NN (-Erwan)
  - Interface graphique rendu CNN [en cours] (-Erwan)

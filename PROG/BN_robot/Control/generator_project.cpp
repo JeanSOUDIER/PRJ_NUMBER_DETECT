@@ -17,26 +17,32 @@ Generator_Project::~Generator_Project(){}
 
 
 void Generator_Project::compute(){
+    const double delta = 0.1;
 
-
-    const bool is_on_part_1_flag = (x() == 0 && y() < line_length());
-    const bool is_on_part_2_flag = (x() < arc_diameter() && y() >= line_length());
-    const bool is_on_part_3_flag = (x() > arc_diameter() && y() >= 0);
-    const bool is_on_part_4_flag = (!is_on_part_1_flag &&
+    const bool is_on_part_1_flag = (x() < delta && y() < line_length() && y() >= 0);
+    const bool is_on_part_2_flag = (x() < arc_diameter()+delta && x() > -delta && y() >= line_length());
+    const bool is_on_part_3_flag = (x() >= arc_diameter()-delta && y() >= 0 && y() < line_length());
+    const bool is_on_part_4_flag = (x() > -delta && x() < arc_diameter()+delta && y() <= 0);
+    const bool is_on_part_5_flag = (!is_on_part_1_flag &&
                                     !is_on_part_2_flag &&
-                                    !is_on_part_3_flag);
+                                    !is_on_part_3_flag &&
+                                    !is_on_part_4_flag);
 
     const scalar v = _robot->GetSpeedCons();
 
     x() = is_on_part_1_flag * (0)+
           is_on_part_2_flag * (x() + Ts()*v/1000.)+
           is_on_part_3_flag * (arc_diameter())+
-          is_on_part_4_flag * ((x() - Ts()*v/1000. > 0)*(x() - Ts()*v/1000.));
+          is_on_part_4_flag * (x() - Ts()*v/1000.)+
+          is_on_part_5_flag * (x());
 
     y() = is_on_part_1_flag * (y() + Ts()*v/1000.)+
           is_on_part_2_flag * (line_length() + (arc_diameter()/2)*std::sin(PI_LD*x()/arc_diameter()))+
           is_on_part_3_flag * (y() - Ts()*v/1000.)+
-          is_on_part_4_flag * (- (arc_diameter()/2)*std::sin(PI_LD*x()/arc_diameter()));
+          is_on_part_4_flag * (- (arc_diameter()/2)*std::sin(PI_LD*x()/arc_diameter()))+
+          is_on_part_5_flag * (y());
+          
+    if(is_on_part_5_flag) {std::cout << "no consigne" << std::endl;}
 
 }
 

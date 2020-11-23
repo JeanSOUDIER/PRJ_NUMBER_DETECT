@@ -82,16 +82,16 @@ bool Sequencer::Execute() {
         	m_WidowXL->MoveArm(false);
         	delay(20);
         	if(i == 10) {
-			RollOver(10);
+			//RollOver(10);
         	} else {
-        		MoveRobot(100); //1000
+        		MoveRobot(1000);
         	}
 		} else {
 			m_WidowXL->MoveArm(true);
 		}
 		tempo = i;
 	}
-	//RollOver(tempo);
+	RollOver(tempo);
 	if(m_BLE_start) {m_BLE->SetTX("done");}
 	return true;
 }
@@ -101,7 +101,7 @@ void Sequencer::MoveRobot(const uint64_t time) {
     auto begining_timestamp = std::chrono::high_resolution_clock::now();
     auto current_timestamp = std::chrono::high_resolution_clock::now();
     m_TurtleBot->SetSpeedCons(1);
-    m_syst->SetSpeedNorm(1);
+    //m_syst->SetSpeedNorm(1);
     do {
         current_timestamp = std::chrono::high_resolution_clock::now();
         if(std::chrono::duration_cast<std::chrono::milliseconds>(current_timestamp - begin_timestamp).count() >= m_sys->Ts()) { //m_syst->GetTe()) {
@@ -114,7 +114,7 @@ void Sequencer::MoveRobot(const uint64_t time) {
         }
     } while(std::chrono::duration_cast<std::chrono::milliseconds>(current_timestamp - begining_timestamp).count() < time);
     m_TurtleBot->SetSpeedCons(0);
-    m_syst->SetSpeedNorm(0);
+    //m_syst->SetSpeedNorm(0);
     delay(m_sys->Ts());
     //delay(m_syst->GetTe());
     m_TurtleBot->SetSpeed(0, 0);
@@ -127,5 +127,5 @@ void Sequencer::RollOver(int nb) {
 	m_WidowXL->SetTime(4000);
 	m_WidowXL->PosToMove();
         m_WidowXL->MoveArm(true);
-	MoveRobot(22000+1000*(10-nb));
+	MoveRobot(21000+1000*(10-nb));
 }

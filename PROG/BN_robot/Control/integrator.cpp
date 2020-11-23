@@ -23,10 +23,12 @@ Integrator::~Integrator(){}
 
 void Integrator::compute(){
 
-     if(stacks()){_outputs[0] += gain() * _timestep * 0.5 * (previousInput() + input());}
-     else{_outputs[0] = gain() * _timestep * (previousInput() + input());}
-     
-     std::cout << "     i " << _timestep << " " << previousInput() << " " <<  input() << " " << _outputs[0] << std::endl;
+     //if(stacks()){_outputs[0] += gain() * _timestep * 0.5 * (previousInput() + input());}
+     if(stacks()){
+         _outputs[0] = gain() * _timestep * input() + _previous_value;
+     } else {
+         _outputs[0] = gain() * _timestep * (previousInput() + input());
+     }
 
     _previous_value = output();
     _previous_input = input();
