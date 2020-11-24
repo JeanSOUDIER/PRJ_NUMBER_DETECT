@@ -1,0 +1,1 @@
+alias cdd='cd PRJ_NUMBER_DETECT/PROG/BN_detector/ && sudo chmod a+rwx /dev/ttyTHS1 && clear'
