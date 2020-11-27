@@ -28,11 +28,9 @@ class TF {
         std::vector<QImage> ToProcessed(std::string path);
         std::vector<QImage> ToProcessed(cv::Mat img);
 
-        QImage QToGray(QImage img);
-        QImage QToHistogram(QImage img);
+        QImage ToHistogram();
+
         double GetThreshold();
-        QImage QToThreshold(QImage img, double thres);
-        std::vector<QImage> QToRegionprops(QImage imgGray, QImage imgThres, bool test);
 
         QImage TakePhoto();
 
@@ -41,18 +39,16 @@ class TF {
         cv::Mat ToHistogram(cv::Mat imgGray);
         cv::Mat ToThreshold(cv::Mat imgGray, double thres);
         std::vector<cv::Mat> ToRegionprops(cv::Mat imgGray, cv::Mat imgThres, bool test);
+        cv::Mat ToInvert(cv::Mat &img);
 
         cv::Mat show_histogram(cv::Mat const& image);
         QImage ToQImage(cv::Mat img, bool format);
-        std::vector<QImage> ToQImageVect(std::vector<cv::Mat> img, bool format);
-
-        cv::Mat ToCVMat(QImage img, bool format);
-        std::vector<cv::Mat> ToCVMatVect(std::vector<QImage> img, bool format);
+        std::vector<QImage> ToQImageVect(std::vector<cv::Mat> img, bool format, bool inverted);
 
 		double m_moy;
 		bool m_print;
 		Cam CPI2;
-
+		cv::Mat m_img;
 };
 
 #endif //TF_H

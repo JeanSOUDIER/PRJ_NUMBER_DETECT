@@ -25,6 +25,7 @@ std::vector<QImage> TF::ToProcessed(cv::Mat img) {
 	if(m_print) {CPI2.ImgShow(img);}
 
     cv::Mat imgGray = ToGray(img);
+    m_img = imgGray;
 
     cv::Mat imgHisto = ToHistogram(imgGray);
 
@@ -33,11 +34,7 @@ std::vector<QImage> TF::ToProcessed(cv::Mat img) {
     std::vector<cv::Mat> imgSort = ToRegionprops(imgGray, imgThres, false);
 
     std::cout << "done !" << std::endl;
-    return ToQImageVect(imgSort, true);
-}
-
-QImage TF::QToGray(QImage img) {
-    return ToQImage(ToGray(ToCVMat(img, true)), true);
+    return ToQImageVect(imgSort, true, true);
 }
 
 cv::Mat TF::ToGray(cv::Mat img) {
@@ -48,10 +45,6 @@ cv::Mat TF::ToGray(cv::Mat img) {
     return imgGray;
 }
 
-QImage TF::QToHistogram(QImage img) {
-    return ToQImage(ToHistogram(ToCVMat(img, true)), true);
-}
-
 cv::Mat TF::ToHistogram(cv::Mat imgGray) {
     std::cout << "histogram" << std::endl;
     cv::Mat histo;
@@ -60,13 +53,19 @@ cv::Mat TF::ToHistogram(cv::Mat imgGray) {
     return imgHisto;
 }
 
+QImage TF::ToHistogram() {
+    QImage res;
+    if(m_img.rows > 10) {
+        res = ToQImage(ToHistogram(m_img), true);
+    } else {
+        std::cout << "call ToProcessed first" << std::endl;
+    }
+    return res;
+}
+
 double TF::GetThreshold() {
     std::cout << "thres " << m_moy << std::endl;
     return m_moy;
-}
-
-QImage TF::QToThreshold(QImage img, double thres) {
-    return ToQImage(ToThreshold(ToCVMat(img, true), thres), true);
 }
 
 cv::Mat TF::ToThreshold(cv::Mat imgGray, double thres) {
@@ -75,10 +74,6 @@ cv::Mat TF::ToThreshold(cv::Mat imgGray, double thres) {
     threshold(imgGray, imgThres, thres, 255, 3);
     if(m_print) {CPI2.ImgShow(imgThres);}
     return imgThres;
-}
-
-std::vector<QImage> TF::QToRegionprops(QImage imgGray, QImage imgThres, bool test) {
-    return ToQImageVect(ToRegionprops(ToCVMat(imgGray, true), ToCVMat(imgThres, true), test), true);
 }
 
 std::vector<cv::Mat> TF::ToRegionprops(cv::Mat imgGray, cv::Mat imgThres, bool test) {
@@ -139,6 +134,13 @@ std::vector<cv::Mat> TF::ToRegionprops(cv::Mat imgGray, cv::Mat imgThres, bool t
     return rez2;
 }
 
+cv::Mat TF::ToInvert(cv::Mat &img) {
+    cv::Mat res = cv::Mat::zeros(img.size(), img.type());
+    const cv::Mat subber = 255*cv::Mat::ones(img.size(), img.type());
+    cv::subtract(subber, img, res);
+    return res;
+}
+
 cv::Mat TF::show_histogram(cv::Mat const& image) {
     // Set histogram bins count
     int bins = 256;
@@ -189,28 +191,14 @@ QImage TF::ToQImage(cv::Mat img, bool format) {
     }
 }
 
-std::vector<QImage> TF::ToQImageVect(std::vector<cv::Mat> img, bool format) {
+std::vector<QImage> TF::ToQImageVect(std::vector<cv::Mat> img, bool format, bool inverted) {
     std::vector<QImage> res;
     for(unsigned int i=0;i<img.size();i++) {
-        res.push_back(ToQImage(img.at(i), format));
-    }
-    return res;
-}
-
-cv::Mat TF::ToCVMat(QImage img, bool format) { //pb de convesion
-    if(format) {
-        cv::Mat res(img.height(), img.width(), CV_8U,img.bits());
-        return res;
-    } else {
-        cv::Mat res(img.height(), img.width(), CV_8UC3,img.bits());
-        return res;
-    }
-}
-
-std::vector<cv::Mat> TF::ToCVMatVect(std::vector<QImage> img, bool format) {
-    std::vector<cv::Mat> res;
-    for(unsigned int i=0;i<img.size();i++) {
-        res.push_back(ToCVMat(img.at(i), format));
+    	if(inverted) {
+    		res.push_back(ToQImage(ToInvert(img.at(i)), format));
+    	} else {
+    		res.push_back(ToQImage(img.at(i), format));
+    	}
     }
     return res;
 }

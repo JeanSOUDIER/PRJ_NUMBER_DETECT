@@ -77,7 +77,7 @@ class ImageViewer : public QMainWindow
 
 public:
     ImageViewer();
-    bool loadFile(const QString &, bool test);
+    bool loadFile(const QString &, uint8_t test);
 
 private slots:
     void open();

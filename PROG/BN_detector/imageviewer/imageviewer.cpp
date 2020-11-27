@@ -81,11 +81,11 @@ ImageViewer::ImageViewer()
 //! [0]
 //! [2]
 
-bool ImageViewer::loadFile(const QString &fileName, bool test)
+bool ImageViewer::loadFile(const QString &fileName, uint8_t test)
 {
     //QImageReader reader(fileName);
     //reader.setAutoTransform(true);
-    TF myTF;
+    TF myTF(true);
     std::vector<QImage> VectNewImage = myTF.ToProcessed();//reader.read();
     /*QImage newImage = VectNewImage.at(0);
     if (newImage.isNull()) {
@@ -104,9 +104,10 @@ bool ImageViewer::loadFile(const QString &fileName, bool test)
         for(unsigned int i=0;i<VectNewImage.size();i++) {
             result.drawImage(i*(s.rwidth()+5), 0, VectNewImage.at(i));
         }
-
-        if(test) {
+        if(test == 0) {
             setImage(res);
+        } else if(test == 1) {
+            setImage(myTF.ToHistogram());
         } else {
             setImage(myTF.TakePhoto());
         }

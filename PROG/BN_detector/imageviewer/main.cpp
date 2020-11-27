@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     commandLineParser.addPositionalArgument(ImageViewer::tr("[file]"), ImageViewer::tr("Image file to open."));
     commandLineParser.process(QCoreApplication::arguments());*/
     ImageViewer imageViewer;
-    imageViewer.loadFile("", true);
+    imageViewer.loadFile("", 0);
     /*if (!commandLineParser.positionalArguments().isEmpty()
         && !imageViewer.loadFile(commandLineParser.positionalArguments().front())) {
         return -1;
