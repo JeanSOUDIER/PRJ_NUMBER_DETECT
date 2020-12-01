@@ -1,0 +1,179 @@
+QGroupBox#fieldsAndButtonsBox {
+
+    margin: 0px;
+
+    padding: 0px;
+
+    background-color: transparent;
+
+    border-width: 1px;
+    border-style: solid;
+    border-color: transparent;
+
+}
+
+QGroupBox#templateBox {
+
+    margin: 0px;
+
+    padding: 0px;
+
+    background-color: transparent;
+
+    border-width: 1px;
+    border-style: solid;
+    border-color: transparent;
+
+}
+
+QGroupBox#templateBoxTOPBOX {
+
+margin: 0px;
+
+padding: 0px;
+
+background-color: transparent;
+
+}
+
+QGroupBox#measureListBox {
+
+background-color: transparent;
+
+}
+
+QGroupBox#noBorder{
+
+border-width: 1px;
+border-style: solid;
+border-color: transparent;
+
+}
+
+QGroupBox#transp{
+
+margin: 0px;
+
+padding: 0px;
+
+border-width: 1px;
+border-style: solid;
+border-color: transparent;
+background-color: transparent;
+
+
+}
+
+
+MeasureBox {
+
+margin: 0px;
+
+padding: 0px;
+
+background-color: transparent;
+
+border-width: 1px;
+border-style: solid;
+border-color: transparent;
+
+
+}
+
+MeasureSubBox {
+
+margin : 0px;
+
+padding : 0px;
+
+background-color: transparent;
+
+border-width: 1px;
+border-style: solid;
+border-color: transparent;
+
+}
+
+UncertaintyBox {
+
+margin : 0px;
+
+padding : 0px;
+
+background-color: transparent;
+
+border-width: 1px;
+border-style: solid;
+border-color: transparent;
+
+
+
+}
+
+
+/*
+QScrollArea {
+
+    margin : 0px;
+
+    padding : 0px;
+
+    background-color: transparent;
+
+    border-width: 1px;
+    border-style: solid;
+    border-color: transparent;
+
+}*/
+
+QGroupBox#interactAndStepsBox {
+
+    background-color: white;
+
+}
+
+QGroupBox#choiceBox {
+
+     background-color: white;
+
+     border: 2px outset gray;
+     border-radius: 3px;
+
+}
+
+
+
+
+QLabel {
+
+    background-color: none;
+
+    border: none;
+
+}
+
+
+QCheckBox{
+
+    background-color: none;
+
+    border: none;
+
+}
+
+QRadioButton{
+
+    background-color: none;
+
+    border: none;
+
+}
+
+
+QLineEdit {
+
+    background-color: white;
+
+}
+
+
