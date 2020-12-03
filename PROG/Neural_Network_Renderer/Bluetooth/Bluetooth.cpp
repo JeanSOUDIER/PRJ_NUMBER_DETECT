@@ -1,8 +1,9 @@
 #include "Bluetooth.hpp"
 
 Bluetooth::Bluetooth(const int nb_usb, const int bdrate) {
-    system("sudo chmod a+rwx /dev/ttyTHS1");
-	m_usb = new Usb(nb_usb, bdrate);
+    const int system_result = system("sudo chmod a+rwx /dev/ttyTHS1");
+    (void)system_result;
+    m_usb = new Usb(nb_usb, bdrate);
 	m_port_nr = nb_usb;
 	m_bdrate = bdrate;
 

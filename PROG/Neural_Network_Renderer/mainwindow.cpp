@@ -3,6 +3,13 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
 
 
+    _threshold = 127;
+    _min_form_size = 800;
+    _max_form_size = 800*1000;
+    _padding = 11;
+
+    /************************************/
+
     QScreen *screen = QGuiApplication::primaryScreen();
     QRect  screenGeometry = screen->geometry();
     const int height = int(screenGeometry.height()*0.6);
@@ -20,12 +27,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
 
     /************************************/
 
+    constexpr int ttyTHS1 = 40;
+
+    _bluetooth_handler = new Bluetooth(ttyTHS1 , 9600);
+
+    /************************************/
+
     setGeometry(int(screenGeometry.width()*0.2),int(screenGeometry.height()*0.2),width, height);
     setWindowTitle(QString::fromUtf8("Number detection projet [INSA]"));
     QWidget::setWindowFlags(Qt::Window);
 
-   //cameraWidget()->photo()->setMaximumSize(int(0.6*screenGeometry.width()) , int(0.6*screenGeometry.height()));
-   //cameraWidget()->photo()->setMaximumWidth(int(0.6*screenGeometry.width()));
     cameraWidget()->photo()->setMaximumHeight(int(0.6*screenGeometry.height()));
     cameraWidget()->timer()->start();
 
@@ -34,9 +45,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
 
 MainWindow::~MainWindow(){
 
+    delete _bluetooth_handler;
+
     delete neural_network;
 
     delete about_window;
+    delete settings_window;
 
     delete menuBar();
     delete layout();
@@ -75,6 +89,11 @@ void MainWindow::setup_windows(){
     about_window->hide();
     connect(about_window , &QDialog::accepted , this , [this]{about_window->hide();});
 
+    settings_window = new SettingsWindow(this);
+    settings_window->hide();
+    connect(settings_window , &QDialog::accepted , this , [this]{settings_window->hide();});
+
+
 }
 void MainWindow::setup_menu(){
 
@@ -112,9 +131,10 @@ void MainWindow::setup_menu(){
     /***********************/
 
     settings_menu = menuBar()->addMenu(tr("S&ettings"));
-        select_camera_action = new QAction(tr("Select a &camera...") , settings_menu);
+        open_settings_action = new QAction(tr("Open the settings &menu...") , settings_menu);
+        connect(open_settings_action , &QAction::triggered , this , [this]{settings_window->show();});
 
-    settings_menu->addAction(select_camera_action);
+    settings_menu->addAction(open_settings_action);
 
 
     /***********************/
@@ -125,6 +145,9 @@ void MainWindow::setup_menu(){
     help_menu->addAction(about_action);
 
     connect(about_action , &QAction::triggered , this , [this]{about_window->show();});
+
+
+    menuBar()->setNativeMenuBar(false);
 
 }
 void MainWindow::setup_neuralnetwork(){
@@ -199,12 +222,22 @@ void MainWindow::setState(const MainWindow::STATE &state){
     }
 
     show();
+  //  menuBar()->show();
     QWidget::activateWindow();
 }
 
 CameraWidget* MainWindow::cameraWidget(){return camera_widget;}
 ResultsWidget* MainWindow::resultsWidget(){return results_widget;}
 Project_network* MainWindow::neuralNetwork(){return neural_network;}
+Bluetooth* MainWindow::bluetooth_handler(){return _bluetooth_handler;}
+
+
+void MainWindow::setPadding(const unsigned &padding){_padding = padding;}
+void MainWindow::setMaximumFormSize(const uint64_t &max){_max_form_size = max;}
+void MainWindow::setMinimumFormSize(const uint64_t &min){_min_form_size = min;}
+void MainWindow::setThreshold(const unsigned &threshold){_threshold = threshold;}
+
+
 
 /*********************************************/
 
@@ -212,16 +245,16 @@ void MainWindow::process(const cv::Mat &photo){
 
     if(photo.empty()){return;} //Safety
 
-    constexpr unsigned padding = 10;
 
-    const cv::Mat top_padding = cv::Mat::zeros(padding , 28 , CV_8UC1);
-    const cv::Mat side_padding = cv::Mat::zeros(28+padding , padding , CV_8UC1);
 
-    const cv::Mat bot_padding = cv::Mat::zeros(padding , 28+2*padding , CV_8UC1);
+    const cv::Mat top_padding = cv::Mat::zeros(_padding , 28 , CV_8UC1);
+    const cv::Mat side_padding = cv::Mat::zeros(28+_padding , _padding , CV_8UC1);
+
+    const cv::Mat bot_padding = cv::Mat::zeros(_padding , 28+2*_padding , CV_8UC1);
 
 
     const cv::Mat gray_image = UtilityOCV::RGBtoGray(photo);
-    const cv::Mat bw_image = UtilityOCV::threshold(gray_image);
+    const cv::Mat bw_image = UtilityOCV::threshold(gray_image , _threshold);
 
     cv::Mat detection_results_mat;
 
@@ -232,7 +265,7 @@ void MainWindow::process(const cv::Mat &photo){
 
     for(cv::Mat &image :  UtilityOCV::regionprops(photo , gray_image , bw_image ,
                                                         detection_results_mat ,
-                                                        600 , 1000*800 ,
+                                                        _min_form_size , _max_form_size,
                                                         UtilityOCV::SOURCE::ORIGINAL , UtilityOCV::SOURCE::GRAY ,
                                                         UtilityOCV::SORT::X ,
                                                         false)){
@@ -271,7 +304,7 @@ void MainWindow::process(const cv::Mat &photo){
 #endif
 
      //data.print();
-     std::cout << "********************************************" << std::endl;
+     //std::cout << "********************************************" << std::endl;
 
      pictures.push_back(data);
 
@@ -281,6 +314,7 @@ void MainWindow::process(const cv::Mat &photo){
 
     concatenate = concatenate.colRange(28 , concatenate.cols); //Remove initial pre-allocation
 
+    //concatenate = UtilityOCV::resize(concatenate , concatenate.cols*5 , concatenate.rows * 5);
 
                 /*----------------------------------------------*/
 
@@ -312,9 +346,9 @@ void MainWindow::process(const cv::Mat &photo){
 
     for(const ste::Matrix<MNN::scalar> &image : pictures){
 
-        std::cout << "Output" << std::endl;
+        //std::cout << "Output" << std::endl;
         predictions.push_back(neuralNetwork()->predict({image.toVector1D() , 784 , 1}));
-        std::cout << "Prediction: " << predictions.back() << std::endl;
+        //std::cout << "Prediction: " << predictions.back() << std::endl;
 
     }
     std::cout << std::endl;

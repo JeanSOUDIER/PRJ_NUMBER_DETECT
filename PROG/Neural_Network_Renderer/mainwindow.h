@@ -7,12 +7,17 @@
 
 #include "resultswidget.h"
 
+#include "settingswindow.h"
+
 #include "Camera_handler/utilityocv.h"
+
 #include "NeuralNetwork/PROJECT_FILES/project_network.h"
 
+/*-------------------------------------------*/
 
-#include <thread>
+#include "Bluetooth/Bluetooth.hpp"
 
+/*-------------------------------------------*/
 
 #include <QAction>
 #include <QApplication>
@@ -60,6 +65,13 @@ public:
     CameraWidget *cameraWidget();
     ResultsWidget *resultsWidget();
     Project_network *neuralNetwork();
+    Bluetooth *bluetooth_handler();
+
+    void setPadding(const unsigned &padding);
+    void setMaximumFormSize(const uint64_t &max);
+    void setMinimumFormSize(const uint64_t &min);
+    void setThreshold(const unsigned &threshold);
+
 
 protected:
 
@@ -69,6 +81,12 @@ protected:
     void closeEvent(QCloseEvent *event) override;
 
 private:
+
+
+    unsigned _padding;
+    uint64_t _max_form_size;
+    uint64_t _min_form_size;
+    unsigned _threshold;
 
     void setup_widgets();
     void setup_windows();
@@ -80,8 +98,8 @@ private:
         QAction *load_nn_ac;
         QAction *exit_action;
 
-    QMenu *settings_menu; //Camera choice
-        QAction *select_camera_action;
+    QMenu *settings_menu;
+        QAction *open_settings_action;
 
     QMenu *help_menu;
         QAction *about_action;
@@ -91,9 +109,12 @@ private:
     ResultsWidget *results_widget;
 
     AboutWindow *about_window;
+    SettingsWindow *settings_window;
 
 
     Project_network *neural_network;
+
+    Bluetooth *_bluetooth_handler;
 
 };
 #endif // MAINWINDOW_H

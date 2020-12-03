@@ -44,16 +44,16 @@ long long int Project_network::predict(const ste::Matrix<MNN::scalar> &input) co
         result = MNN::elu((layer->weights() * result) + layer->biases());
     }
 
-    const std::vector<MNN::scalar> result_vector = result.toVector1D();
+//    const std::vector<MNN::scalar> result_vector = result.toVector1D();
 
-    for(const MNN::scalar &value : result_vector){
-        std::cout << value << " ";
-    }
-   std::cout << std::endl;
+//    for(const MNN::scalar &value : result_vector){
+//        std::cout << value << " ";
+//    }
+//   std::cout << std::endl;
 
-    return Utility::indexOf(result_vector , result.max());
+//    return Utility::indexOf(result_vector , result.max());
 
-    //return Utility::indexOf(result.toVector1D() , result.max());
+    return Utility::indexOf(result.toVector1D() , result.max());
 
 
 }

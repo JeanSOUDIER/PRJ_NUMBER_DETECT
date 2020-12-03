@@ -61,11 +61,13 @@
 #ifndef RS_232_H
 #define RS_232_H
 
+#include <algorithm>
+
+#include <iostream>
 
 #include <string>
 #include <vector>
-#include <iostream>
-#include <algorithm>
+
 
 #include <cstddef>
 

@@ -79,9 +79,15 @@ cv::Mat CameraWidget::takePhoto(){
 
     const cv::Mat result = camera->takePhoto();
 
+    const int old_width = mainWindow->width();
+    const int old_height = mainWindow->height();
+
     setPhoto(
     UtilityOCV::toQPixmap(result , QImage::Format_RGB888).scaled(int(0.95*width()) , int(0.8*height()) , Qt::KeepAspectRatio)
     );
+
+    mainWindow->resize(old_width , old_height);
+
 //    setPhoto(
 //    UtilityOCV::toQPixmap(result, QImage::Format_RGB888)
 //    );

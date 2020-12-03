@@ -1,13 +1,18 @@
 #ifndef BLUETOOTH_H
 #define BLUETOOTH_H
 
-#include <iostream>
-#include <string>
+
 #include <algorithm>
-#include <pthread.h>
 #include <atomic>
 #include <array>
-#include <deque>
+
+#include <iostream>
+
+#include <string>
+
+
+#include <pthread.h>
+
 #include "Usb.hpp"
 
 //#define DEBUG

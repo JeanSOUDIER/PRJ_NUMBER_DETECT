@@ -83,9 +83,20 @@ ResultsWidget::~ResultsWidget(){
 
 
 
-void ResultsWidget::send(){/*send(numbers());*/}
+void ResultsWidget::send(){send(numbers());}
 
-void ResultsWidget::send(const std::vector<long long> &numbers){(void)numbers;}
+void ResultsWidget::send(const std::vector<long long> &numbers){
+
+    QString q_result = "";
+
+    for(const long long &value : numbers){
+        q_result += QString::number(value);
+    }
+
+    mainWindow->bluetooth_handler()->SetTX(q_result.toStdString());
+
+
+}
 
 /***************************************************************************/
 

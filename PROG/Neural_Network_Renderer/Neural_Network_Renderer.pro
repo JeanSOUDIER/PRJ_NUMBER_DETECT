@@ -26,33 +26,19 @@ SOURCES += \
     NeuralNetwork/SequenceHandler_STL/utility.cpp \
     NeuralNetwork/layer.cpp \
     NeuralNetwork/neuralnetwork.cpp \
-    aboutwindow.cpp \
-    camerawidget.cpp \
     main.cpp \
+    aboutwindow.cpp \
     mainwindow.cpp \
+    camerawidget.cpp \
     numberscroll.cpp \
     numberwidget.cpp \
     resultswidget.cpp \
     Camera_handler/camerahandler.cpp \
     Camera_handler/utilityocv.cpp \
     Bluetooth/Bluetooth.cpp \
-    Camera_handler/camerahandler.cpp \
-    Camera_handler/utilityocv.cpp \
-    NeuralNetwork/MNIST_Handler/mnist_handler.cpp \
-    NeuralNetwork/PROJECT_FILES/project_network.cpp \
-    NeuralNetwork/SequenceHandler_STL/utility.cpp \
-    NeuralNetwork/layer.cpp \
-    NeuralNetwork/MatrixNN_global.cpp \
-    NeuralNetwork/neuralnetwork.cpp \
-    aboutwindow.cpp \
-    camerawidget.cpp \
-    main.cpp \
-    mainwindow.cpp \
-    numberscroll.cpp \
-    numberwidget.cpp \
-    resultswidget.cpp \
     Bluetooth/Usb.cpp \
-    Bluetooth/rs232.cpp
+    Bluetooth/rs232.cpp \
+    settingswindow.cpp
 
 HEADERS += \
     NeuralNetwork/MNIST_Handler/mnist_handler.h \
@@ -62,35 +48,18 @@ HEADERS += \
     NeuralNetwork/SequenceHandler_STL/utility.h \
     NeuralNetwork/layer.h \
     NeuralNetwork/neuralnetwork.h \
+    Camera_handler/camerahandler.h \
+    Camera_handler/utilityocv.h \
     aboutwindow.h \
     camerawidget.h \
     mainwindow.h \
     numberscroll.h \
     numberwidget.h \
     resultswidget.h \
-    Camera_handler/camerahandler.h \
-    Camera_handler/utilityocv.h \
     Bluetooth/Bluetooth.hpp \
-    Camera_handler/camerahandler.h \
-    Camera_handler/utilityocv.h \
-    NeuralNetwork/Matrix/CUDA_src/CUDA_global.h \
-    NeuralNetwork/Matrix/CUDA_src/CUDA_matrix_operators.h \
-    NeuralNetwork/Matrix/CUDA_src/CUDA_setup.h \
-    NeuralNetwork/Matrix/Matrix.hpp \
-    NeuralNetwork/MNIST_Handler/mnist_handler.h \
-    NeuralNetwork/PROJECT_FILES/project_network.h \
-    NeuralNetwork/SequenceHandler_STL/utility.h \
-    NeuralNetwork/layer.h \
-    NeuralNetwork/MatrixNN_global.h \
-    NeuralNetwork/neuralnetwork.h \
-    aboutwindow.h \
-    camerawidget.h \
-    mainwindow.h \
-    numberscroll.h \
-    numberwidget.h \
-    resultswidget.h \
     Bluetooth/Usb.hpp \
-    Bluetooth/rs232.hpp
+    Bluetooth/rs232.hpp \
+    settingswindow.h
 
 LIBS += -I/usr/include/opencv
 LIBS += -L/usr/lib -lopencv_core -lopencv_highgui -lopencv_videoio -lopencv_imgcodecs -lopencv_imgproc
