@@ -330,8 +330,8 @@ std::vector<int> Arm::PosWriting(bool state, int time) {
 }
 std::vector<int> Arm::PosPreWriting(bool state, int time) {
     std::vector<int> pos(3);
-    pos[0] = 300;
-    pos[1] = 100;
+    pos[0] = 280;
+    pos[1] = 200;
     pos[2] = 0;
 
     SetTime(time);

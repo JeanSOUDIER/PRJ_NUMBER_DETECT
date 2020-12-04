@@ -20,6 +20,10 @@ Sequencer::Sequencer(Arm* WidowXL, Bluetooth* BLE, MobileBase* TurtleBot) {
 	}
 	m_sys = new Control::System_project{20, m_TurtleBot, {0, 0, -M_PI/2}, 10, 5};
 	m_syst = new asserv(0.02, 10, 5);
+	m_coordinatesA = m_TurtleBot->GetAngleStart();
+	m_coordinatesY = m_TurtleBot->GetPosStart(false,(m_coordinatesA*M_PI/180),700);
+	m_coordinatesX = m_TurtleBot->GetPosStart(false,std::fmod((m_coordinatesA*M_PI/180)+271,359),5000);
+	std::cout << "coord init " << m_coordinatesA << " " << m_coordinatesX << " " << m_coordinatesY << std::endl;
 	std::cout << "Sequencer start" << std::endl;
 }
 
@@ -76,13 +80,13 @@ bool Sequencer::Execute() {
 			}
 		}
 		m_WidowXL->WriteOff();
-        	m_WidowXL->MoveArm(true);
+        m_WidowXL->MoveArm(true);
 		m_WidowXL->PosWriting(false, 0);
 		if(i < reading.size()-1) {
         	m_WidowXL->MoveArm(false);
         	delay(20);
         	if(i == 10) {
-			//RollOver(10);
+				RollOver(10);
         	} else {
         		MoveRobot(1000);
         	}
@@ -93,6 +97,11 @@ bool Sequencer::Execute() {
 	}
 	RollOver(tempo);
 	if(m_BLE_start) {m_BLE->SetTX("done");}
+	double coordinatesA = m_coordinatesA-m_TurtleBot->GetAngleStart();
+	double coordinatesY = m_coordinatesY-m_TurtleBot->GetPosStart(false,(coordinatesA*M_PI/180),700);
+	double coordinatesX = m_coordinatesX-m_TurtleBot->GetPosStart(false,std::fmod((m_coordinatesA*M_PI/180)+271,359),5000);
+	std::cout << "coord buf " << coordinatesA << " " << coordinatesX << " " << coordinatesY << std::endl;
+	m_TurtleBot->SetCurrentPosi({coordinatesA, coordinatesX, coordinatesY});
 	return true;
 }
 
@@ -107,10 +116,10 @@ void Sequencer::MoveRobot(const uint64_t time) {
         if(std::chrono::duration_cast<std::chrono::milliseconds>(current_timestamp - begin_timestamp).count() >= m_sys->Ts()) { //m_syst->GetTe()) {
             begin_timestamp = std::chrono::high_resolution_clock::now();
             m_sys->compute();
-	    m_TurtleBot->SetCurrentPosi(m_sys->coord());
-	    m_TurtleBot->SetSpeed(m_sys->vr(), m_sys->vl());
-	    //m_TurtleBot->SetSpeed(m_syst->Compute(m_TurtleBot->GetCurrentPos()));
-	    std::cout << "t " << std::chrono::duration_cast<std::chrono::milliseconds>(current_timestamp - begin_timestamp).count() << std::endl << std::endl;
+	    	m_TurtleBot->SetCurrentPosi(m_sys->coord());
+	    	m_TurtleBot->SetSpeed(m_sys->vr(), m_sys->vl());
+	    	//m_TurtleBot->SetSpeed(m_syst->Compute(m_TurtleBot->GetCurrentPos()));
+	    	std::cout << "t " << std::chrono::duration_cast<std::chrono::milliseconds>(current_timestamp - begin_timestamp).count() << std::endl << std::endl;
         }
     } while(std::chrono::duration_cast<std::chrono::milliseconds>(current_timestamp - begining_timestamp).count() < time);
     m_TurtleBot->SetSpeedCons(0);
@@ -126,6 +135,6 @@ void Sequencer::MoveRobot(const uint64_t time) {
 void Sequencer::RollOver(int nb) {
 	m_WidowXL->SetTime(4000);
 	m_WidowXL->PosToMove();
-        m_WidowXL->MoveArm(true);
+    m_WidowXL->MoveArm(true);
 	MoveRobot(21000+1000*(10-nb));
 }

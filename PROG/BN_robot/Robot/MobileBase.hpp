@@ -31,6 +31,8 @@ class MobileBase {
         ~MobileBase();
 
         void StartPlacing();
+        double GetAngleStart();
+        double GetPosStart(bool delai, int angle, double dist_max);
         void GoPos(const double x, const double y, const double a);
         void SetSpeed(std::vector<int> speed);
         void SetSpeed(int L, int R);

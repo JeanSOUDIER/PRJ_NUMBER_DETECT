@@ -32,7 +32,7 @@ MobileBase::MobileBase(const double posX, const double posY, const double angle,
 	}
 	delay(1000);
 	m_start.store(true,std::memory_order_release);
-	StartThread();
+	//StartThread();
     std::cout << "MobileBase start" << std::endl;
 }
 
@@ -47,6 +47,12 @@ MobileBase::~MobileBase() {
 }
 
 void MobileBase::StartPlacing() {
+	GoPos(0,0,GetAngleStart());
+	double pos = GetPosStart(true,0,700);
+	GoPos(0,pos-START_DIST,-M_PI*Utility::sign(pos-START_DIST));
+}
+
+double MobileBase::GetAngleStart() {
 	bool c = false;
 	double angle, dist_85, dist_board;
 	double N1 = 0;
@@ -60,18 +66,22 @@ void MobileBase::StartPlacing() {
 		if(static_cast<int>(2000*angle) == static_cast<int>(2000*N1) && !std::isnan(angle) && !std::isinf(angle) && std::fabs(2*angle) < 1) {c = true;}
 		N1 = angle;
 	}while(!c);
-	GoPos(0,0,2*angle);
-	c = false;
-	delay(500);
+	return N1;
+}
+
+double MobileBase::GetPosStart(bool delai, int angle, double dist_max) {
+	angle = std::fmod(angle+90,359);
+	bool c = false;
+	if(delai) {delay(500);}
 	GetLidarPoints(false);
-	N1 = 0;
+	int N1 = 0;
 	do{
 		GetLidarPoints(false);
-		std::cout << m_posYlid.at(90) << std::endl;
-		if(static_cast<int>(N1) == m_posYlid.at(90) && !std::isinf(m_posYlid.at(90)) && !std::isnan(m_posYlid.at(90)) && m_posYlid.at(90) > 0 && m_posYlid.at(90) < 700) {c = true;}
-		N1 = static_cast<double>(m_posYlid.at(90));
+		std::cout << m_posYlid.at(angle) << std::endl;
+		if(N1 == static_cast<int>(m_posYlid.at(angle)) && !std::isinf(m_posYlid.at(angle)) && !std::isnan(m_posYlid.at(angle)) && m_posYlid.at(angle) >= 0 && m_posYlid.at(angle) < dist_max) {c = true;}
+		N1 = m_posYlid.at(angle);
 	}while(!c);
-	GoPos(0,m_posYlid.at(90)-START_DIST,-M_PI*Utility::sign(m_posYlid.at(90)-START_DIST));
+	return N1;
 }
 
 void MobileBase::GoPos(const double x, const double y, const double a) {

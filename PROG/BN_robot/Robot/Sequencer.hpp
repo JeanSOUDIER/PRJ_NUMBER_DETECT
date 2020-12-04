@@ -35,6 +35,10 @@ class Sequencer {
     	bool m_BLE_start;
 
 	private:
+		double m_coordinatesA;
+		double m_coordinatesX;
+		double m_coordinatesY;
+
 		Arm* m_WidowXL;
 		Bluetooth* m_BLE;
 		MobileBase* m_TurtleBot;
