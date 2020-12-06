@@ -11,6 +11,34 @@
 #include "../SequenceHandler_STL/utility.h"
 #include "../Matrix/Matrix.hpp"
 
+/**
+
+                     Matrix class
+
+    DUHAMEL Erwan (erwanduhamel@outlook.com)
+    SOUDIER Jean  (jean.soudier@insa-strasbourg.com)
+
+
+    Provides a class for ICP (Iterative Closest Point) computing.
+
+    Features :
+
+    • Compute an ICP between 2 frames
+
+    Functions :
+
+    • ICP                           | Constructor with arguments (error and maxIter) to break the iterative loop
+    • GetPos(DynData,StaData)       | Function that compute the paasage matrix. The output is <Tx, Ty, Theta> and the input are the 2 clouds of lidars of size(Nx2)
+    • SaveImg(Map,name)             | Function that save to name.csv the matrix Map with of output of success state
+    • svd()                         | Function that compute the SVD (Singular Value Decomposition) of a matrix
+    • median()                      | Function that compute the median of a vector
+    • nearestNeighbor()             | Function that compute the nearest neighbor of each point of 2 clouds of datas size(N*2)
+    • pdt()                         | Function that return the product of 2 vectors
+    • distEucl()                    | Function that return the euclidan distance of 2 points (x0,y0,x1,y1) were the first point is (x0,y0) and the second is (x1,y1)
+
+
+*/
+
 class ICP {
 	public:
         ICP();

@@ -7,30 +7,31 @@
 #include "Robot/Sequencer.hpp"
 
 int main() {
-    constexpr int ttyUSB_ARBO = 38;
-    constexpr int ttyUSB_LDS = 39;
-    constexpr int ttyACM0 = 24;
-    constexpr int ttyS0 = 0;
+    // Declare USB ports
+    constexpr int ttyUSB_ARBO = 38; // Arm
+    constexpr int ttyUSB_LDS = 39;  // Lidar
+    constexpr int ttyACM0 = 24;     // Mobile Base
+    constexpr int ttyS0 = 0;        // Bluetooth
 
     int test;
     std::cout << "learn mode ? ";
     std::cin >> test;
     std::cout <<"----SETUP----" << std::endl;
-    if(test != 1) {
+    if(test != 1) { // Mode to play the main program
         Sequencer Prgm(
             new Arm(6, ttyUSB_ARBO, 115200),
             new Bluetooth(ttyS0, 9600),
             new MobileBase(ttyACM0, 115200, new Lidar(ttyUSB_LDS, 230400))
-        );
+        ); // Initialisation of the robot
 
         std::cout <<"----LOOP----" << std::endl;
-        while(Prgm.Execute()) {}
-    } else {
-        MobileBase OpenCR(ttyACM0, 115200, new Lidar(ttyUSB_LDS, 230400));
+        while(Prgm.Execute()) {} // Main loop of the program
+    } else { // Mode to learn new drawing pattern
+        MobileBase OpenCR(ttyACM0, 115200, new Lidar(ttyUSB_LDS, 230400)); // Use to place the robot
         delay(1000);
 
-        Arm WidowXL(6, ttyUSB_ARBO, 115200);
-        WidowXL.ToKeyboard(false);
+        Arm WidowXL(6, ttyUSB_ARBO, 115200); // Use to draw
+        WidowXL.ToKeyboard(false); // function to draw with keyboard
     }
 
     return 0;

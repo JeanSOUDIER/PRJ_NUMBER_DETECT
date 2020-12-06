@@ -93,36 +93,36 @@ void loop() {
     Serial.println((int)(c));
     int velo;
     switch(mode) {
-      case 0:
+      case 0: // Start char = 255
         if(c == 255) {
           mode = 1;
         }
         break;
-      case 1:
+      case 1: // 8H velocity left
         velo = c;
         vel[0] = velo<<8;
         cc = c;
         mode = 2;
         break;
-      case 2:
+      case 2: // 8L velocity left
         velo = c;
         vel[0] += velo;
         cc += c;
         mode = 3;
         break;
-      case 3:
+      case 3: // 8H velocity right
         velo = c;
         vel[1] = velo<<8;
         cc += c;
         mode = 4;
         break;
-      case 4:
+      case 4: // 8L velocity right
         velo = c;
         vel[1] += velo;
         cc += c;
         mode = 5;
         break;
-      case 5:
+      case 5: // Checksum char = sum(bits[])%256
         if(cc%256 == c) {
           vel[0] -= 330;
           vel[1] -= 330;

@@ -15,7 +15,6 @@
 #include "../SequenceHandler_STL/sequencehandler.h"
 #include "../Control/system_project.h"
 #include "../Control/Control_global.h"
-#include "asserv.hpp"
 
 constexpr int DIST_BASE = 50;
 constexpr int DIST_ARM = 50;
@@ -44,7 +43,6 @@ class Sequencer {
 		MobileBase* m_TurtleBot;
 
 		Control::System_project* m_sys;
-		asserv* m_syst;
 
 		SequenceHandler seqHandler;
 };

@@ -1,7 +1,7 @@
 #include "ICP.hpp"
 
 ICP::ICP()
-	: ICP(1e-5,200) {}
+	: ICP(1e-8,400) {} //Defaults values
 
 ICP::ICP(const double error, const unsigned int MaxIter) {
 	m_error = error;
@@ -16,16 +16,16 @@ std::vector<double> ICP::GetPos(const std::vector<std::vector<double>> &DynData,
 	std::vector<std::vector<double>> model = {std::vector<double>() , std::vector<double>()};
 	std::vector<std::vector<double>> data = {std::vector<double>() , std::vector<double>()};
 	unsigned int len1 = 0, len2 = 0;
-	for(unsigned int i=0;i<StaData.at(0).size();i++) {
-        if(!std::isinf(StaData.at(0).at(i))) {len1++;}
+	for(unsigned int i=0;i<StaData.at(0).size();i++) { // Assume that the clouds come with "std::inf" when the point is out of range of the lidar
+        if(!std::isinf(StaData.at(0).at(i))) {len1++;} // Computing the number of "std::inf" in the 2 clouds
         if(!std::isinf(DynData.at(0).at(i))) {len2++;}
 	}
-	if(len1 > len2) {
+	if(len1 > len2) { // Taking the higher value so if the clouds come with size(360x2) and have for exemple 6 and 10 "std::inf" the resize both clouds to size(350x2)
 	    len1 = len2;
 	}
 	unsigned int cpt = 0, cpt2 = 0;
     while(cpt < len1) {
-        if(!std::isinf(StaData.at(0).at(cpt2))) {
+        if(!std::isinf(StaData.at(0).at(cpt2))) { //resizing cloud 1
             model.at(0).push_back(StaData.at(0).at(cpt2));
             model.at(1).push_back(StaData.at(1).at(cpt2));
             cpt++;
@@ -34,28 +34,21 @@ std::vector<double> ICP::GetPos(const std::vector<std::vector<double>> &DynData,
     }
     cpt = 0, cpt2 = 0;
     while(cpt < len1) {
-        if(!std::isinf(DynData.at(0).at(cpt2))) {
+        if(!std::isinf(DynData.at(0).at(cpt2))) { //resizing cloud 2
             data.at(0).push_back(DynData.at(0).at(cpt2));
             data.at(1).push_back(DynData.at(1).at(cpt2));
             cpt++;
         }
         cpt2++;
     }
-    /*for(unsigned int i=0;i<len1;i++) {
-        std::cout << data.at(0).at(i) << " " << data.at(1).at(i) << ";" << std::endl;
-    }
-    std::cout << std::endl;
-    for(unsigned int i=0;i<len1;i++) {
-        std::cout << model.at(0).at(i) << " " << model.at(1).at(i) << ";" << std::endl;
-    }*/
-	std::vector<double> wghs(data.at(0).size());
-	ste::Matrix<double> TR = ste::Matrix<double>({{0, 1},{1, 0}});
-	ste::Matrix<double> TT(2,1);
+	std::vector<double> wghs(data.at(0).size()); // Vector of weights
+	ste::Matrix<double> TR = ste::Matrix<double>({{0, 1},{1, 0}}); // Rotation matrix
+	ste::Matrix<double> TT(2,1); // Translation matrix
 	TT.at(0,0) = 0;
 	TT.at(1,0) = 0;
 	long double res=9e99;
 	long double oldres;
-	// ---- ICP ---- //
+	// ---- ICP loop ---- //
 	for(unsigned int iter=0;iter<m_maxIter;iter++) {
 		// ---- Find points ---- //
 		//std::cout << iter << " " << std::fabs(oldres-res) << std::endl;
@@ -81,7 +74,7 @@ std::vector<double> ICP::GetPos(const std::vector<std::vector<double>> &DynData,
             }
 		}
 		res /= ResPt;
-		// ---- Cauchy ---- //
+		// ---- Cauchy error ---- //
 		Rob *= 4.3040;
 		double suWghs = 0;
 		for(unsigned int i=0;i<wghs.size();i++) {
@@ -135,24 +128,25 @@ std::vector<double> ICP::GetPos(const std::vector<std::vector<double>> &DynData,
         	data.at(0).at(i) = data.at(0).at(i)+Ti.at(0);
         	data.at(1).at(i) = data.at(1).at(i)+Ti.at(1);
         }
-        // ---- Up TF ---- //
+        // ---- Update passage matrix ---- //
     	TR = Ri*TR;
    		TT = Ri*TT;
    		TT.at(0,0) += Ti.at(0);
    		TT.at(1,0) += Ti.at(1);
+   		// ---- Compute the new error ---- //
     	if(iter >= 5) {
         	if(std::fabs(oldres-res) < m_error) {
            		break;
         	}
     	}
     	if(iter == m_maxIter-1) {
-    		std::cout << "sat ICP" << std::endl;
-		m_satur = true;
+    		std::cout << "sat ICP" << std::endl; // Print that we arrive to maxIter and haven't found a satisfaying error
+			m_satur = true;
     	}
 	}
 	std::vector<double> result(3);
 	if(m_satur) {
-		result.at(0) = 0;
+		result.at(0) = 0; // Don't use this points
 		result.at(1) = 0;
 		result.at(2) = 0;
 	} else {
@@ -170,7 +164,7 @@ std::vector<ste::Matrix<double>> ICP::svd(const ste::Matrix<double> &Mat) {
     const double c = Mat.at(1,0);
     const double d = Mat.at(1,1);
 	const double tet = std::atan2(2*a*b+2*c*d,a*a+b*b-c*c-d*d)/2;
-	//PB
+	// Problem of sign
 	const ste::Matrix<double> U({{-std::cos(tet), -std::sin(tet)}, {-std::sin(tet), std::cos(tet)}});
 	const double phi = std::atan2(2*a*b+2*c*d,a*a-b*b+c*c-d*d)/2;
 	const double s11 = (a*std::cos(tet)+c*std::sin(tet))*std::cos(phi) + (b*std::cos(tet)+d*std::sin(tet))*std::sin(phi);
