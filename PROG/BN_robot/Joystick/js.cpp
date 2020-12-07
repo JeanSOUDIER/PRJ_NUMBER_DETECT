@@ -1,18 +1,18 @@
 #include "js.hpp"
 
 Js::Js(bool active) 
-	: Js(active,0,10) {}
+	: Js(active,0,10) {} //default init
 
 Js::Js(bool active, int lim_min, int lim_max) {
-	m_lim1 = 32768/(lim_max-lim_min);
+	m_lim1 = 32768/(lim_max-lim_min); //adjust the outputs
 	m_lim2 = 65536/(lim_max-lim_min);
     m_active = active;
     if(m_active) {
-	const std::string device = "/dev/input/js0";
-        m_js = open(&device[0], O_RDONLY);
+		const std::string device = "/dev/input/js0"; //select the current joystick
+        m_js = open(&device[0], O_RDONLY); //open it
 
         if (m_js == -1) {
-            perror("Could not open joystick");
+            perror("Could not open joystick"); //throw error
             m_active = false;
         }
     }
@@ -28,13 +28,12 @@ std::vector<int> Js::GetEvent() {
     	struct js_event event;
     	struct axis_state axes[3] = {0, 0, 0};
     	size_t axis;
-    	while(res[0] == static_cast<int>(GamePadType::None)) {
+    	while(res[0] == static_cast<int>(GamePadType::None)) { //while no event
 	    	fflush(stdout);
 	    	read_event(m_js, &event);
 	        switch (event.type) {
-
 	            case JS_EVENT_BUTTON:{
-	            	res[0] = static_cast<int>(GamePadType::Button);
+	            	res[0] = static_cast<int>(GamePadType::Button); //send button event
 	            	res[1] = static_cast<int>(event.number);
 	            	res[2] = static_cast<int>(event.value);
 	                break;
@@ -64,7 +63,7 @@ std::vector<int> Js::GetEvent() {
 		                }
 	                }
 	                std::cout << static_cast<int>(axes[axis].x) << " " << static_cast<int>(axes[axis].y) << std::endl;
-	    		    res[0] = static_cast<int>(GamePadType::Axis);
+	    		    res[0] = static_cast<int>(GamePadType::Axis); //send axis event
 	    		    res[1] = static_cast<int>(x);
 	    		    res[2] = static_cast<int>(y);
 	    		    res[3] = static_cast<int>(z);

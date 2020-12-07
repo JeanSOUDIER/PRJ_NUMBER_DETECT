@@ -13,6 +13,28 @@
 #include <string>
 #include <vector>
 
+/**
+
+                     JS class
+
+    DUHAMEL Erwan (erwanduhamel@outlook.com)
+    SOUDIER Jean  (jean.soudier@insa-strasbourg.com)
+
+
+    Provides a class for Joystick arm piloting.
+
+    Features :
+
+    • Pilote the arm with a gamepad Xbox360 (never used because to hard to stabilised)
+
+    Functions :
+
+    • JS                           | activate the joystick with the limits of the outputs values
+    • GetEvent()				   | return the shifting in a vector of <type,datas> with <TypeAxis,Xaxis,Yaxis,LR/RT> or <TypeButton,Number,Value,0>
+    • get_axis_state()			   | return the axis with is actully moved
+    • read_event()				   | return the current event of the gamepad
+
+*/
 
 struct axis_state {
     short x, y;

@@ -1,5 +1,4 @@
 #include <iostream>
-#include <cmath>
 #include "Robot/Arm.hpp"
 #include "Robot/MobileBase.hpp"
 #include "Robot/Bluetooth.hpp"

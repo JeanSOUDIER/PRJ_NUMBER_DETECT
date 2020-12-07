@@ -38,7 +38,7 @@ void Bluetooth::ReadThread() {
 	if(r.at(0) && m_start.load(std::memory_order_acquire)) {
 		DEBUG_BLUETOOTH_PRINT("read");
 		DEBUG_BLUETOOTH_PRINT(static_cast<int>(r.at(0)));
-		switch(m_stateR) {
+		switch(m_stateR) { //state machine to read <255,size,datas...,checksum>
     		case 0:{
     			if(r.at(0) == 255) {m_stateR = 1;}
     			break;
@@ -79,7 +79,7 @@ void Bluetooth::WriteThread() {
 	if(m_buff_tx.size() && m_start.load(std::memory_order_acquire)) {
 		DEBUG_BLUETOOTH_PRINT("send");
 		std::vector<char> s(1);
-		switch(m_stateS) {
+		switch(m_stateS) { //state machine to write <255,size,datas...,checksum>
     		case 0:{
     			s.at(0) = static_cast<char>(255);
     			m_usb->SendBytes(s);
@@ -163,7 +163,7 @@ void Bluetooth::StartThread() {
 
 std::vector<char> Bluetooth::GetRX(void) {
 	DEBUG_BLUETOOTH_PRINT("read main thread");
-	while(!m_rec.load(std::memory_order_acquire)) {}
+	while(!m_rec.load(std::memory_order_acquire)) {} //no messages
 	DEBUG_BLUETOOTH_PRINT("read op");
 	int len = GetRXsize();
 	std::vector<char> returnValue(len);

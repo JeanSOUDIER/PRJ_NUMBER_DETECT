@@ -24,7 +24,7 @@ Arm::Arm(const int nb, const int nb_usb,const  int bdrate, const std::vector<int
     }
 
     if(m_usb->GetActive()) {
-        delay(10000);
+        delay(10000); //Do not remove, USB won't start correctly and you are control the arm
         PosToMove();
         MoveArm(true);
         PosToMove();
@@ -45,7 +45,7 @@ Arm::~Arm() {
 
 void Arm::MoveArm(bool withDelay) {
     if(m_usb->GetActive()) {
-        std::vector<char> sending(2*m_nb+2);
+        std::vector<char> sending(2*m_nb+2); //form <Time(8L bits), Time(8H bits), Pos[i](8L bits), Pos[i](8H bits)....>
         sending[0] = (m_TimeArm%256);
         sending[1] = static_cast<unsigned char>(m_TimeArm/256);
         for(unsigned int i=0;i<m_PosArm.size();i++) {
@@ -58,28 +58,28 @@ void Arm::MoveArm(bool withDelay) {
 }
 
 void Arm::Send(int ins, const std::vector<char>&data) {
-    int sum = 508+data.size()+2+ins;
+    int sum = 508+data.size()+2+ins; //compute checksum
     std::vector<char>send(5+data.size());
-    send[0] = char(255);
-    send[1] = char(253);
-    send[2] = char(data.size()+2);
-    send[3] = char(ins);
+    send[0] = char(255); //start char
+    send[1] = char(253); //id of arbotix
+    send[2] = char(data.size()+2); //size msg
+    send[3] = char(ins); //instruction
     for(unsigned int i=0;i<data.size();i++) {
-        send[i+4] = data[i];
-        sum += data[i];
+        send[i+4] = data[i]; //add datas
+        sum += data[i]; //compute checksum
     }
-    send[data.size()+4] = char(255-((sum%256)+1));
-    m_usb->SendBytes(send);
+    send[data.size()+4] = char(255-((sum%256)+1)); //compute checksum
+    m_usb->SendBytes(send); //sending
 }
 
 bool Arm::PlaceArm(double x, double y, double z) {
     std::cout << "x = " << x << ", y = " << y << ", z = " << z << std::endl;
     bool test = false;
-    x -= A4b;
+    x -= A4b; //map to positives values
     y -= A4a;
     z *= -1;
     //convet to cartesian
-    const double r = sqrt(x*x+y*y);
+    const double r = sqrt(x*x+y*y); //compute r
     const double gamma = (y == 0 && x < 0) ? 3.1415 : 2*atan(y/(x+r));
 
     const double rA3 = r-A3;
@@ -93,14 +93,14 @@ bool Arm::PlaceArm(double x, double y, double z) {
                 //test arm not to short
                 const double d = std::sqrt(rA3*rA3+z*z);
                 if(d < A1+A2) {
-                    const double thet = std::acos(z/d);
-                    const double thetLoi = std::acos(-(A1*A1+d*d-A2*A2)/(2*d*A1));
-                    const double theta1 = -thetLoi+thet+A1thet;
+                    const double thet = std::acos(z/d); //use Al-kashi formula to find the angle of Motor2 from bottom to A1
+                    const double thetLoi = std::acos(-(A1*A1+d*d-A2*A2)/(2*d*A1)); //use the generic theorem of pythagor to find the angle of Motor2 from Motor2 to normal of the bottom
+                    const double theta1 = -thetLoi+thet+A1thet; //angle of the bottom to A1 + angle of the structure A1thet - angle of the normal to the Motor2
 
-                    const double thetLoi2 = std::acos(-(A1*A1+A2*A2-d*d)/(2*A2*A1));
-                    const double theta2 = M_PI/2-thetLoi2;
+                    const double thetLoi2 = std::acos(-(A1*A1+A2*A2-d*d)/(2*A2*A1)); //use the generic theorem of pythagor to find the angle of the Motor3
+                    const double theta2 = M_PI/2-thetLoi2; //adjust the value
 
-                    const double theta3 = -theta1-theta2;
+                    const double theta3 = -theta1-theta2; //force the 3rd angle to conserve the A3 parralella to the bottom
                     //set axes
                     SetAxePos(1, gamma);
                     SetAxePos(2, theta1);
@@ -154,7 +154,7 @@ void Arm::ToKeyboard(bool GamePad) {
     int z = pos[2];
     int pas = 10;
     SetTime(0);
-    std::cout << "Entrer your caractere : ";
+    std::cout << "Entrez votre caractere : ";
     char caractere;
     std::cin >> caractere;
     std::cout << "Votre caractere est : " << caractere << std::endl;
@@ -168,7 +168,6 @@ void Arm::ToKeyboard(bool GamePad) {
         if(GamePad) {
             std::vector<int> res = Xbox360.GetEvent();
             if(res[0] == static_cast<int>(GamePadType::Button)) {
-                //TODO
                 if(res[2]) {
                     switch(res[1]) {
                         case 0:{
