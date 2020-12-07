@@ -37,9 +37,9 @@ Sequencer::~Sequencer() {
 
 bool Sequencer::Execute() {
 	int length;
-	std::vector<char> reading = {static_cast<std::vector<char>>(0)};
+	std::vector<char> reading = {0};
 	if(m_BLE_start) {
-		while(reading.size() == 0) {
+		while(reading.at(0) == 0) {
 			reading = m_BLE->GetRX();
 		}
 		if(reading.at(0) == 254) {return false;}

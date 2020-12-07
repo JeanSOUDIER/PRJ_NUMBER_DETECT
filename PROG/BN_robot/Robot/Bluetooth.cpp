@@ -167,12 +167,9 @@ std::vector<char> Bluetooth::GetRX(void) {
 	DEBUG_BLUETOOTH_PRINT("read op");
 	int len = GetRXsize();
 	std::vector<char> returnValue(len);
-	std::generate(returnValue.begin() , returnValue.end() , [this]{
-        static unsigned int index = 0;
-        const char currentItem = m_rx.at(index).load();
-        index++;
-        return currentItem;
-	});
+	for(unsigned int i=0;i<len;i++) {
+		returnValue.at(i) = m_rx.at(i).load();
+	}
 	m_rec.store(false,std::memory_order_release);
 	DEBUG_BLUETOOTH_PRINT("read end");
     return returnValue;
