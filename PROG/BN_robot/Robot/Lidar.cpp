@@ -5,7 +5,7 @@ Lidar::Lidar(const int nb_usb, const int bdrate)
 
 Lidar::Lidar(const bool start, const int nb_usb, const int bdrate) {
 
-    for(auto &item:m_range){std::atomic_init(&item,0);}
+    for(auto &item:m_range){std::atomic_init(&item,0);} //fill all buffer at 0
     for(auto &item:m_intensity){std::atomic_init(&item,0);}
     for(auto &item:m_xPos){std::atomic_init(&item,0.0);}
     for(auto &item:m_yPos){std::atomic_init(&item,0.0);}
@@ -24,7 +24,7 @@ Lidar::Lidar(const bool start, const int nb_usb, const int bdrate) {
 }
 
 Lidar::~Lidar() {
-    /*const std::vector<char> data = {'e'};
+    /*const std::vector<char> data = {'e'}; //Stop the lidar but you have to unplug it if you want to restart
     m_usb->SendBytes(data);
     delay(1000);*/
     m_start.store(false, std::memory_order_release);
@@ -57,7 +57,7 @@ void Lidar::SetSat(bool state) {
 void Lidar::StartLidar(void) {
     if(m_start.load()) {
         std::cout << "Starting lidar" << std::endl;
-        const std::vector<char> data = {'a'};
+        const std::vector<char> data = {'a'}; //Char to start the lidar
         m_usb->SendBytes(data);
     }
 }
@@ -69,15 +69,15 @@ void Lidar::Poll(void) {
     int index;
 
     while (m_start.load() && !got_scan) {
-        raw_bytes = m_usb->ReadBytes(1);
-        if(raw_bytes[0] == 0xFA) {
+        raw_bytes = m_usb->ReadBytes(1); //read 1 byte
+        if(raw_bytes[0] == 0xFA) { //if it's the start char of the lidar message
             raw_bytes.clear();
-            raw_bytes = m_usb->ReadBytes(41);
-            raw_bytes.insert(raw_bytes.begin(),0xFA);
-            if(raw_bytes[1] >= 0xA0  && raw_bytes[1] <= 0xDB) {
+            raw_bytes = m_usb->ReadBytes(41); //read the 41 others bytes
+            raw_bytes.insert(raw_bytes.begin(),0xFA); //add the first one
+            if(raw_bytes[1] >= 0xA0  && raw_bytes[1] <= 0xDB) { //if the number of the frame is in the range from 0 (0xA0) to 59 => frame of 6 points then 360/6 = 60
               got_scan = true;
               int degree_count_num = 0;
-              index = (raw_bytes[1] - 0xA0) * 6;
+              index = (raw_bytes[1] - 0xA0) * 6; //compute the angle
               good_sets++;
 
               m_motor_speed += (raw_bytes[3] << 8) + raw_bytes[2]; //accumulate count for avg. time increment
@@ -99,7 +99,7 @@ void Lidar::Poll(void) {
                 m_range.at(359 - index - degree_count_num).store(temp,std::memory_order_release);
                 m_intensity.at(359 - index - degree_count_num).store(intensity,std::memory_order_release);
                 m_cpt++;
-                if(m_cpt > 60) {
+                if(m_cpt > 60) { //frame is complete
                     for(unsigned int i=0;i<m_range.size();i++) {
                         if(m_range.at(i).load(std::memory_order_acquire) == 3500) {
                             m_xPos.at(i).store(std::numeric_limits<double>::infinity());
@@ -111,7 +111,7 @@ void Lidar::Poll(void) {
                     }
                     m_cpt = 0;
                     m_first_frame.store(true, std::memory_order_release);
-                }
+                } //if last frame was read
                 if(!m_lidar_endTr.load(std::memory_order_acquire) && m_first_frame.load(std::memory_order_acquire)) {
                     for(unsigned int i=0;i<m_xPos.size();i++) {
                         m_xPosSend.at(i).store(m_xPos.at(i).load(std::memory_order_acquire),std::memory_order_release);
@@ -289,7 +289,7 @@ bool Lidar::SaveLidarPoints() {
 void Lidar::DisplayICP() {
     for(unsigned int i=0;i<m_xPos.size();i++) {
         if(!std::isinf(m_xPos.at(i))) {
-            //std::cout << "points.push_back(new Point(" << static_cast<float>(m_xPos) << "f, " << static_cast<float>(m_xPos) << "f, 0.0f));" << std::endl;
+            std::cout << "points.push_back(new Point(" << static_cast<float>(m_xPos) << "f, " << static_cast<float>(m_xPos) << "f, 0.0f));" << std::endl;
         }
     }
 }

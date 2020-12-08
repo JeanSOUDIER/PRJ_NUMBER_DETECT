@@ -5,8 +5,8 @@ Usb::Usb() {
 }
 
 Usb::Usb(const int nb_usb, const int baudrate) {
-	m_port_nr = nb_usb; /* /dev/ttyUSB0 */
-    m_bdrate = baudrate; /* 115200 baud */
+	m_port_nr = nb_usb;
+    m_bdrate = baudrate;
  
     std::vector<char> mode={'8','N','1',0}; // 8 data bits, no parity, 1 stop bit
   

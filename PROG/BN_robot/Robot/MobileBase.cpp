@@ -63,9 +63,9 @@ double MobileBase::GetAngleStart() {
 		dist_board = std::sqrt(m_posYlid.at(90)*m_posYlid.at(90)+dist_85*dist_85-2*m_posYlid.at(90)*dist_85*std::cos(5*M_PI/180));
 		angle = std::acos((dist_85*dist_85-m_posYlid.at(90)*m_posYlid.at(90)-dist_board*dist_board)/(-2*m_posYlid.at(90)*dist_board))-M_PI/2;
 		std::cout << 2*angle << std::endl;
-		if(static_cast<int>(2000*angle) == static_cast<int>(2000*N1) && !std::isnan(angle) && !std::isinf(angle) && std::fabs(2*angle) < 1) {c = true;}
+		if(static_cast<int>(2000*angle) == static_cast<int>(2000*N1) && !std::isnan(angle) && !std::isinf(angle) && std::fabs(angle) < 1) {c = true;}
 		N1 = angle;
-	}while(!c);
+	}while(!c); //while 2 points are not the same, no inf, no nan and between 0 and 1
 	return N1;
 }
 
@@ -80,7 +80,7 @@ double MobileBase::GetPosStart(bool delai, int angle, double dist_max) {
 		std::cout << m_posYlid.at(angle) << std::endl;
 		if(N1 == static_cast<int>(m_posYlid.at(angle)) && !std::isinf(m_posYlid.at(angle)) && !std::isnan(m_posYlid.at(angle)) && m_posYlid.at(angle) >= 0 && m_posYlid.at(angle) < dist_max) {c = true;}
 		N1 = m_posYlid.at(angle);
-	}while(!c);
+	}while(!c); //while 2 points are not the same, no inf, no nan and between 0 and dist_max
 	return N1;
 }
 
@@ -97,16 +97,16 @@ void MobileBase::GoPos(const double x, const double y, const double a) {
     	gamma += M_PI;
     	gamma = std::fmod(gamma,2*M_PI);
     	gamma -= M_PI;
-    	if(gamma != 0) {
+    	if(gamma != 0) { //go to the angle
     		SetSpeed(-SPEED_CST*Utility::sign(gamma),SPEED_CST*Utility::sign(gamma));
 		delay(std::abs(gamma)*2*SPEED_ANGLE);
     	}
-	if(r != 0) {
+	if(r != 0) { //go to the distance
 		SetSpeed(SPEED_CST*Utility::sign(r),SPEED_CST*Utility::sign(r));
     	std::cout << r*SPEED_NORM << std::endl;
 		delay(r*SPEED_NORM);
 	}
-	if(a != 0) {
+	if(a != 0) { //go to the end angle
 		SetSpeed(-SPEED_CST*Utility::sign(a),SPEED_CST*Utility::sign(a));
 		delay(std::abs(a)*SPEED_ANGLE);
 	}
@@ -195,18 +195,17 @@ void* MobileBase::ThreadRun() {
 	GetLidarPoints(true);
 	m_startTime = std::clock();
     while(m_start.load(std::memory_order_acquire)) {
-    	//TODO asserv lidar + deplacement
 		GetLidarPoints(true);
 		std::vector<std::vector<double>> posi = {m_posXlid, m_posYlid};
 		std::vector<std::vector<double>> posiN1 = {m_posXN1lid, m_posYN1lid};
-		std::vector<double> res = myICP.GetPos(posi, posiN1);
+		std::vector<double> res = myICP.GetPos(posi, posiN1); //compute the ICP
 		m_endTime = std::clock();
-		double delta = (m_endTime-m_startTime)/(CLOCKS_PER_SEC/1000);
+		double delta = (m_endTime-m_startTime)/(CLOCKS_PER_SEC/1000); //time for integration
 		m_startTime = std::clock();
 		delta /= 1000;
 		//std::cout << "				x=" << res.at(0) << " y=" << res.at(1) << " a=" << res.at(2) << " d=" << delta << std::endl;
 		double cst = 5;
-		if(res.at(0) < cst) {
+		if(res.at(0) < cst) { //saturation
 			m_posX.store(m_posX.load()+res.at(0)*delta, std::memory_order_release);
 		} else {
 			m_posX.store(m_posX.load()+cst*delta, std::memory_order_release);

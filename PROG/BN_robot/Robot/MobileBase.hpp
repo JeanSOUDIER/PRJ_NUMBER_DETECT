@@ -22,6 +22,44 @@
 #include "../SequenceHandler_STL/utility.h"
 #include "../Algorithms/ICP.hpp"
 
+/**
+
+                     MobileBase class
+
+    DUHAMEL Erwan (erwanduhamel@outlook.com)
+    SOUDIER Jean  (jean.soudier@insa-strasbourg.com)
+
+
+    Provides a class for Mobile Base control.
+
+    Features :
+
+    • control the mobile base
+
+    Functions :
+
+    • MobileBase                        | Constructor with arguments nb_usb (the number of the USB port), bdrate (the baudrate), the position of the robot <posX,posY,angle> and the lidar if you have one
+    • StartPlacing()                    | Function to place the robot at the begining
+    • GetAngleStart()                   | Function that return the angle of the robot with protections and filter
+    • GetPosStart(delai,angle,dist_max) | Function that return the position of the robot to the board with protections and filter, arguments are delai if you want to wait 0.5s, angle if you want to adjust the point of interest and the dist_max for the max lentgh in the protection
+    • GoPos(x,y,a)                      | Function to place the robot in space in <x,y> and a is the end angle
+    • SetSpeed(speed)                   | Function to set the speed of the motors
+    • SetSpeed(L,R)                     | Function to set the speed of the motors
+    • SetSpeedCons(speed)               | Function to set speed consigne for the position loop
+    • GetSpeedCons()                    | Function that return the speed consigne
+    • PrintPos()                        | Function that print in the terminal the position of the robot
+    • GetCurrentPos()                   | Function that return the position of the robot <x,y,thet>
+    • SetCurrentPosi(p)                 | Function to set the current position of the robot virtually for the feedback
+    • GetCurrentPosi()                  | Function that return the position of the robot <x,y,thet>
+    • currentPos_helper(context)        | Function to call the current position outside the class
+    • currentPos_helper_meter(context)  | Function to call the current position outside the class in meter
+    • MobileBaseHelper(context)         | Function to call the thread outside the class
+    • StartThread()                     | Function to start the thread to compute the ICP
+    • ThreadRun()                       | Function to handle the thread of the ICP
+    • GetLidarPoints(nb)                | Function to read the lidar points, if nb=true create un buffer of the last value for the ICP
+
+*/
+
 class MobileBase {
     public:
         explicit MobileBase(const int nb_usb, const int bdrate);
@@ -53,7 +91,7 @@ class MobileBase {
         void GetLidarPoints(bool nb);
     private:
 
-        const double START_DIST = 380;
+        const double START_DIST = 380; //distance to the white board
         const double SPEED_CST = 50;
         const double DIST_BT_WHEEL = 23;
         const double SPEED_NORM = 25.5;

@@ -6,6 +6,32 @@
 #include <iterator>
 #include "../RS232_CPP/rs232.hpp"
 
+/**
+
+                     USB class
+
+    DUHAMEL Erwan (erwanduhamel@outlook.com)
+    SOUDIER Jean  (jean.soudier@insa-strasbourg.com)
+
+
+    Provides a class for USB communication.
+
+    Features :
+
+    • Send and read data from USB
+
+    Functions :
+
+    • Usb 		                    | Constructor with arguments nb_usb (the number of the USB port) and baudrate (the baudrate)
+    • GetBdRate()                   | Function that return the baudrate value
+    • GetPortNb()					| Function that return the port number value
+    • SetActive(state)				| Function to activate the USB port
+    • GetActive()					| Function that return the state of the USB port
+    • SendBytes(data)				| Function to send data throw USB port
+    • ReadBytes()					| Function to read data throw USB port
+
+*/
+
 class Usb {
 	public:
 		Usb();

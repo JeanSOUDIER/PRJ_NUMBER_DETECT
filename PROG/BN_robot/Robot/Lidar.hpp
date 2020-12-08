@@ -14,6 +14,46 @@
 #include "algorithm"
 #include "../SequenceHandler_STL/utility.h"
 
+/**
+
+                     Lidar class
+
+    DUHAMEL Erwan (erwanduhamel@outlook.com)
+    SOUDIER Jean  (jean.soudier@insa-strasbourg.com)
+
+
+    Provides a class for Lidar control.
+
+    Features :
+
+    • save lidar points
+
+    Functions :
+
+    • Lidar                         | Constructor with arguments nb_usb (the number of the USB port), bdrate (the baudrate) and start (if you want to start the lidar)
+    • SetStart(state)               | Function that start or stop the lidar
+    • Poll()                        | Function to read lidar points
+    • GetBdRate()                   | Function that return the baudrate
+    • GetPortNb()                   | Function that return the port number
+    • GetStart()                    | Function that return the state of the lidar
+    • GetMotorSpeed()               | Function that return the motor speed
+    • GetTimeIncrement()            | Function that return the time increment between frames
+    • GetSat()                      | Function that return if we sature the length form 0 to 150 mm to "std::inf"
+    • GetRange()                    | Function that return the range of the last frame
+    • GetIntensity()                | Function that return the intensity of the last frame
+    • GetXPos()                     | Function that return the X position of 360 points in a last frame
+    • GetYPos()                     | Function that return the Y position of 360 points in a last frame
+    • Display(isXY)                 | Function that diplay points frame in the terminal in polar if isXY=false else in cartesian
+    • DisplayGraph()                | Function that plot a cartesian graph in the terminal
+    • DisplayICP()                  | Function that diplay points without the inf values
+    • SaveLidarPoints()             | Function that save the points of a frame in a *.csv file
+    • LidarHelper(context)          | Function to call the lidar outside the class
+    • StartThread()                 | Function that start the thread to receive lidar points
+    • ThreadRun()                   | Function that handle the lidar thread
+    • StartLidar()                  | Function to start the lidar
+
+*/
+
 class MobileBase;
 
 class Lidar{
