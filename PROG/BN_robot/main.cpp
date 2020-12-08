@@ -5,6 +5,13 @@
 #include "Robot/Lidar.hpp"
 #include "Robot/Sequencer.hpp"
 
+/**
+
+    DUHAMEL Erwan (erwanduhamel@outlook.com)
+    SOUDIER Jean  (jean.soudier@insa-strasbourg.com)
+
+**/
+
 int main() {
     // Declare USB ports
     constexpr int ttyUSB_ARBO = 38; // Arm
