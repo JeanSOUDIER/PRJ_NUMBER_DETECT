@@ -20,6 +20,29 @@ constexpr int DIST_BASE = 50;
 constexpr int DIST_ARM = 50;
 constexpr int MAX_LENGTH_ARM = DIST_BASE/DIST_ARM;
 
+/**
+
+                     Bluetooth class
+
+    DUHAMEL Erwan (erwanduhamel@outlook.com)
+    SOUDIER Jean  (jean.soudier@insa-strasbourg.fr)
+
+
+    Provides a class for Bluetooth communication.
+
+    Features :
+
+    • Send and read data from bluetooth
+
+    Functions :
+
+    • Sequencer                     | Constructor
+    • Execute()                     | Function to do the main programme 1 turn
+    • MoveRobot(time)               | Function to move the mobile base with feedback loop for a time
+    • RollOver(nb)             		| Function to finish the turn (nb the number of caracters with is actully write)
+
+*/
+
 class Sequencer {
 	public:
 		explicit Sequencer(Arm* = nullptr, MobileBase* = nullptr);
