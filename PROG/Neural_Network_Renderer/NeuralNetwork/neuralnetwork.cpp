@@ -4,34 +4,23 @@
 namespace MNN {
 
 NeuralNetwork::NeuralNetwork(const uint64_t &layers){
-
-    _learning_rate = 0;
-
     _layers.reserve(layers);
-
-    _save_path = "D:/";
-
-
 }
 
 NeuralNetwork::NeuralNetwork(const std::vector<Layer*> &layers){
 
-    _learning_rate = 0;
-
     _layers = layers;
-
-    _save_path = "D:/";
 
 }
 
-
+#ifdef MNN_TRAIN
 NeuralNetwork::NeuralNetwork(const scalar &learning_rate , const uint64_t &layers){
 
     _learning_rate = learning_rate;
 
     _layers.reserve(layers);
 
-     _save_path = "D:/";
+     _save_path = "D:/new_MNN.xml";
 
 }
 NeuralNetwork::NeuralNetwork(const scalar &learning_rate , const uint64_t &layers , const std::string &save_path){
@@ -55,235 +44,32 @@ NeuralNetwork::NeuralNetwork(const scalar &learning_rate , const std::vector<Lay
 
 }
 
-NeuralNetwork::NeuralNetwork(const scalar &learning_rate , const std::string &save_path){
 
-    _learning_rate = learning_rate;
+NeuralNetwork::NeuralNetwork(const uint64_t &layers , const std::string &save_path){
 
-    _layers.reserve(2);
-
+    _layers.reserve(layers);
      _save_path = save_path;
-
-
-}
-
-NeuralNetwork::~NeuralNetwork(){clear_layers();}
-
-
-
-void NeuralNetwork::create(const std::vector<uint64_t> &layers_neurons){
-
-
-
-        std::mt19937 gen(time(0));
-
-    /*
-
-
-        std::vector<Neuron*> neurons;
-        neurons.reserve(layers_neurons.at(layer));
-
-        const scalar variance =  2./(layers_neurons.at(layer-1) + (layers_neurons.at(layer)));
-        //const scalar variance = 1;
-
-        std::normal_distribution<scalar> xavier_initializer(0, std::sqrt(variance));
-
-        for(uint64_t neuron_index = 0 ; neuron_index < layers_neurons.at(layer) ; neuron_index++){
-
-            //Xavier initialization
-            //https://www.deeplearning.ai/ai-notes/initialization/
-
-            std::vector<scalar> weights;
-            weights.resize(layers_neurons.at(layer-1) , 0);
-
-            for(scalar &weight : weights){weight = xavier_initializer(gen);}
-
-            AdvancedNeuron *neuron = new AdvancedNeuron(weights , 0);
-            //neuron->setActivationFunction(AdvancedNeuron::sigmoid() , AdvancedNeuron::sigmoid_derivative());
-
-            neurons.push_back(neuron);
-
-
-        }
-
-        _layers.push_back(new ConvolutionalLayer(neurons));
-    */
-
-
-
-    for(size_t index = 1 ; index < layers_neurons.size() ; index++){
-
-        ste::Matrix<scalar> weights(layers_neurons.at(index) , layers_neurons.at(index-1));
-
-
-
-
-
-
-        _layers.push_back(
-                    new Layer(
-                        weights ,
-                        ste::Matrix<scalar>(layers_neurons.at(index) , 1))
-                    );
-
-    }
-
-}
-
-
-#ifdef MNN_TRAIN
-void NeuralNetwork::train(const uint64_t &epochs , const uint64_t &batch_size , const Train &method, const std::vector<scalar> &method_parameters){
-    train(epochs , false , batch_size , method , method_parameters);
-}
-
-void NeuralNetwork::train(const uint64_t &epochs , const bool &endCondition , const uint64_t &batch_size , const Train &method , const std::vector<scalar> &method_parameters){
-
-
-    switch(method){
-
-    case(MNN::Train::GRADIENT_DESCENT):{
-
-        train_SGD(epochs , endCondition , batch_size);
-        break;
-    }
-
-    case(MNN::Train::MOMENTUM):{
-        if(method_parameters.size() != 1){throw std::invalid_argument("Project_network::train\nInvalid method parameters.\nExpected 1 for momentum method, but received "
-                                                                      + std::to_string(method_parameters.size()) + ".");}
-
-        train_MOMENTUM(epochs , endCondition , batch_size  ,method_parameters[0]);
-        break;
-    }
-
-    case(MNN::Train::RMS_PROP):{
-
-        if(method_parameters.size() != 2){throw std::invalid_argument("Project_network::train\nInvalid method parameters.\nExpected 2 for RMSprop method, but received "
-                                                                      + std::to_string(method_parameters.size()) + ".");}
-
-        train_RMS(epochs , endCondition , batch_size , method_parameters[0] , method_parameters[1]);
-        break;
-    }
-
-    case(MNN::Train::ADAM):{
-
-
-        if(method_parameters.size() != 3){throw std::invalid_argument("Project_network::train\nInvalid method parameters.\nExpected 3 for Adam method, but received "
-                                                                      + std::to_string(method_parameters.size()) + ".");}
-
-        train_ADAM(epochs , endCondition, batch_size , method_parameters[0] , method_parameters[1] , method_parameters[2]);
-        break;
-    }
-
-    default:{throw std::invalid_argument("Project_network::train\nInvalid method. This error is often due to a cast.");}
-
-    }
-
-    //Safety, ensures the results to not be lost if it is impossible de write the results in the path
-    if(!save(_save_path , true)){
-
-        std::string new_path = _save_path;
-
-        while(!save(new_path , true)){
-            std::cout << "Could not save training results in " << new_path <<".\n";
-            std::cout << "Please enter a new path : ";
-            std::cin >> new_path; //Updates the save path
-        }
-
-        _save_path = new_path;
-
-    }
-
-}
-
-void NeuralNetwork::train_SGD(const uint64_t &epoch , const uint64_t &batch_size){
-    train_SGD(epoch , false , batch_size);
-}
-
-void NeuralNetwork::train_MOMENTUM(const uint64_t &epoch , const uint64_t &batch_size  , const scalar &beta){
-    train_MOMENTUM(epoch , false , batch_size , beta);
-}
-
-void NeuralNetwork::train_RMS(const uint64_t &epoch , const uint64_t &batch_size , const scalar &beta , const scalar &epsilon){
-    train_RMS(epoch , false , batch_size , beta , epsilon);
-}
-
-void NeuralNetwork::train_ADAM(const uint64_t &epoch , const uint64_t &batch_size , const scalar &beta1, const scalar &beta2, const scalar &epsilon){
-    train_ADAM(epoch , false , batch_size , beta1 , beta2 , epsilon);
 }
 #endif
+NeuralNetwork::~NeuralNetwork(){
+
+    clear_layers();
+#ifdef MNN_TRAIN
+    delete dataset_trainer;
+    delete dataset_tester;
+#endif
+}
+
+
 long long int NeuralNetwork::predict(const ste::Matrix<scalar> &input) const{
 
     ste::Matrix<scalar> result = input;
 
     for(Layer* layer : _layers){
-        result = MNN::elu((layer->weights() * result) + layer->biases());
+        result = MNN::elu(layer->weights() * result + layer->biases());
     }
 
     return Utility::indexOf(result.toVector1D() , result.max());
-
-}
-
-
-
-bool NeuralNetwork::save(const bool &override_old){return save(_save_path , override_old);}
-
-bool NeuralNetwork::save(const std::string &path , const bool &override_old){
-
-    const QString q_path = QString::fromStdString(path);
-
-    QFile target_file(q_path.endsWith(".xml" , Qt::CaseInsensitive) ? q_path : q_path+".xml");
-
-    if(target_file.exists() && override_old){target_file.remove();}
-    if(target_file.exists() && !override_old){return false;}
-
-    if(target_file.open(QFile::WriteOnly)){
-
-        QXmlStreamWriter writer(&target_file);
-        writer.setAutoFormatting(true);
-        writer.writeStartDocument();
-
-        //<MNN_NETWORK>
-        writer.writeStartElement("MNN_NETWORK");
-
-                for(uint64_t layer = 1 ; layer < layers().size() ; layer++){
-                    //<LAYER>
-                    writer.writeStartElement("LAYER");
-
-                    for(uint64_t neuron = 0 ; neuron < layers().at(layer)->weights().rows() ; neuron++){
-                            //<NEURON>
-                            writer.writeStartElement("NEURON");
-                                writer.writeTextElement("BIAS" , QString::number(layers().at(layer)->biases().at(neuron)));
-
-                                    //<WEIGHTS>
-                                    writer.writeStartElement("WEIGHTS");
-                                    for(const scalar weight : layers().at(layer)->weights().rowAt(neuron)){
-                                        writer.writeTextElement("WEIGHT" , QString::number(weight));
-                                    }
-                                    writer.writeEndElement();
-                                    //<WEIGHTS>
-
-
-                                writer.writeEndElement();
-                            //</NEURON>
-                    }
-                    writer.writeEndElement();
-                    //</LAYER>
-
-                }
-
-
-        writer.writeEndElement();
-        //</MNN_NETWORK>
-
-        writer.writeEndDocument();
-
-
-    }
-    else{return false;}
-
-    target_file.close();
-
-    return true;
-
 
 }
 
@@ -458,12 +244,316 @@ void NeuralNetwork::clear_layers(){
 
 }
 
-scalar NeuralNetwork::loss(const ste::Matrix<scalar> &expected_output , const ste::Matrix<scalar> &obtained_output) const{
-    return cost(expected_output , obtained_output);
+
+std::vector<Layer*>& NeuralNetwork::layers() {return _layers;}
+
+
+#ifdef MNN_TRAIN
+void NeuralNetwork::create(const std::vector<uint64_t> &layers_neurons){
+
+    //Xavier initialization
+    //https://www.deeplearning.ai/ai-notes/initialization/
+    std::mt19937 gen(time(0));
+
+    for(size_t index = 1 ; index < layers_neurons.size() ; index++){
+
+        const scalar standard_deviation =  std::sqrt(2./(layers_neurons.at(index-1) + (layers_neurons.at(index))));
+
+        _layers.push_back(
+                    new Layer(
+                        ste::Matrix<scalar>::randn(layers_neurons.at(index) , layers_neurons.at(index-1) , 0 , standard_deviation) , //weights
+                        ste::Matrix<scalar>(layers_neurons.at(index) , 1 , 0)) //biases
+                    );
+
+    }
+
 }
 
 
-std::vector<Layer*>& NeuralNetwork::layers() {return _layers;}
+
+void NeuralNetwork::train(const uint64_t &epochs , const uint64_t &batch_size , const Train &method, const std::vector<scalar> &method_parameters){
+    train(epochs , false , batch_size , method , method_parameters);
+}
+
+void NeuralNetwork::train(const uint64_t &epochs , const bool &endCondition , const uint64_t &batch_size , const Train &method , const std::vector<scalar> &method_parameters){
+
+
+    switch(method){
+
+    case(MNN::Train::GRADIENT_DESCENT):{
+
+        train_SGD(epochs , endCondition , batch_size);
+        break;
+    }
+
+    case(MNN::Train::MOMENTUM):{
+        if(method_parameters.size() != 1){throw std::invalid_argument("NeuralNetwork::train\nInvalid method parameters.\nExpected 1 for momentum method, but received "
+                                                                      + std::to_string(method_parameters.size()) + ".");}
+
+        train_MOMENTUM(epochs , endCondition , batch_size  ,method_parameters[0]);
+        break;
+    }
+
+    case(MNN::Train::RMS_PROP):{
+
+        if(method_parameters.size() != 2){throw std::invalid_argument("NeuralNetwork::train\nInvalid method parameters.\nExpected 2 for RMSprop method, but received "
+                                                                      + std::to_string(method_parameters.size()) + ".");}
+
+        train_RMS(epochs , endCondition , batch_size , method_parameters[0] , method_parameters[1]);
+        break;
+    }
+
+    case(MNN::Train::ADAM):{
+
+
+        if(method_parameters.size() != 3){throw std::invalid_argument("NeuralNetwork::train\nInvalid method parameters.\nExpected 3 for Adam method, but received "
+                                                                      + std::to_string(method_parameters.size()) + ".");}
+
+        train_ADAM(epochs , endCondition, batch_size , method_parameters[0] , method_parameters[1] , method_parameters[2]);
+        break;
+    }
+
+    default:{throw std::invalid_argument("NeuralNetwork::train\nInvalid method. This error is often due to a cast.");}
+
+    }
+
+    //Safety, ensures the results to not be lost if it is impossible de write the results in the path
+    if(!save(_save_path , true)){
+
+        std::string new_path = _save_path;
+
+        while(!save(new_path , true)){
+            std::cout << "Could not save training results in " << new_path <<".\n";
+            std::cout << "Please enter a new path : ";
+            std::cin >> new_path; //Updates the save path
+        }
+
+        _save_path = new_path;
+
+    }
+
+}
+
+void NeuralNetwork::train_SGD(const uint64_t &epoch , const uint64_t &batch_size){
+    train_SGD(epoch , false , batch_size);
+}
+
+void NeuralNetwork::train_MOMENTUM(const uint64_t &epoch , const uint64_t &batch_size  , const scalar &beta){
+    train_MOMENTUM(epoch , false , batch_size , beta);
+}
+
+void NeuralNetwork::train_RMS(const uint64_t &epoch , const uint64_t &batch_size , const scalar &beta , const scalar &epsilon){
+    train_RMS(epoch , false , batch_size , beta , epsilon);
+}
+
+void NeuralNetwork::train_ADAM(const uint64_t &epoch , const uint64_t &batch_size , const scalar &beta1, const scalar &beta2, const scalar &epsilon){
+    train_ADAM(epoch , false , batch_size , beta1 , beta2 , epsilon);
+}
+
+
+
+
+void NeuralNetwork::train_SGD(const uint64_t &epochs , const bool &endCondition , const uint64_t &batch_size){
+std::cout << "*************************************************train_SGD*************************************************" << std::endl;
+    for(uint64_t epoch = 1 ; (epoch <= epochs) && !endCondition ; epoch++){
+std::cout << "Epoch " << epoch << std::endl;
+        for(uint64_t item = 0 ; item < dataset_trainer->size()/batch_size ; item += batch_size){
+
+            //Vectors of the errors, total errors and gradients.
+            std::vector<ste::Matrix<scalar>> errors;
+            errors.reserve(layers().size());
+
+            std::vector<ste::Matrix<scalar>> total_errors;
+            total_errors.reserve(layers().size());
+
+            std::vector<ste::Matrix<scalar>> gradients;
+            gradients.reserve(layers().size());
+
+            //Initialize the vectors.
+            for(Layer* layer : _layers){
+
+                errors.push_back(ste::Matrix<scalar>(layer->cell_number() , 1 , 0));
+                total_errors.push_back(ste::Matrix<scalar>(layer->cell_number() , 1 , 0));
+                gradients.push_back(ste::Matrix<scalar>(layer->cell_number() , 1 , 0));
+
+            }
+
+
+            for(uint64_t batch_item = item ; batch_item <= item+batch_size ; batch_item++){
+                std::vector<ste::Matrix<scalar>> raw_outputs;
+                raw_outputs.reserve(layers().size());
+
+                std::vector<ste::Matrix<scalar>> activated_outputs;
+                activated_outputs.reserve(layers().size());
+
+
+                //Forward propagation
+                activated_outputs.push_back(dataset_trainer->data(batch_item));
+                for(Layer *layer : _layers){
+
+
+                    raw_outputs.push_back((layer->weights() * activated_outputs.back()) + layer->biases());
+                    activated_outputs.push_back(MNN::elu(raw_outputs.back()));
+
+                }
+
+
+                //Back propagation
+
+                for(uint64_t layer = _layers.size() ; layer > 2 ; layer--){
+
+
+                    errors.at(layer-1) = ste::Matrix<scalar>::hadamard(activated_outputs.at(layer)-expected(dataset_trainer->label(batch_item)) , MNN::elu_derivative(raw_outputs.at(layer-1)));
+                    total_errors.at(layer-1) = total_errors.at(layer-1) + errors.at(layer-1);
+                    gradients.at(layer-1) = gradients.at(layer-1) + errors.at(layer-1) * activated_outputs.at(layer-1).transpose();
+
+                }
+
+
+            }
+
+            //Gradient descent
+
+            for(uint64_t index = 1 ; index < _layers.size()-2 ; index++){
+
+                Layer* layer = _layers.at(index);
+
+                layer->setWeights(layer->weights() - gradients.at(index)*(_learning_rate/batch_size));
+                layer->setBiases(layer->biases() - total_errors.at(index)*(_learning_rate/batch_size));
+
+            }
+        }
+
+    }
+
+}
+
+void NeuralNetwork::train_MOMENTUM(const uint64_t &epochs , const bool &endCondition , const uint64_t &batch_size  , const MNN::scalar &beta){
+
+    (void)beta;
+
+    for(uint64_t epoch = 1 ; (epoch <= epochs) && !endCondition ; epoch++){
+
+
+        for(uint64_t item = 0 ; item < dataset_trainer->size()/batch_size ; item++){
+
+            for(uint64_t batch_item = 1 ; batch_item <= batch_size ; batch_item++){}
+
+        }
+
+    }
+
+
+}
+
+void NeuralNetwork::train_RMS(const uint64_t &epochs , const bool &endCondition , const uint64_t &batch_size , const MNN::scalar &beta , const MNN::scalar &epsilon){
+
+    (void)beta;
+    (void)epsilon;
+
+    for(uint64_t epoch = 1 ; (epoch <= epochs) && !endCondition ; epoch++){
+
+
+        for(uint64_t item = 0 ; item < dataset_trainer->size()/batch_size ; item++){
+
+            for(uint64_t batch_item = 1 ; batch_item <= batch_size ; batch_item++){}
+
+        }
+
+    }
+
+
+}
+
+void NeuralNetwork::train_ADAM(const uint64_t &epochs , const bool &endCondition , const uint64_t &batch_size , const MNN::scalar &beta1 , const MNN::scalar &beta2, const MNN::scalar &epsilon){
+
+    (void)beta1;
+    (void)beta2;
+    (void)epsilon;
+
+    for(uint64_t epoch = 1 ; (epoch <= epochs) && !endCondition ; epoch++){
+
+
+        for(uint64_t item = 0 ; item < dataset_trainer->size()/batch_size ; item++){
+
+            for(uint64_t batch_item = 1 ; batch_item <= batch_size ; batch_item++){}
+
+        }
+
+    }
+
+
+}
+
+bool NeuralNetwork::save(const bool &override_old){return save(_save_path , override_old);}
+
+bool NeuralNetwork::save(const std::string &path , const bool &override_old){
+
+    const QString q_path = QString::fromStdString(path);
+
+    QFile target_file(q_path.endsWith(".xml" , Qt::CaseInsensitive) ? q_path : q_path+".xml");
+
+    if(target_file.exists() && override_old){target_file.remove();}
+    if(target_file.exists() && !override_old){return false;}
+
+    if(target_file.open(QFile::WriteOnly)){
+
+        QXmlStreamWriter writer(&target_file);
+        writer.setAutoFormatting(true);
+        writer.writeStartDocument();
+
+        //<MNN_NETWORK>
+        writer.writeStartElement("MNN_NETWORK");
+
+                for(uint64_t layer = 1 ; layer < layers().size() ; layer++){
+                    //<LAYER>
+                    writer.writeStartElement("LAYER");
+
+                    for(uint64_t neuron = 0 ; neuron < layers().at(layer)->weights().rows() ; neuron++){
+                            //<NEURON>
+                            writer.writeStartElement("NEURON");
+                                writer.writeTextElement("BIAS" , QString::number(layers().at(layer)->biases().at(neuron)));
+
+                                    //<WEIGHTS>
+                                    writer.writeStartElement("WEIGHTS");
+                                    for(const scalar weight : layers().at(layer)->weights().rowAt(neuron)){
+                                        writer.writeTextElement("WEIGHT" , QString::number(weight));
+                                    }
+                                    writer.writeEndElement();
+                                    //<WEIGHTS>
+
+
+                                writer.writeEndElement();
+                            //</NEURON>
+                    }
+                    writer.writeEndElement();
+                    //</LAYER>
+
+                }
+
+
+        writer.writeEndElement();
+        //</MNN_NETWORK>
+
+        writer.writeEndDocument();
+
+
+    }
+    else{return false;}
+
+    target_file.close();
+
+    return true;
+
+
+}
+
+scalar NeuralNetwork::loss(const ste::Matrix<scalar> &expected_output , const ste::Matrix<scalar> &obtained_output) const{
+    return cost(expected_output , obtained_output);
+}
+#endif
+
+
 
 }
 

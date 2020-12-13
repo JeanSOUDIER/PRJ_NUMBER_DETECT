@@ -217,5 +217,5 @@ double ICP::pdt(const std::vector<double> &a, const std::vector<double> &b) {
 }
 
 bool ICP::SaveImg(const ste::Matrix<double> &Map, const std::string &name) {
-	return Utility::writeCSV(name,Map.toVector(),";");
+	return Utility::writeCSV(name,Map.toVector2D(),";");
 }
