@@ -8,7 +8,7 @@
 /**
 
     DUHAMEL Erwan (erwanduhamel@outlook.com)
-    SOUDIER Jean  (jean.soudier@insa-strasbourg.com)
+    SOUDIER Jean  (jean.soudier@insa-strasbourg.fr)
 
 **/
 
