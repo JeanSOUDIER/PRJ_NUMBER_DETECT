@@ -1,9 +1,9 @@
 m = 3; %kg
 S = 0.0739; %m^2
-Cx = 1.2; %Unsain bolt
+Cx = 1.2; %Aproximate for this type of robot
 D = 3; %m
-C0 = 0.008; %ex 1 Ted
-C1 = 1.6e-6; %ex1 Ted
+C0 = 0.008; %Aproximate for this type of robot
+C1 = 1.6e-6; %Aproximate for this type of robot
 g = 9.81;
 rho = 1.225; %air
 VBAT = 12; %V
