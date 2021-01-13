@@ -83,14 +83,11 @@ cv::Mat CameraWidget::takePhoto(){
     const int old_height = mainWindow->height();
 
     setPhoto(
-    UtilityOCV::toQPixmap(result , QImage::Format_RGB888).scaled(int(0.95*width()) , int(0.8*height()) , Qt::KeepAspectRatio)
+
+                UtilityOCV::toQPixmap(result , QImage::Format_RGB888).scaled(int(0.95*width()) , int(0.8*height()) , Qt::KeepAspectRatio)
     );
 
     mainWindow->resize(old_width , old_height);
-
-//    setPhoto(
-//    UtilityOCV::toQPixmap(result, QImage::Format_RGB888)
-//    );
 
     return result;
 }
@@ -107,12 +104,7 @@ void CameraWidget::on_photo_button(){
     mainWindow->setState(MainWindow::STATE::RESULTS_DISPLAY);
     mainWindow->process(takePhoto());
 
-//    if(autosend_cb->isChecked()){mainWindow->resultsWidget()->send();}
-
-
-
-
-
+    if(autosend_cb->isChecked()){mainWindow->resultsWidget()->send();}
 
 }
 

@@ -61,11 +61,6 @@ private slots:
 
     void on_ok_button();
 
-
-
-
-
-
 };
 
 #endif // SETTINGSWINDOW_H

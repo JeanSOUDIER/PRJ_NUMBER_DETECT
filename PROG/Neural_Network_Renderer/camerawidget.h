@@ -43,7 +43,7 @@ protected:
     cv::Mat takePhoto();
 
     QTimer* timer();
-    QLabel* photo();
+    QLabel* photo();    
 
 private:
 

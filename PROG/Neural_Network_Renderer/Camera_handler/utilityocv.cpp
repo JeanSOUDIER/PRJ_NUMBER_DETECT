@@ -266,7 +266,7 @@ ste::Matrix<float> toSteMatrix_F(const cv::Mat &cvMat){
     result.reserve(uchar_mat.rows());
 
 
-    for(const std::vector<uchar> &row : uchar_mat.toVector()){
+    for(const std::vector<uchar> &row : uchar_mat.toVector2D()){
         result.push_back(std::vector<float>(row.begin() , row.end()));
     }
 
@@ -280,7 +280,7 @@ ste::Matrix<double> toSteMatrix_D(const cv::Mat &cvMat){
     std::vector<std::vector<double>> result;
     result.reserve(uchar_mat.rows());
 
-    for(const std::vector<uchar> &row : uchar_mat.toVector()){
+    for(const std::vector<uchar> &row : uchar_mat.toVector2D()){
         result.push_back(std::vector<double>(row.begin() , row.end()));
     }
 
