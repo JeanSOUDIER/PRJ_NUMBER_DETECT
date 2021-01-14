@@ -30,20 +30,20 @@
     Functions :
 
     • Arm                           | Constructor with arguments nb (number of motors), nb_usb (the port number of the arm in USB), the baudrate of the USB, the limits (min/max), the time to move the arm
-    • SetLimAxe(nb,lim_min,lim_max) | Function that manage the position limits of a motor with nb the number of the motor, lim_min the minimum value and lim_max the max value
+    • SetLimAxe(nb,lim_min,lim_max) | Function that manages the position limits of a motor with nb the number of the motor, lim_min the minimum value and lim_max the max value
     • SetLimMinAxe(nb,lim)          | Function to manage the min limit of the motor nb
     • SetLimMaxAxe(nb,lim)          | Function to manage the max limit of the motor nb
     • SetAxePos(nb,pos)             | Function to change the goal position to a motor to a position between pi/2 and -pi/2
     • SetAxePosTic(nb,pos)          | Function to change the goal position to a motor to a position between lim_max and lim_min
-    • GetAxePos(nb)                 | Function that return the psition of the motor in Tic
-    • GetBdRate()                   | Function that return the baudrate
-    • GetPortNb()                   | Function that return the USB port number
-    • GetTime()                     | Function that return the time to move motors
-    • GetNbMot()                    | Function that return the number of motors
+    • GetAxePos(nb)                 | Function that returns the psition of the motor in Tic
+    • GetBdRate()                   | Function that returns the baudrate
+    • GetPortNb()                   | Function that returns the USB port number
+    • GetTime()                     | Function that returns the time to move motors
+    • GetNbMot()                    | Function that returns the number of motors
     • MoveArm(withDelay)            | Function to move the arm with the positions in the buffer [SetAxePos or SetAxePosTic]
     • PlaceArm(x,y,z)               | Function to move the arm with inverse kinematic to an (x,y,z) position of the end effector from the base of the arm, return the success
-    • WriteOn()                     | Function that set the position of the end effector to write
-    • WriteOff()                    | Function that set the position of the end effector to not write
+    • WriteOn()                     | Function that sets the position of the end effector to write
+    • WriteOff()                    | Function that sets the position of the end effector to not write
     • Homing()                      | Function to place the robot to the start position
     • PosWriting(state,time)        | Function to place the arm to write something with state of the end effector (on/off) and the time to go
     • PosPreWriting(state,time)     | Function to pre place the arm to write something with state of the end effector (on/off) and the time to go

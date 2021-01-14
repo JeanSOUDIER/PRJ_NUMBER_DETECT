@@ -31,25 +31,25 @@
     Functions :
 
     • Lidar                         | Constructor with arguments nb_usb (the number of the USB port), bdrate (the baudrate) and start (if you want to start the lidar)
-    • SetStart(state)               | Function that start or stop the lidar
+    • SetStart(state)               | Function that starts or stops the lidar
     • Poll()                        | Function to read lidar points
-    • GetBdRate()                   | Function that return the baudrate
-    • GetPortNb()                   | Function that return the port number
-    • GetStart()                    | Function that return the state of the lidar
-    • GetMotorSpeed()               | Function that return the motor speed
-    • GetTimeIncrement()            | Function that return the time increment between frames
-    • GetSat()                      | Function that return if we sature the length form 0 to 150 mm to "std::inf"
-    • GetRange()                    | Function that return the range of the last frame
-    • GetIntensity()                | Function that return the intensity of the last frame
-    • GetXPos()                     | Function that return the X position of 360 points in a last frame
-    • GetYPos()                     | Function that return the Y position of 360 points in a last frame
-    • Display(isXY)                 | Function that diplay points frame in the terminal in polar if isXY=false else in cartesian
-    • DisplayGraph()                | Function that plot a cartesian graph in the terminal
-    • DisplayICP()                  | Function that diplay points without the inf values
-    • SaveLidarPoints()             | Function that save the points of a frame in a *.csv file
+    • GetBdRate()                   | Function that returns the baudrate
+    • GetPortNb()                   | Function that returns the port number
+    • GetStart()                    | Function that returns the state of the lidar
+    • GetMotorSpeed()               | Function that returns the motor speed
+    • GetTimeIncrement()            | Function that returns the time increment between frames
+    • GetSat()                      | Function that returns if we data from 0 to 150 mm is saturated to "std::inf"
+    • GetRange()                    | Function that returns the range of the last frame
+    • GetIntensity()                | Function that returns the intensity of the last frame
+    • GetXPos()                     | Function that returns the X position of 360 points in a last frame
+    • GetYPos()                     | Function that returns the Y position of 360 points in a last frame
+    • Display(isXY)                 | Function that diplays points frame in the terminal in polar if isXY=false else in cartesian
+    • DisplayGraph()                | Function that plots a cartesian graph in the terminal
+    • DisplayICP()                  | Function that diplays points without the inf values
+    • SaveLidarPoints()             | Function that saves the points of a frame in a *.csv file
     • LidarHelper(context)          | Function to call the lidar outside the class
-    • StartThread()                 | Function that start the thread to receive lidar points
-    • ThreadRun()                   | Function that handle the lidar thread
+    • StartThread()                 | Function that starts the thread to receive lidar points
+    • ThreadRun()                   | Function that handles the lidar thread
     • StartLidar()                  | Function to start the lidar
 
 */

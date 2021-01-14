@@ -24,7 +24,7 @@ Arm::Arm(const int nb, const int nb_usb,const  int bdrate, const std::vector<int
     }
 
     if(m_usb->GetActive()) {
-        delay(10000); //Do not remove, USB won't start correctly and you are control the arm
+        delay(10000); //Do not remove, USB won't start correctly and you will not be able to control the arm
         PosToMove();
         MoveArm(true);
         PosToMove();
@@ -45,7 +45,7 @@ Arm::~Arm() {
 
 void Arm::MoveArm(bool withDelay) {
     if(m_usb->GetActive()) {
-        std::vector<char> sending(2*m_nb+2); //form <Time(8L bits), Time(8H bits), Pos[i](8L bits), Pos[i](8H bits)....>
+        std::vector<char> sending(2*m_nb+2); //format <Time(8L bits), Time(8H bits), Pos[i](8L bits), Pos[i](8H bits)....>
         sending[0] = (m_TimeArm%256);
         sending[1] = static_cast<unsigned char>(m_TimeArm/256);
         for(unsigned int i=0;i<m_PosArm.size();i++) {
