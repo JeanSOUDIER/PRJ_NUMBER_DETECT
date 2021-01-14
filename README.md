@@ -22,7 +22,7 @@ Material used:
 Advanced project description:
 ======
 
-> TO BE ADDED
+> See PDF.
 
 
 Repository organization
