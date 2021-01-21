@@ -11,32 +11,23 @@
 #include "Usb.hpp"
 
 /**
-
                      Bluetooth class
-
     DUHAMEL Erwan (erwanduhamel@outlook.com)
     SOUDIER Jean  (jean.soudier@insa-strasbourg.fr)
-
-
     Provides a class for Bluetooth communication.
-
     Features :
-
     • Send and read data from bluetooth
-
     Functions :
-
     • Bluetooth                     | Constructor with arguments nb_usb (the number of the USB port) and bdrate (the baudrate)
-    • GetRX()                       | Function that return the value to read (warning this function wait until you receive something)
+    • GetRX()                       | Function that returns the value to read (warning this function wait until you receive something)
     • SetTX(txt)                    | Function to send char vector or string
     • BluetoothHelper()             | Function to call function outside
     • StartThread()                 | Function to start the bluetooth thread
     • ThreadRun()                   | Function that handle the thread of the bluetooth
     • ReadThread()                  | Function to read in thread the messages
     • WriteThread()                 | Function to write in thread the messages
-    • UpdateThread()                | Function to updates in thread the buffers (m_tx to m_buff_tx) and (m_buff_rx to m_rx)
-    • GetRXsize()                   | Function that return the size of the read buffer
-
+    • UpdateThread()                | Function to update the buffers in the object thread (m_tx to m_buff_tx) and (m_buff_rx to m_rx)
+    • GetRXsize()                   | Function that returns the size of the buffer holding the read data
 */
 
 //#define DEBUG

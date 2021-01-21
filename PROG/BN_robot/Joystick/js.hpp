@@ -29,10 +29,10 @@
 
     Functions :
 
-    • JS                           | activate the joystick with the limits of the outputs values
-    • GetEvent()				   | return the shifting in a vector of <type,datas> with <TypeAxis,Xaxis,Yaxis,LR/RT> or <TypeButton,Number,Value,0>
-    • get_axis_state()			   | return the axis with is actully moved
-    • read_event()				   | return the current event of the gamepad
+    • JS                           | activates the joystick with the limits of the specified in arguments
+    • GetEvent()                   | returns the shifting in a vector of <type,datas> with <TypeAxis,Xaxis,Yaxis,LR/RT> or <TypeButton,Number,Value,0>
+    • get_axis_state()             | returns the axis with is current state
+    • read_event()                 | returns the current event of the gamepad
 
 */
 

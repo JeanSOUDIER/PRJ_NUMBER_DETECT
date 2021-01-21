@@ -1,10 +1,10 @@
 #ifndef UTILITYOCV_H
 #define UTILITYOCV_H
 
-#include "../NeuralNetwork/Matrix/Matrix.hpp"
-#include "../NeuralNetwork/MatrixNN_global.h"
+#include "../MatrixNN/Matrix/Matrix.hpp"
+#include "../MatrixNN/MatrixNN_global.h"
 
-#include "../NeuralNetwork/SequenceHandler_STL/utility.h"
+#include "../MatrixNN/SequenceHandler_STL/utility.h"
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc.hpp>

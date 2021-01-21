@@ -27,35 +27,35 @@
     Functions :
 
     • Bluetooth                     | Constructor with arguments nb_usb (the number of the USB port) and bdrate (the baudrate)
-    • GetRX()                       | Function that return the value to read (warning this function wait until you receive something)
+    • GetRX()                       | Function that returns the value to read (WARNING : this function waits, i.e. blocks the current thread until something is received)
     • SetTX(txt)                    | Function to send char vector or string
     • BluetoothHelper()             | Function to call function outside
     • StartThread()                 | Function to start the bluetooth thread
-    • ThreadRun()                   | Function that handle the thread of the bluetooth
-    • ReadThread()                  | Function to read in thread the messages
-    • WriteThread()                 | Function to write in thread the messages
-    • UpdateThread()                | Function to updates in thread the buffers (m_tx to m_buff_tx) and (m_buff_rx to m_rx)
-    • GetRXsize()                   | Function that return the size of the read buffer
+    • ThreadRun()                   | Function that handles the thread of the Bluetooth communication
+    • ReadThread()                  | Function to read the messages in the current thread 
+    • WriteThread()                 | Function to write the messages in the current thread 
+    • UpdateThread()                | Function to updates the thread buffers (m_tx to m_buff_tx) and (m_buff_rx to m_rx)
+    • GetRXsize()                   | Function that returns the size of the read buffer
 
 */
 
 //#define DEBUG
 #ifdef DEBUG
-	#define DEBUG_BLUETOOTH_PRINT(x) std::cout<<x<<std::endl;
+    #define DEBUG_BLUETOOTH_PRINT(x) std::cout<<x<<std::endl;
 #else
-	#define DEBUG_BLUETOOTH_PRINT(x)
+    #define DEBUG_BLUETOOTH_PRINT(x)
 #endif
 
 class Bluetooth {
-	public:
-		Bluetooth(const int nb_usb, const int bdrate);
-		~Bluetooth();
+    public:
+        Bluetooth(const int nb_usb, const int bdrate);
+        ~Bluetooth();
 
-		std::vector<char> GetRX(void);
-		void SetTX(std::vector<char> txt);
-		void SetTX(std::string txt);
+        std::vector<char> GetRX(void);
+        void SetTX(std::vector<char> txt);
+        void SetTX(std::string txt);
 
-		static void* BluetoothHelper(void *context);
+        static void* BluetoothHelper(void *context);
                 void StartThread();
         protected:
                 void* ThreadRun();
@@ -63,7 +63,7 @@ class Bluetooth {
                 void WriteThread();
                 void UpdateThread();
                 int GetRXsize();
-	private:
+    private:
 
                 std::atomic<bool> m_start;
                 std::atomic<bool> m_rec;
@@ -85,7 +85,7 @@ class Bluetooth {
                 int m_tx_size;
                 std::vector<char> m_msg;
 
-        	int m_port_nr;
+            int m_port_nr;
                 int m_bdrate;
 
                 Usb *m_usb;

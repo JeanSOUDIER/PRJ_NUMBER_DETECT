@@ -26,7 +26,7 @@ SettingsWindow::SettingsWindow(MainWindow *parent) : QDialog(parent){
         min_size_spin = new QSpinBox(widgets_box);
         min_size_spin->setMinimum(0);
         min_size_spin->setMaximum(std::numeric_limits<int>::max()-1);
-        min_size_spin->setValue(800);
+        min_size_spin->setValue(3000);
         min_size_spin->setSuffix(" px");
         min_size_spin->setButtonSymbols(QAbstractSpinBox::PlusMinus);
         connect(min_size_spin ,
@@ -118,7 +118,7 @@ void SettingsWindow::reset(){
 
     threshold_slider->setValue(127);
 
-    min_size_spin->setValue(800);
+    min_size_spin->setValue(3000);
 
     max_size_spin->setValue(1000*800);
     max_size_spin->setMinimum(min_size_spin->value() + 1);

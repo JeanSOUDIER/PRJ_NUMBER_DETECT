@@ -1,11 +1,11 @@
 #include "Usb.hpp"
 
 Usb::Usb() {
-	m_active = false;
+    m_active = false;
 }
 
 Usb::Usb(const int nb_usb, const int baudrate) {
-	m_port_nr = nb_usb;
+    m_port_nr = nb_usb;
     m_bdrate = baudrate;
  
     std::vector<char> mode={'8','N','1',0}; // 8 data bits, no parity, 1 stop bit
@@ -14,7 +14,7 @@ Usb::Usb(const int nb_usb, const int baudrate) {
         std::cout << "Can not open comport\n" << std::endl;
         m_active = false;
     } else {
-		m_active = true;
+        m_active = true;
     }
 }
 
@@ -29,8 +29,8 @@ void Usb::SendBytes(const std::vector<char> &data) {
     }
     RS232::cputs(m_port_nr, msg);
     RS232::flushRXTX(m_port_nr);
-	//std::copy(data.begin(), data.end(), std::ostream_iterator<int>(std::cout, " "));
-	//std::cout << std::endl;
+    //std::copy(data.begin(), data.end(), std::ostream_iterator<int>(std::cout, " "));
+    //std::cout << std::endl;
 }
 
 std::vector<char> Usb::ReadBytes(const int n) {

@@ -67,6 +67,7 @@ private:
     NumberScroll *number_scroll;
 
     QPushButton *send_return_button;
+    QPushButton *cancel_button;
 
     std::vector<long long> _numbers;
 

@@ -37,37 +37,37 @@ constexpr int MAX_LENGTH_ARM = DIST_BASE/DIST_ARM;
     Functions :
 
     • Sequencer                     | Constructor
-    • Execute()                     | Function to do the main programme 1 turn
-    • MoveRobot(time)               | Function to move the mobile base with feedback loop for a time
-    • RollOver(nb)             		| Function to finish the turn (nb the number of caracters with is actully write)
+    • Execute()                     | Function describing the the main programme behaviour (for 1 turn).
+    • MoveRobot(time)               | Function to move the mobile robot with feedback loop for 'time' in ms.
+    • RollOver(nb)                  | Function to finish the turn ('nb' the number of caracters with is currently has to write)
 
 */
 
 class Sequencer {
-	public:
-		explicit Sequencer(Arm* = nullptr, MobileBase* = nullptr);
-		explicit Sequencer(Arm* = nullptr, Bluetooth* = nullptr, MobileBase* = nullptr);
-		~Sequencer();
+    public:
+        explicit Sequencer(Arm* = nullptr, MobileBase* = nullptr);
+        explicit Sequencer(Arm* = nullptr, Bluetooth* = nullptr, MobileBase* = nullptr);
+        ~Sequencer();
 
         bool Execute();
     protected:
-    	void MoveRobot(const uint64_t time);
-	void RollOver(int nb);
+        void MoveRobot(const uint64_t time);
+    void RollOver(int nb);
 
-    	bool m_BLE_start;
+        bool m_BLE_start;
 
-	private:
-		double m_coordinatesA;
-		double m_coordinatesX;
-		double m_coordinatesY;
+    private:
+        double m_coordinatesA;
+        double m_coordinatesX;
+        double m_coordinatesY;
 
-		Arm* m_WidowXL;
-		Bluetooth* m_BLE;
-		MobileBase* m_TurtleBot;
+        Arm* m_WidowXL;
+        Bluetooth* m_BLE;
+        MobileBase* m_TurtleBot;
 
-		Control::System_project* m_sys;
+        Control::System_project* m_sys;
 
-		SequenceHandler seqHandler;
+        SequenceHandler seqHandler;
 };
 
 #endif //SEQUENCER_H

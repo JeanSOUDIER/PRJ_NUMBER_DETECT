@@ -28,13 +28,13 @@
     Functions :
 
     • ICP                           | Constructor with arguments (error and maxIter) to break the iterative loop
-    • GetPos(DynData,StaData)       | Function that compute the paasage matrix. The output is <Tx, Ty, Theta> and the input are the 2 clouds of lidars of size(Nx2)
-    • SaveImg(Map,name)             | Function that save to name.csv the matrix Map with of output of success state
-    • svd()                         | Function that compute the SVD (Singular Value Decomposition) of a matrix size(2x2)
-    • median()                      | Function that compute the median of a vector
-    • nearestNeighbor()             | Function that compute the nearest neighbor of each point of 2 clouds of datas size(N*2)
-    • pdt()                         | Function that return the product of 2 vectors
-    • distEucl()                    | Function that return the euclidan distance of 2 points (x0,y0,x1,y1) were the first point is (x0,y0) and the second is (x1,y1)
+    • GetPos(DynData,StaData)       | Function that computes the paasage matrix. The output is <Tx, Ty, Theta> and the inputs are the 2 clouds of Lidar-obtained points (size(N*2))
+    • SaveImg(Map,name)             | Function that writes a Map in a csv file.
+    • svd()                         | Function that computes the SVD (Singular Value Decomposition) of a 2x2 matrix.
+    • median()                      | Function that computes the median of a vector.
+    • nearestNeighbor()             | Function that computes the nearest neighbor of each point of 2 clouds of points (size(N*2))
+    • pdt()                         | Function that returns the product of 2 vectors
+    • distEucl()                    | Function that returns the euclidan distance of 2 points (x0,y0,x1,y1) were the first point is (x0,y0) and the second is (x1,y1)
 
 */
 

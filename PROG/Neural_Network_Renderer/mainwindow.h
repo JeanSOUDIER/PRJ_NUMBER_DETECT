@@ -11,7 +11,7 @@
 
 #include "Camera_handler/utilityocv.h"
 
-#include "NeuralNetwork/PROJECT_FILES/project_network.h"
+#include "MatrixNN/PROJECT_FILES/project_network.h"
 
 /*-------------------------------------------*/
 

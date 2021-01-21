@@ -4,7 +4,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
 
 
     _threshold = 127;
-    _min_form_size = 800;
+    _min_form_size = 3000;
     _max_form_size = 800*1000;
     _padding = 11;
 
@@ -153,7 +153,7 @@ void MainWindow::setup_menu(){
 void MainWindow::setup_neuralnetwork(){
 
 
-    neural_network = new Project_network();
+    neural_network = new Project_network(4);
     QMessageBox::StandardButton info = QMessageBox::information(this , tr("Neural network initialization") , tr("Please choose a MNN XML file to initiate the neural network.") , QMessageBox::Ok);
     Q_UNUSED(info)
     std::string file = QFileDialog::getOpenFileName(this,tr("Select a file"), QDir::currentPath(), tr("XML Files (*.xml)")).toStdString();
@@ -274,19 +274,6 @@ void MainWindow::process(const cv::Mat &photo){
 
         cv::Mat cvMat = UtilityOCV::resize(UtilityOCV::invert(image) , 28 , 28).clone()/255;
 
-
-//        std::cout << "cvMat.rows: " << cvMat.rows << std::endl;
-//        std::cout << "top_padding.rows: " << top_padding.rows << std::endl;
-
-//        std::cout << "cvMat.cols: " << cvMat.cols << std::endl;
-//        std::cout << "top_padding.cols: " << top_padding.cols << std::endl;
-
-//        std::cout << "cvMat.dims: " << cvMat.dims << std::endl;
-//        std::cout << "top_padding.dims: " << top_padding.dims << std::endl;
-
-//        std::cout << "cvMat.type(): " << cvMat.type() << std::endl;
-//        std::cout << "top_padding.type(): " << top_padding.type() << std::endl;
-
         cv::vconcat(cvMat , top_padding , cvMat);
         cv::hconcat(cvMat , side_padding , cvMat);
         cv::hconcat(side_padding , cvMat , cvMat);
@@ -294,17 +281,11 @@ void MainWindow::process(const cv::Mat &photo){
 
         const cv::Mat cv_data = UtilityOCV::resize(cvMat , 28 , 28);
 
-
-       // std::cout << cvMat << std::endl;
-
 #ifdef DOUBLE_PRECISION
         const ste::Matrix<MNN::scalar> data =  UtilityOCV::toSteMatrix_D(cv_data)*(1./255.);
 #else
         const ste::Matrix<MNN::scalar> data =  UtilityOCV::toSteMatrix_F(cv_data);//*(1./255.);
 #endif
-
-     //data.print();
-     //std::cout << "********************************************" << std::endl;
 
      pictures.push_back(data);
 
@@ -313,14 +294,7 @@ void MainWindow::process(const cv::Mat &photo){
     }
 
     concatenate = concatenate.colRange(28 , concatenate.cols); //Remove initial pre-allocation
-
-    //concatenate = UtilityOCV::resize(concatenate , concatenate.cols*5 , concatenate.rows * 5);
-
                 /*----------------------------------------------*/
-
-//    resultsWidget()->setSplitPhotos(
-//                UtilityOCV::toQPixmap(photo , QImage::Format_RGB888).scaled(int(0.3*width()) , int(0.45*height()) , Qt::KeepAspectRatio)
-//                );
 
     resultsWidget()->setSplitPhotos(
                 UtilityOCV::toQPixmap(concatenate , QImage::Format_Grayscale8).scaled(int(0.3*width()) , int(0.45*height()) , Qt::KeepAspectRatio)
@@ -346,12 +320,10 @@ void MainWindow::process(const cv::Mat &photo){
 
     for(const ste::Matrix<MNN::scalar> &image : pictures){
 
-        //std::cout << "Output" << std::endl;
         predictions.push_back(neuralNetwork()->predict({image.toVector1D() , 784 , 1}));
         //std::cout << "Prediction: " << predictions.back() << std::endl;
-
     }
-    std::cout << std::endl;
+
 
     resultsWidget()->numbers() = predictions;
     resultsWidget()->updateNumbers();

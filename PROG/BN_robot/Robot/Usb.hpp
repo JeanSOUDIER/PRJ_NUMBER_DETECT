@@ -22,30 +22,30 @@
 
     Functions :
 
-    • Usb 		                    | Constructor with arguments nb_usb (the number of the USB port) and baudrate (the baudrate)
-    • GetBdRate()                   | Function that return the baudrate value
-    • GetPortNb()					| Function that return the port number value
-    • SetActive(state)				| Function to activate the USB port
-    • GetActive()					| Function that return the state of the USB port
-    • SendBytes(data)				| Function to send data throw USB port
-    • ReadBytes()					| Function to read data throw USB port
+    • Usb                            | Constructor with arguments nb_usb (the number of the USB port) and baudrate (the baudrate)
+    • GetBdRate()                    | Function that returns the baudrate value
+    • GetPortNb()                    | Function that returns the port number value
+    • SetActive(state)               | Function to activate the USB port
+    • GetActive()                    | Function that returns the state of the USB port
+    • SendBytes(data)                | Function to send data throw USB port
+    • ReadBytes()                    | Function to read data throw USB port
 
 */
 
 class Usb {
-	public:
-		Usb();
+    public:
+        Usb();
         Usb(const int nb_usb, const int baudrate);
-		~Usb();
+        ~Usb();
 
-		int GetBdRate(void);
-		int GetPortNb(void);
-		void SetActive(bool state);
+        int GetBdRate(void);
+        int GetPortNb(void);
+        void SetActive(bool state);
         bool GetActive(void);
 
         void SendBytes(const std::vector<char> &data);
         std::vector<char> ReadBytes(const int n);
-	private:
+    private:
         bool m_active;
         int m_port_nr;
         int m_bdrate;

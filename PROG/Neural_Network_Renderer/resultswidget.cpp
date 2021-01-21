@@ -56,12 +56,17 @@ ResultsWidget::ResultsWidget(MainWindow *parent) : QWidget(parent){
 
         number_scroll = new NumberScroll(main_splitter);
 
+        cancel_button = new QPushButton(tr("Cancel") , numbers_box);
+        connect(cancel_button , &QPushButton::clicked , this , &ResultsWidget::on_return);
+        cancel_button->hide();
+
         send_return_button = new QPushButton(tr("Return") , numbers_box);
         send_return_button->setShortcut(QKeySequence(Qt::Key_Backspace));
 
         connect(send_return_button , &QPushButton::clicked , this , &ResultsWidget::on_return);
 
         numbers_box_layout->addWidget(number_scroll);
+        numbers_box_layout->addWidget(cancel_button);
         numbers_box_layout->addWidget(send_return_button);
 
     /*--------------------------------------*/
@@ -87,6 +92,12 @@ void ResultsWidget::send(){send(numbers());}
 
 void ResultsWidget::send(const std::vector<long long> &numbers){
 
+    std::cout << numbers.size() << std::endl;
+
+    if(numbers.empty()){return;}
+
+    std::cout << "empty == false" << std::endl;
+
     QString q_result = "";
 
     for(const long long &value : numbers){
@@ -94,7 +105,6 @@ void ResultsWidget::send(const std::vector<long long> &numbers){
     }
 
     mainWindow->bluetooth_handler()->SetTX(q_result.toStdString());
-
 
 }
 
@@ -117,6 +127,7 @@ void ResultsWidget::setState(const ResultsWidget::STATE &state){
             disconnect(send_return_button , &QPushButton::clicked , this , &ResultsWidget::on_return);
             connect(send_return_button , &QPushButton::clicked , this , &ResultsWidget::on_send);
             send_return_button->setText(tr("Send and return"));
+            cancel_button->show();
             break;
         }
 
@@ -125,6 +136,7 @@ void ResultsWidget::setState(const ResultsWidget::STATE &state){
             disconnect(send_return_button , &QPushButton::clicked , this , &ResultsWidget::on_send);
             connect(send_return_button , &QPushButton::clicked , this , &ResultsWidget::on_return);
             send_return_button->setText(tr("Return"));
+            cancel_button->hide();
             break;
         }
 

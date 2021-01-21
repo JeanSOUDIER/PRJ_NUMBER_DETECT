@@ -13,19 +13,13 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 #QMAKE_CXXFLAGS_RELEASE  += /MT
 
 
-CONFIG += c++14
+CONFIG += c++17
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    NeuralNetwork/MNIST_Handler/mnist_handler.cpp \
-    NeuralNetwork/MatrixNN_global.cpp \
-    NeuralNetwork/PROJECT_FILES/project_network.cpp \
-    NeuralNetwork/SequenceHandler_STL/utility.cpp \
-    NeuralNetwork/layer.cpp \
-    NeuralNetwork/neuralnetwork.cpp \
     main.cpp \
     aboutwindow.cpp \
     mainwindow.cpp \
@@ -33,21 +27,22 @@ SOURCES += \
     numberscroll.cpp \
     numberwidget.cpp \
     resultswidget.cpp \
+    settingswindow.cpp \
     Camera_handler/camerahandler.cpp \
     Camera_handler/utilityocv.cpp \
     Bluetooth/Bluetooth.cpp \
     Bluetooth/Usb.cpp \
     Bluetooth/rs232.cpp \
-    settingswindow.cpp
+    MatrixNN/MNIST_Handler/mnist_handler.cpp \
+    MatrixNN/PROJECT_FILES/project_network.cpp \
+    MatrixNN/SequenceHandler_STL/utility.cpp \
+    MatrixNN/dataset_handler.cpp \
+    MatrixNN/layer.cpp \
+    MatrixNN/MatrixNN_global.cpp \
+    MatrixNN/neuralnetwork.cpp \
+
 
 HEADERS += \
-    NeuralNetwork/MNIST_Handler/mnist_handler.h \
-    NeuralNetwork/Matrix/Matrix.hpp \
-    NeuralNetwork/MatrixNN_global.h \
-    NeuralNetwork/PROJECT_FILES/project_network.h \
-    NeuralNetwork/SequenceHandler_STL/utility.h \
-    NeuralNetwork/layer.h \
-    NeuralNetwork/neuralnetwork.h \
     Camera_handler/camerahandler.h \
     Camera_handler/utilityocv.h \
     aboutwindow.h \
@@ -56,23 +51,32 @@ HEADERS += \
     numberscroll.h \
     numberwidget.h \
     resultswidget.h \
+    settingswindow.h \
     Bluetooth/Bluetooth.hpp \
     Bluetooth/Usb.hpp \
     Bluetooth/rs232.hpp \
-    settingswindow.h
+    MatrixNN/Matrix/Matrix.hpp \
+    MatrixNN/MNIST_Handler/mnist_handler.h \
+    MatrixNN/PROJECT_FILES/project_network.h \
+    MatrixNN/SequenceHandler_STL/utility.h \
+    MatrixNN/dataset_handler.h \
+    MatrixNN/layer.h \
+    MatrixNN/MatrixNN_global.h \
+    MatrixNN/neuralnetwork.h \
+
 
 LIBS += -I/usr/include/opencv
 LIBS += -L/usr/lib -lopencv_core -lopencv_highgui -lopencv_videoio -lopencv_imgcodecs -lopencv_imgproc
 
 
-#CUDA_SOURCES += NeuralNetwork/Matrix/CUDA_src/CUDA_global.cu \
-#                NeuralNetwork/Matrix/CUDA_src/CUDA_setup.cu \
-#                NeuralNetwork/Matrix/CUDA_src/CUDA_matrix_operators.cu
+#CUDA_SOURCES += MatrixNN/Matrix/CUDA_src/CUDA_global.cu \
+#                MatrixNN/Matrix/CUDA_src/CUDA_setup.cu \
+#                MatrixNN/Matrix/CUDA_src/CUDA_matrix_operators.cu
 
 
-#HEADERS += NeuralNetwork/Matrix/CUDA_src/CUDA_global.h \
-#           NeuralNetwork/Matrix/CUDA_src/CUDA_setup.h \
-#           NeuralNetwork/Matrix/CUDA_src/CUDA_matrix_operators.h
+#HEADERS += MatrixNN/Matrix/CUDA_src/CUDA_global.h \
+#           MatrixNN/Matrix/CUDA_src/CUDA_setup.h \
+#           MatrixNN/Matrix/CUDA_src/CUDA_matrix_operators.h
 
 
 #CUDA_DIR = "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.1"
