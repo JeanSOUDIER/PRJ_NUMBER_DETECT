@@ -17,6 +17,8 @@
 
 #include "numberscroll.h"
 
+#include "MatrixNN/MatrixNN_global.h"
+
 class MainWindow;
 
 class ResultsWidget : public QWidget {
@@ -52,9 +54,10 @@ protected:
     void send(const std::vector<long long> &numbers);
 
     void resetNumbers();
-    void updateNumbers(const std::vector<long long> &numbers);
+    void updateNumbers(const std::vector<long long> &numbers, const std::vector<MNN::scalar> &probabilities);
     void updateNumbers();
     std::vector<long long> &numbers();
+    std::vector<MNN::scalar> &probabilities();
 
 private:
 
@@ -70,6 +73,7 @@ private:
     QPushButton *cancel_button;
 
     std::vector<long long> _numbers;
+    std::vector<MNN::scalar> _probabilities;
 
 private slots:
 

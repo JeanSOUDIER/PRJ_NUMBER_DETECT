@@ -282,9 +282,9 @@ void MainWindow::process(const cv::Mat &photo){
         const cv::Mat cv_data = UtilityOCV::resize(cvMat , 28 , 28);
 
 #ifdef DOUBLE_PRECISION
-        const ste::Matrix<MNN::scalar> data =  UtilityOCV::toSteMatrix_D(cv_data)*(1./255.);
+        const ste::Matrix<MNN::scalar> data =  UtilityOCV::toSteMatrix_D(cv_data).reshape(784 , 1);
 #else
-        const ste::Matrix<MNN::scalar> data =  UtilityOCV::toSteMatrix_F(cv_data);//*(1./255.);
+        const ste::Matrix<MNN::scalar> data =  UtilityOCV::toSteMatrix_F(cv_data).reshape(784 , 1);
 #endif
 
      pictures.push_back(data);
@@ -318,14 +318,22 @@ void MainWindow::process(const cv::Mat &photo){
     std::vector<long long> predictions;
     predictions.reserve(pictures.size());
 
+    std::vector<MNN::scalar> probabilities;
+    probabilities.reserve(pictures.size());
+
     for(const ste::Matrix<MNN::scalar> &image : pictures){
 
-        predictions.push_back(neuralNetwork()->predict({image.toVector1D() , 784 , 1}));
-        //std::cout << "Prediction: " << predictions.back() << std::endl;
+        const ste::Matrix<MNN::scalar> out = neuralNetwork()->output(image);
+
+        const MNN::scalar prob = out.max();
+        probabilities.push_back(prob);
+
+        predictions.push_back(Utility::indexOf(out.toVector1D() , prob));
     }
 
 
     resultsWidget()->numbers() = predictions;
+    resultsWidget()->probabilities() = probabilities;
     resultsWidget()->updateNumbers();
 
 }
