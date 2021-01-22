@@ -58,6 +58,7 @@ public:
 
 #endif
     virtual long long int predict(const ste::Matrix<scalar> &input) const;        //Predicts the ouput from the input
+    virtual ste::Matrix<scalar> output(const ste::Matrix<scalar> &input) const;                            //Returns the output
 
     virtual bool load(const std::string &path);                             //Load euristics from a file
     virtual bool isFileValid(const std::string &path);                      //Checks if a file is a valid data source
