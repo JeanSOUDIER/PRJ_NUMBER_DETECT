@@ -1,6 +1,6 @@
 #include "numberwidget.h"
 
-NumberWidget::NumberWidget(QWidget *parent , const long long &num , const MNN::scalar &probability, const QString &label) : QGroupBox("Label: " + label , parent){
+NumberWidget::NumberWidget(QWidget *parent , const long long &num , const QString &label) : QGroupBox(label , parent){
 
     QHBoxLayout *main_layout = new QHBoxLayout(this);
 
@@ -11,7 +11,6 @@ NumberWidget::NumberWidget(QWidget *parent , const long long &num , const MNN::s
     number->setMaximumWidth(100);
 
 
-     QLabel *probability_label = new QLabel(tr("Probability: ") + QString::number(probability , 'g' , 4) + " %" , this);
 //    number_selector = new QSlider(this);
 //    number_selector->setMinimum(0);
 //    number_selector->setMaximum(9);
@@ -21,8 +20,6 @@ NumberWidget::NumberWidget(QWidget *parent , const long long &num , const MNN::s
 
 
     main_layout->addWidget(number);
-    main_layout->addWidget(probability_label);
-
     //main_layout->addWidget(number_selector);
 
 

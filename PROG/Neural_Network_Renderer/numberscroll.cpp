@@ -21,9 +21,9 @@ NumberScroll::~NumberScroll(){
 }
 
 
-void NumberScroll::addNumber(const long long &value, const MNN::scalar &probability, const QString &label){
+void NumberScroll::addNumber(const long long &value, const QString &label){
 
-    numbers.push_back(new NumberWidget(this , value , probability , label));
+    numbers.push_back(new NumberWidget(this , value , label));
 
     contents->layout()->addWidget(numbers.back());
 

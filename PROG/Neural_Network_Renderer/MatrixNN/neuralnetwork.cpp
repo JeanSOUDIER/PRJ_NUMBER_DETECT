@@ -72,19 +72,6 @@ long long int NeuralNetwork::predict(const ste::Matrix<scalar> &input) const{
 
 }
 
-ste::Matrix<scalar> NeuralNetwork::output(const ste::Matrix<scalar> &input) const{
-
-
-    ste::Matrix<scalar> result = input;
-
-    for(const Layer* layer : _layers){
-        MNN::elu_r((result = (layer->weights() * result))+= layer->biases()); ///This syntax limits the amount of deep copy, and thus fastens the propagation. It is recommended to use it for your network too (adapted and associated with loop unrolling and eventual multi-threading).
-    }
-
-    return result;
-
-}
-
 
 bool NeuralNetwork::load(const std::string &path){
 
