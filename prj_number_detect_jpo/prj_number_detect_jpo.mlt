@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mlt LC_NUMERIC="fr_FR" version="6.13.0" title="Shotcut version 18.12.23" producer="main_bin">
+  <profile description="HD 1080p 25 fps" width="1920" height="1080" progressive="1" sample_aspect_num="1" sample_aspect_den="1" display_aspect_num="16" display_aspect_den="9" frame_rate_num="25" frame_rate_den="1" colorspace="709"/>
+  <playlist id="main_bin">
+    <property name="xml_retain">1</property>
+  </playlist>
+  <producer id="black" in="00:00:00,000" out="00:02:56,640">
+    <property name="length">4417</property>
+    <property name="eof">pause</property>
+    <property name="resource">black</property>
+    <property name="aspect_ratio">1</property>
+    <property name="mlt_service">color</property>
+    <property name="mlt_image_format">rgb24</property>
+    <property name="set.test_audio">0</property>
+  </producer>
+  <playlist id="background">
+    <entry producer="black" in="00:00:00,000" out="00:02:56,640"/>
+  </playlist>
+  <producer id="producer0" title="Anonymous Submission" in="00:00:00,000" out="03:59:59,960">
+    <property name="length">04:00:00:00</property>
+    <property name="eof">pause</property>
+    <property name="resource">D:/école/GE5/PRJ_NUMBER_DETECT/prj_autom_montage/IMG20210112140728.jpg</property>
+    <property name="ttl">1</property>
+    <property name="aspect_ratio">1</property>
+    <property name="progressive">1</property>
+    <property name="seekable">1</property>
+    <property name="mlt_service">qimage</property>
+    <property name="shotcut:hash">77e29dc87a9f54c9bab4a219bcd9ab14</property>
+    <property name="ignore_points">0</property>
+    <property name="global_feed">1</property>
+    <property name="xml">was here</property>
+  </producer>
+  <producer id="producer1" title="Anonymous Submission" in="00:00:00,000" out="03:59:59,960">
+    <property name="length">04:00:00:00</property>
+    <property name="eof">pause</property>
+    <property name="resource">D:/école/GE5/PRJ_NUMBER_DETECT/prj_spe_montage/jetson_2 - Copie.JPG</property>
+    <property name="ttl">1</property>
+    <property name="aspect_ratio">1</property>
+    <property name="progressive">1</property>
+    <property name="seekable">1</property>
+    <property name="mlt_service">qimage</property>
+    <property name="shotcut:hash">2de77cd859f8150b2aa1ce68387463a8</property>
+    <property name="ignore_points">0</property>
+    <property name="global_feed">1</property>
+    <property name="xml">was here</property>
+  </producer>
+  <producer id="producer2" title="Anonymous Submission" in="00:00:00,000" out="03:59:59,960">
+    <property name="length">04:00:00:00</property>
+    <property name="eof">pause</property>
+    <property name="resource">D:/école/GE5/PRJ_NUMBER_DETECT/prj_spe_montage/Capture.PNG</property>
+    <property name="ttl">1</property>
+    <property name="aspect_ratio">1</property>
+    <property name="progressive">1</property>
+    <property name="seekable">1</property>
+    <property name="mlt_service">qimage</property>
+    <property name="shotcut:hash">f305e2be91e5dcddddd3e5fa2052d1ec</property>
+    <property name="ignore_points">0</property>
+    <property name="global_feed">1</property>
+    <property name="xml">was here</property>
+  </producer>
+  <producer id="producer3" title="Anonymous Submission" in="00:00:00,000" out="03:59:59,960">
+    <property name="length">04:00:00:00</property>
+    <property name="eof">pause</property>
+    <property name="resource">D:/école/GE5/PRJ_NUMBER_DETECT/prj_autom_montage/Capture6.PNG</property>
+    <property name="ttl">1</property>
+    <property name="aspect_ratio">1</property>
+    <property name="progressive">1</property>
+    <property name="seekable">1</property>
+    <property name="mlt_service">qimage</property>
+    <property name="shotcut:hash">03b6a3f8b0f4d0ab96ff6c6948a9c6f7</property>
+    <property name="ignore_points">0</property>
+    <property name="global_feed">1</property>
+    <property name="xml">was here</property>
+  </producer>
+  <producer id="producer4" title="Anonymous Submission" in="00:00:00,000" out="00:02:27,000">
+    <property name="length">00:02:27:01</property>
+    <property name="eof">pause</property>
+    <property name="resource">D:/école/GE5/PRJ_NUMBER_DETECT/prj_spé_montage.mp4</property>
+    <property name="audio_index">1</property>
+    <property name="video_index">0</property>
+    <property name="mute_on_pause">0</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="aspect_ratio">1</property>
+    <property name="shotcut:hash">7f624f96d4f40fefa6a6a249a9350a93</property>
+    <property name="ignore_points">0</property>
+    <property name="shotcut:caption">prj_spé_montage.mp4</property>
+    <property name="shotcut:detail">D:\école\GE5\PRJ_NUMBER_DETECT\prj_spé_montage.mp4</property>
+    <property name="shotcut:skipConvert">1</property>
+    <property name="global_feed">1</property>
+    <property name="xml">was here</property>
+  </producer>
+  <playlist id="playlist0">
+    <property name="shotcut:video">1</property>
+    <property name="shotcut:name">V1</property>
+    <blank length="00:00:00,040"/>
+    <entry producer="producer0" in="00:00:00,000" out="00:00:08,640"/>
+    <entry producer="producer1" in="00:00:00,000" out="00:00:08,880"/>
+    <entry producer="producer2" in="00:00:00,000" out="00:00:07,320"/>
+    <entry producer="producer3" in="00:00:00,000" out="00:00:04,600"/>
+    <entry producer="producer4" in="00:00:00,000" out="00:02:27,000"/>
+  </playlist>
+  <producer id="producer5" title="Anonymous Submission" in="00:00:00,000" out="00:00:08,680">
+    <property name="length">00:00:08:18</property>
+    <property name="eof">pause</property>
+    <property name="resource">D:/école/GE5/PRJ_NUMBER_DETECT/prj_spe_montage/voix/intro.wav</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="shotcut:hash">f07ce8b0b2c79a41a5e5888d36fbe70f</property>
+    <property name="ignore_points">0</property>
+    <property name="shotcut:caption">intro.wav</property>
+    <property name="shotcut:detail">D:\école\GE5\PRJ_NUMBER_DETECT\prj_spe_montage\voix\intro.wav</property>
+    <property name="shotcut:skipConvert">1</property>
+    <property name="global_feed">1</property>
+    <property name="xml">was here</property>
+  </producer>
+  <producer id="producer6" title="Anonymous Submission" in="00:00:00,000" out="00:00:16,240">
+    <property name="length">00:00:16:07</property>
+    <property name="eof">pause</property>
+    <property name="resource">D:/école/GE5/PRJ_NUMBER_DETECT/prj_spe_montage/voix/partie.wav</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="shotcut:hash">889a950df4c0a2080bf5b8b0d60adaef</property>
+    <property name="ignore_points">0</property>
+    <property name="shotcut:caption">partie.wav</property>
+    <property name="shotcut:detail">D:\école\GE5\PRJ_NUMBER_DETECT\prj_spe_montage\voix\partie.wav</property>
+    <property name="shotcut:skipConvert">1</property>
+    <property name="global_feed">1</property>
+    <property name="xml">was here</property>
+  </producer>
+  <producer id="producer7" title="Anonymous Submission" in="00:00:00,000" out="00:00:47,680">
+    <property name="length">00:00:47:18</property>
+    <property name="eof">pause</property>
+    <property name="resource">D:/école/GE5/PRJ_NUMBER_DETECT/prj_autom_montage/voix/demo.wav</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="shotcut:hash">3f4f5b5067c1f9cc3ee67d582bd621a2</property>
+    <property name="ignore_points">0</property>
+    <property name="shotcut:caption">demo.wav</property>
+    <property name="shotcut:detail">D:\école\GE5\PRJ_NUMBER_DETECT\prj_autom_montage\voix\demo.wav</property>
+    <property name="shotcut:skipConvert">1</property>
+    <property name="global_feed">1</property>
+    <property name="xml">was here</property>
+  </producer>
+  <producer id="producer8" title="Anonymous Submission" in="00:00:00,000" out="00:00:30,000">
+    <property name="length">00:00:30:01</property>
+    <property name="eof">pause</property>
+    <property name="resource">C:/Users/xoxox/Downloads/giornos-theme-but-only-the-best-part-is-in_vwd15lya_lyb0-online-audio-converter_vJBaMW7.mp3</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="shotcut:hash">b1f5d23b286728427ae2afaf6ddfc500</property>
+    <property name="ignore_points">0</property>
+    <property name="shotcut:caption">giornos-theme-but-only-the-best-part-is-in_vwd15lya_lyb0-online-audio-converter_vJBaMW7.mp3</property>
+    <property name="shotcut:detail">C:\Users\xoxox\Downloads\giornos-theme-but-only-the-best-part-is-in_vwd15lya_lyb0-online-audio-converter_vJBaMW7.mp3</property>
+    <property name="shotcut:skipConvert">1</property>
+    <property name="global_feed">1</property>
+    <property name="xml">was here</property>
+  </producer>
+  <producer id="producer9" title="Anonymous Submission" in="00:00:00,000" out="00:00:30,000">
+    <property name="length">00:00:30:01</property>
+    <property name="eof">pause</property>
+    <property name="resource">C:/Users/xoxox/Downloads/giornos-theme-but-only-the-best-part-is-in_vwd15lya_lyb0-online-audio-converter_vJBaMW7.mp3</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="shotcut:hash">b1f5d23b286728427ae2afaf6ddfc500</property>
+    <property name="ignore_points">0</property>
+    <property name="shotcut:caption">giornos-theme-but-only-the-best-part-is-in_vwd15lya_lyb0-online-audio-converter_vJBaMW7.mp3</property>
+    <property name="shotcut:detail">C:\Users\xoxox\Downloads\giornos-theme-but-only-the-best-part-is-in_vwd15lya_lyb0-online-audio-converter_vJBaMW7.mp3</property>
+    <property name="shotcut:skipConvert">1</property>
+    <property name="global_feed">1</property>
+    <property name="xml">was here</property>
+  </producer>
+  <producer id="producer10" title="Anonymous Submission" in="00:00:00,000" out="00:00:30,000">
+    <property name="length">00:00:30:01</property>
+    <property name="eof">pause</property>
+    <property name="resource">C:/Users/xoxox/Downloads/giornos-theme-but-only-the-best-part-is-in_vwd15lya_lyb0-online-audio-converter_vJBaMW7.mp3</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="shotcut:hash">b1f5d23b286728427ae2afaf6ddfc500</property>
+    <property name="ignore_points">0</property>
+    <property name="shotcut:caption">giornos-theme-but-only-the-best-part-is-in_vwd15lya_lyb0-online-audio-converter_vJBaMW7.mp3</property>
+    <property name="shotcut:detail">C:\Users\xoxox\Downloads\giornos-theme-but-only-the-best-part-is-in_vwd15lya_lyb0-online-audio-converter_vJBaMW7.mp3</property>
+    <property name="shotcut:skipConvert">1</property>
+    <property name="global_feed">1</property>
+    <property name="xml">was here</property>
+  </producer>
+  <producer id="producer11" title="Anonymous Submission" in="00:00:00,000" out="00:00:30,000">
+    <property name="length">00:00:30:01</property>
+    <property name="eof">pause</property>
+    <property name="resource">C:/Users/xoxox/Downloads/giornos-theme-but-only-the-best-part-is-in_vwd15lya_lyb0-online-audio-converter_vJBaMW7.mp3</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="shotcut:hash">b1f5d23b286728427ae2afaf6ddfc500</property>
+    <property name="ignore_points">0</property>
+    <property name="shotcut:caption">giornos-theme-but-only-the-best-part-is-in_vwd15lya_lyb0-online-audio-converter_vJBaMW7.mp3</property>
+    <property name="shotcut:detail">C:\Users\xoxox\Downloads\giornos-theme-but-only-the-best-part-is-in_vwd15lya_lyb0-online-audio-converter_vJBaMW7.mp3</property>
+    <property name="shotcut:skipConvert">1</property>
+    <property name="global_feed">1</property>
+    <property name="xml">was here</property>
+  </producer>
+  <playlist id="playlist1">
+    <property name="shotcut:audio">1</property>
+    <property name="shotcut:name">A1</property>
+    <entry producer="producer5" in="00:00:00,000" out="00:00:08,680"/>
+    <entry producer="producer6" in="00:00:00,000" out="00:00:16,240"/>
+    <entry producer="producer7" in="00:00:00,000" out="00:00:47,680"/>
+    <entry producer="producer8" in="00:00:00,000" out="00:00:30,000"/>
+    <entry producer="producer9" in="00:00:00,000" out="00:00:30,000"/>
+    <entry producer="producer10" in="00:00:00,000" out="00:00:30,000"/>
+    <entry producer="producer11" in="00:00:00,000" out="00:00:09,120"/>
+  </playlist>
+  <tractor id="tractor0" title="Shotcut version 18.12.23" global_feed="1" in="00:00:00,000" out="00:02:56,640">
+    <property name="shotcut">1</property>
+    <property name="shotcut:projectAudioChannels">2</property>
+    <property name="shotcut:projectFolder">1</property>
+    <track producer="background"/>
+    <track producer="playlist0"/>
+    <track producer="playlist1" hide="video"/>
+    <transition id="transition0">
+      <property name="a_track">0</property>
+      <property name="b_track">1</property>
+      <property name="mlt_service">mix</property>
+      <property name="always_active">1</property>
+      <property name="sum">1</property>
+    </transition>
+    <transition id="transition1">
+      <property name="a_track">0</property>
+      <property name="b_track">1</property>
+      <property name="version">0,9</property>
+      <property name="mlt_service">frei0r.cairoblend</property>
+      <property name="disable">1</property>
+    </transition>
+    <transition id="transition2">
+      <property name="a_track">0</property>
+      <property name="b_track">2</property>
+      <property name="mlt_service">mix</property>
+      <property name="always_active">1</property>
+      <property name="sum">1</property>
+    </transition>
+  </tractor>
+</mlt>
