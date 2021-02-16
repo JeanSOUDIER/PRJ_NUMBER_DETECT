@@ -17,6 +17,7 @@
 #include <vector>
 #include <atomic>
 
+#include "MotorWheel.hpp"
 #include "Lidar.hpp"
 #include "Usb.hpp"
 #include "../SequenceHandler_STL/utility.h"
@@ -100,12 +101,11 @@ class MobileBase {
         std::atomic<bool> m_start;
         std::atomic<int> m_timeCont;
 
-        int m_port_nr;
-        int m_bdrate;
         bool m_lidar_start;
 
-        Usb *m_usb;
         Lidar *m_RPLidar;
+        MotorWheel *m_wheels;
+
         pthread_t *inc_x_thread;
 
         std::vector<double> m_posXlid;
