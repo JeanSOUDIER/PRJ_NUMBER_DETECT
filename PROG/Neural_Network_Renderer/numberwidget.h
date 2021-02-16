@@ -1,10 +1,13 @@
 #ifndef NUMBERWIDGET_H
 #define NUMBERWIDGET_H
 
+#include "MatrixNN/MatrixNN_global.h"
+
 #include <stdint.h>
 
 #include <QGroupBox>
 
+#include <QLabel>
 #include <QLCDNumber>
 
 #include <QSlider>
@@ -20,7 +23,7 @@ class NumberWidget : public QGroupBox {
 
 public:
 
-    NumberWidget(QWidget *parent , const long long &num, const QString &label = "");
+    NumberWidget(QWidget *parent , const long long &num, const MNN::scalar &probability, const QString &label = "");
     ~NumberWidget();
 
     int value() const;
@@ -29,11 +32,7 @@ private:
 
     QLCDNumber *number;
 
-//    QSlider *number_selector;
 
-//private slots:
-
-//    void on_number_selector_update();
 
 };
 

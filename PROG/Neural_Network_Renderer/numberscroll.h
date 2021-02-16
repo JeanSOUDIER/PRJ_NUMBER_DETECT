@@ -2,6 +2,8 @@
 #define NUMBERSCROLL_H
 
 #include "numberwidget.h"
+#include "MatrixNN/MatrixNN_global.h"
+
 #include <QGroupBox>
 
 #include <QScrollArea>
@@ -33,7 +35,7 @@ public:
 
 protected:
 
-    void addNumber(const long long &value, const QString &label = "");
+    void addNumber(const long long &value, const MNN::scalar &probability, const QString &label = "");
 
     std::vector<int> toVector() const;
     void reset();

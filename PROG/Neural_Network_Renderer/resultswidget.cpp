@@ -151,22 +151,27 @@ void ResultsWidget::setState(const ResultsWidget::STATE &state){
 
 
 std::vector<long long>& ResultsWidget::numbers(){return _numbers;}
+std::vector<MNN::scalar> &ResultsWidget::probabilities(){return _probabilities;}
 
-void ResultsWidget::updateNumbers(const std::vector<long long> &numbers){
+void ResultsWidget::updateNumbers(const std::vector<long long> &numbers , const std::vector<MNN::scalar> &probabilities){
 
     resetNumbers();
     unsigned label = 1;
-    for(const long long &number : numbers){
-        number_scroll->addNumber(number , tr("Label: ") + QString::number(label));
+//    for(const long long &number : numbers){
+//        number_scroll->addNumber(number , pro tr("Label: ") + QString::number(label));
+//        label++;
+//    }
+
+
+    for(unsigned index = 0 ; index < std::min(numbers.size() , probabilities.size()) ; index++){
+        number_scroll->addNumber(numbers.at(index) , probabilities.at(index)*100 , QString::number(label));
         label++;
     }
 
 }
-void ResultsWidget::updateNumbers(){updateNumbers(numbers());}
+void ResultsWidget::updateNumbers(){updateNumbers(_numbers , _probabilities);}
 
-void ResultsWidget::resetNumbers(){
-    number_scroll->reset();
-}
+void ResultsWidget::resetNumbers(){number_scroll->reset();}
 
 
 /*****************************************************************/
