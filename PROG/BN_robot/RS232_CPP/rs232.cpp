@@ -620,7 +620,7 @@ int RS232::PollComport(const int &comport_number, unsigned char *buffer, const i
 
   int n;
   //ReadFile(&RS232::Cport[comport_number], buf, size, (LPDWORD)((void *)&n), NULL);
-    ReadFile(&RS232::Cport[comport_number], buffer, size, LPDWORD(&n), NULL);
+    ReadFile(RS232::Cport[comport_number], buffer, size, LPDWORD(&n), NULL);
   return(n);
 }
 
