@@ -123,6 +123,7 @@ int RS232::OpenComport(const unsigned int &comport_number, const unsigned int &b
     case 3000000 : {baudr = B3000000; break;}
     case 3500000 : {baudr = B3500000; break;}
     case 4000000 : {baudr = B4000000; break;}
+    case 12000000: {custom_bauds = true; baudr = B38400; break; }
     default      : {
                    std::cout << ("invalid baudrate\n");
                    return(1);
@@ -303,7 +304,7 @@ int RS232::PollComport(const int &comport_number, unsigned char *buffer, const i
 
 
 int RS232::SendByte(const unsigned &port, unsigned char byte){
-  std::cout << static_cast<int>(byte) << " ";
+  //std::cout << static_cast<int>(byte) << " ";
   int n = write(RS232::Cport[port], &byte, 1);
   if(n < 0){
     if(errno == EAGAIN){
@@ -507,6 +508,8 @@ int RS232::OpenComport(const unsigned int &comport_number, const unsigned int &b
     case (1500000) : {mode_str = "baud=1500000"; break;}
     case (2000000) : {mode_str = "baud=2000000"; break;}
     case (3000000) : {mode_str = "baud=2000000"; break;}
+    case (12000000): {mode_str = "baud=12000000"; break; }
+
     default      : {std::cout << ("invalid baudrate\n"); return(1);}
   }
 
@@ -619,7 +622,7 @@ int RS232::OpenComport(const std::string &str, const unsigned int &baudrate , co
 int RS232::PollComport(const int &comport_number, unsigned char *buffer, const int &size){
 
   int n;
-  //ReadFile(&RS232::Cport[comport_number], buf, size, (LPDWORD)((void *)&n), NULL);
+  //ReadFile(RS232::Cport[comport_number], buffer, size, (LPDWORD)((void *)&n), NULL);
     ReadFile(RS232::Cport[comport_number], buffer, size, LPDWORD(&n), NULL);
   return(n);
 }

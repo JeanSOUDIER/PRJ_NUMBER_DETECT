@@ -4,7 +4,9 @@
 #include <iostream>
 #include <vector>
 #include <iterator>
-#include "../RS232_CPP/rs232.hpp"
+#include <string>
+
+#include "rs232.hpp"
 
 /**
 
@@ -35,6 +37,7 @@
 class Usb {
     public:
         Usb();
+        Usb(const std::string nb_usb, const int baudrate);
         Usb(const int nb_usb, const int baudrate);
         ~Usb();
 
@@ -43,8 +46,10 @@ class Usb {
         void SetActive(bool state);
         bool GetActive(void);
 
+        void SendBytes(const std::string& s);
         void SendBytes(const std::vector<char> &data);
-        std::vector<char> ReadBytes(const int n);
+        std::vector<unsigned char> ReadBytes(const int n);
+        int ReadBytes(const int n, unsigned char* buf);
     private:
         bool m_active;
         int m_port_nr;
