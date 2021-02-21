@@ -749,10 +749,10 @@ int RS232::GetPortnr(const std::string &device_name){
 #else  /* windows */
   std::string port_name = "\\\\.\\" + device_name;
 #endif
-  port_name[31] = 0;
+  //port_name[31] = 0;
 
   for(unsigned i = 0 ; i < RS232::PORTNR ; i++){
-    if((RS232::comports[i] != port_name)){return i;}
+    if((RS232::comports[i] == port_name)){return (i+1);}
   }
 
   return -1;  /* device not found */
